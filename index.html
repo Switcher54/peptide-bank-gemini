@@ -124,6 +124,7 @@
                 <button onclick="router('map')" id="nav-map" class="nav-btn whitespace-nowrap shrink-0 px-3 py-2 rounded-full text-xs font-semibold text-slate-400 hover:text-white transition-all duration-300">Injektion</button>
                 <button onclick="router('blood')" id="nav-blood" class="nav-btn whitespace-nowrap shrink-0 px-3 py-2 rounded-full text-xs font-semibold text-slate-400 hover:text-white transition-all duration-300">Blutbild</button>
                 <button onclick="router('storage')" id="nav-storage" class="nav-btn whitespace-nowrap shrink-0 px-3 py-2 rounded-full text-xs font-semibold text-slate-400 hover:text-white transition-all duration-300">Stabilität</button>
+                <button onclick="router('inventory')" id="nav-inventory" class="nav-btn whitespace-nowrap shrink-0 px-3 py-2 rounded-full text-xs font-semibold text-slate-400 hover:text-white transition-all duration-300 flex items-center gap-1">Bestand <span id="nav-inv-warn" class="hidden text-[10px]">⚠️</span></button>
                 <button onclick="router('sport')" id="nav-sport" class="nav-btn whitespace-nowrap shrink-0 px-3 py-2 rounded-full text-xs font-semibold text-slate-400 hover:text-white transition-all duration-300">Protokolle</button>
                 <button onclick="router('stack')" id="nav-stack" class="nav-btn whitespace-nowrap shrink-0 px-3 py-2 rounded-full text-xs font-semibold text-slate-400 hover:text-white transition-all duration-300 flex items-center gap-1">Stacker <span class="w-1.5 h-1.5 rounded-full bg-accent animate-pulse"></span></button>
                 <button onclick="router('tutorial')" id="nav-tutorial" class="nav-btn whitespace-nowrap shrink-0 px-3 py-2 rounded-full text-xs font-semibold text-slate-400 hover:text-white transition-all duration-300">Misch-Guide</button>
@@ -141,6 +142,18 @@
     </header>
 
     <main class="flex-grow max-w-[1600px] mx-auto w-full px-4 sm:px-8 py-10 relative z-10">
+
+        <!-- Global Inventory Warning -->
+        <div id="global-inv-warning" class="hidden mb-8 bg-rose-500/10 border border-rose-500/20 p-4 rounded-2xl items-center justify-between shadow-[0_0_15px_rgba(244,63,94,0.1)]">
+            <div class="flex items-center gap-4">
+                <span class="text-2xl">⚠️</span>
+                <div>
+                    <h4 class="font-bold text-rose-400 text-sm mb-0.5">Bestand kritisch</h4>
+                    <p class="text-xs text-rose-200/80" id="global-inv-text">Einige deiner Wirkstoffe gehen zur Neige. Bitte rechtzeitig nachbestellen!</p>
+                </div>
+            </div>
+            <button onclick="router('inventory')" class="px-4 py-2 bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 rounded-xl text-xs font-bold transition-all whitespace-nowrap">Zum Bestand</button>
+        </div>
 
         <div id="view-db" class="view-panel block animate-fade-in-up space-y-8">
             <div class="text-center space-y-4 mb-10">
@@ -467,14 +480,22 @@
                                     </div>
                                     
                                     <div class="bg-slate-800/50 p-4 rounded-xl border border-white/5 mt-4">
-                                        <h4 class="font-bold text-brand-400 mb-2 flex items-center gap-2"><span class="text-lg">🔄</span> Rotations-Guide</h4>
-                                        <ul id="map-info-rotation" class="space-y-2 text-xs text-slate-400 list-disc list-inside">
-                                            <li>Tipp 1</li>
-                                        </ul>
-                                    </div>
+                                    <h4 class="font-bold text-brand-400 mb-2 flex items-center gap-2"><span class="text-lg">🔄</span> Rotations-Guide</h4>
+                                    <ul id="map-info-rotation" class="space-y-2 text-xs text-slate-400 list-disc list-inside">
+                                        <li>Tipp 1</li>
+                                    </ul>
                                 </div>
+                                
+                                <div class="bg-slate-900/80 p-4 rounded-xl border border-white/5 mt-4 space-y-2">
+                                    <label class="text-xs font-semibold text-slate-300 block">Protokollierte Substanz</label>
+                                    <select id="map-log-substance" class="w-full bg-slate-800 border border-slate-600 rounded-xl py-2 px-3 text-sm text-white outline-none">
+                                        <option value="">-- Keine Zuordnung --</option>
+                                    </select>
+                                    <p class="text-[10px] text-slate-500">Zieht bei Protokollierung automatisch 1 Tagesdosis vom Bestand ab.</p>
+                                </div>
+                            </div>
 
-                                <button id="map-log-btn" onclick="logCurrentMapZone()" class="mt-4 w-full py-3 bg-brand-500/20 text-brand-400 border border-brand-500/50 hover:bg-brand-500 hover:text-white rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2 shadow-glow-brand">
+                            <button id="map-log-btn" onclick="logCurrentMapZone()" class="mt-4 w-full py-3 bg-brand-500/20 text-brand-400 border border-brand-500/50 hover:bg-brand-500 hover:text-white rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2 shadow-glow-brand">
                                     <span class="text-lg">💉</span> Diese Zone jetzt protokollieren
                                 </button>
                             </div>
@@ -613,6 +634,55 @@
                                 <div id="sim-result-bar" class="h-full bg-emerald-500 transition-all duration-700 ease-out" style="width: 80%;"></div>
                             </div>
                             <p class="text-sm text-slate-400 leading-relaxed" id="sim-result-desc">Lyophilisiert im Kühlschrank optimal geschützt.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- INVENTORY VIEW -->
+        <div id="view-inventory" class="view-panel hidden space-y-8">
+            <div class="glass-card rounded-3xl p-6 sm:p-10">
+                <div class="mb-8">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-semibold mb-4">
+                        <span class="text-base">📦</span> Smart Inventory
+                    </div>
+                    <h2 class="text-3xl font-bold text-white mb-2">Kühlschrank-Bestand</h2>
+                    <p class="text-slate-400 text-sm">Verwalte deine Vials. Die App warnt dich automatisch, wenn ein Wirkstoff für weniger als 2 Wochen reicht.</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
+                    <div class="lg:col-span-5 space-y-5 bg-slate-900/50 p-6 rounded-2xl border border-slate-800 self-start">
+                        <h3 class="text-lg font-bold text-white mb-2 border-b border-white/5 pb-2">Neuen Bestand erfassen</h3>
+                        <div class="space-y-3">
+                            <label class="text-xs font-semibold text-slate-300 block">Substanz</label>
+                            <select id="inv-select" class="w-full bg-slate-800 border border-slate-600 rounded-xl py-2.5 px-4 text-sm text-white focus:border-blue-500 outline-none cursor-pointer">
+                                <option value="">-- Bitte wählen --</option>
+                            </select>
+                        </div>
+                        <div class="grid grid-cols-3 gap-4">
+                            <div class="space-y-2">
+                                <label class="text-xs font-semibold text-slate-300 block">Anzahl Vials</label>
+                                <input type="number" id="inv-vials" value="1" min="0" step="0.1" class="w-full bg-slate-800 border border-slate-600 rounded-xl py-2.5 px-2 text-sm text-white focus:border-blue-500 outline-none font-mono">
+                            </div>
+                            <div class="space-y-2">
+                                <label class="text-xs font-semibold text-slate-300 block">mg / Vial</label>
+                                <input type="number" id="inv-mg" value="5" min="1" step="0.5" class="w-full bg-slate-800 border border-slate-600 rounded-xl py-2.5 px-2 text-sm text-white focus:border-blue-500 outline-none font-mono">
+                            </div>
+                            <div class="space-y-2">
+                                <label class="text-xs font-semibold text-slate-300 block" title="Wie viele Tage reicht dir ein einzelnes Vial bei aktueller Dosierung?">Tage / Vial</label>
+                                <input type="number" id="inv-days" value="14" min="1" class="w-full bg-slate-800 border border-slate-600 rounded-xl py-2.5 px-2 text-sm text-white focus:border-blue-500 outline-none font-mono">
+                            </div>
+                        </div>
+                        <button onclick="addInventoryItem()" class="w-full py-3 bg-blue-500/20 text-blue-400 border border-blue-500/50 hover:bg-blue-500 hover:text-white rounded-xl text-sm font-bold transition-all shadow-[0_0_15px_rgba(59,130,246,0.2)]">
+                            Speichern / Aktualisieren
+                        </button>
+                    </div>
+
+                    <div class="lg:col-span-7 bg-slate-900/50 border border-white/5 rounded-2xl p-6 flex flex-col">
+                        <h3 class="text-lg font-bold text-white mb-4 border-b border-white/5 pb-4">Aktueller Vorrat</h3>
+                        <div id="inv-list" class="space-y-3 flex-grow overflow-y-auto max-h-[400px] pr-2 scrollbar-hide">
+                            <!-- JS Inject -->
                         </div>
                     </div>
                 </div>
@@ -1265,6 +1335,7 @@
         }
 
         let loadedCount = typeof RAW_DATA !== 'undefined' ? RAW_DATA.length : 0;
+        let pkChartInstance = null;
 
         function router(viewId) {
             document.querySelectorAll('.view-panel').forEach(p => { 
@@ -1739,8 +1810,7 @@
             RAW_DATA.forEach(item => {
                 const name = item[2];
                 const id = item[0];
-                const dose = item[9].normal;
-                s.innerHTML += `<option value="${id}">${name} (${dose})</option>`;
+                s.innerHTML += `<option value="${id}">${name}</option>`;
             });
         }
 
@@ -1795,7 +1865,7 @@
             }
             
             const cycleMgInput = document.getElementById('cycle-mg-interval');
-            if (cycleMgInput) cycleMgInput.value = (dose * multi) / 1000;
+            if (cycleMgInput) cycleMgInput.value = (doseMcg * multi) / 1000;
 
             calculateSyringe();
         }
@@ -1804,6 +1874,86 @@
             const freq = document.getElementById('cycle-freq').value;
             const label = document.getElementById('cycle-mg-label');
             if(label) label.innerText = freq === 'weekly' ? 'mg/Wo' : 'mg/Tag';
+        }
+
+        function renderPKChart() {
+            const ctx = document.getElementById('pkChartCanvas');
+            const placeholder = document.getElementById('pkChartPlaceholder');
+            const presetId = document.getElementById('calcPreset')?.value;
+
+            if (!ctx) return;
+
+            if (!presetId) {
+                if (placeholder) placeholder.classList.remove('hidden');
+                if (pkChartInstance) {
+                    pkChartInstance.destroy();
+                    pkChartInstance = null;
+                }
+                return;
+            }
+
+            const pep = RAW_DATA.find(i => i[0] === presetId);
+            if (!pep) return;
+
+            if (placeholder) placeholder.classList.add('hidden');
+
+            // Halbwertszeit extrahieren
+            let hlStr = pep[9].halflife;
+            let hlHours = 24; 
+            if(hlStr.includes('m') && !hlStr.includes('Mo')) hlHours = parseFloat(hlStr) / 60 || 0.5;
+            else if(hlStr.includes('h')) hlHours = parseFloat(hlStr) || 4;
+            else if(hlStr.includes('Tag')) hlHours = (parseFloat(hlStr) || 1) * 24;
+            else if(hlStr.includes('Kurz')) hlHours = 1;
+            else if(hlStr.includes('Lang')) hlHours = 72;
+
+            const doseMg = parseFloat(document.getElementById('calc-dose-mg')?.value) || 0.25;
+
+            let labels = [];
+            let data = [];
+            let currentLevel = 0;
+            
+            // Simulation über 14 Tage
+            for (let day = 0; day < 14; day++) {
+                for (let hour = 0; hour < 24; hour++) {
+                    if (hour === 0) currentLevel += doseMg; // Tägliche Injektion
+                    currentLevel = currentLevel * Math.pow(0.5, 1 / hlHours); // Exponentialer Zerfall
+                    
+                    if (hour === 0 || hour === 12) { 
+                        labels.push(`Tag ${day+1} (${hour}h)`);
+                        data.push(currentLevel);
+                    }
+                }
+            }
+
+            if (pkChartInstance) {
+                pkChartInstance.destroy();
+            }
+
+            pkChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Plasma-Level (mg)',
+                        data: data,
+                        borderColor: '#38bdf8',
+                        backgroundColor: 'rgba(56, 189, 248, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false }, tooltip: { mode: 'index', intersect: false } },
+                    scales: {
+                        x: { display: false },
+                        y: { beginAtZero: true, grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { color: '#94a3b8' } }
+                    }
+                }
+            });
         }
 
         function calculateCycleBudget() {
@@ -2028,43 +2178,26 @@
                     <li>Bein vor Injektion entlasten (nicht anspannen).</li>
                 `;
             }
-
-            checkMapWarning();
-        }
-
-        function checkMapWarning() {
-            const warnEl = document.getElementById('map-warning-badge');
-            if(!warnEl) return;
-            
-            if(currentMapZoneTitle === "Abdomen (Bauchfett)") {
-                warnEl.classList.add('hidden');
-                return;
-            }
-
-            let history = JSON.parse(localStorage.getItem('injection_history') || '[]');
-            let recent = history.find(h => h.zone === currentMapZoneTitle);
-            
-            if(recent) {
-                let hoursAgo = (Date.now() - recent.time) / (1000 * 60 * 60);
-                if(hoursAgo < 72) {
-                    document.getElementById('map-warning-text').innerText = `Zuletzt vor ${Math.round(hoursAgo)}h injiziert. Wähle eine andere Zone!`;
-                    warnEl.classList.remove('hidden');
-                    return;
+            else if(zoneId === 'im-gluteus') {
+                currentMapZoneTitle = "Gluteus (Gesäßmuskel)";
+                if(title) title.innerText = currentMapZoneTitle;
+                if(badge) {
+                    badge.innerText = "Intramuskulär (IM)";
+                    badge.className = "px-2 py-0.5 rounded text-[10px] font-bold border uppercase tracking-wider mb-2 inline-block bg-accent/10 text-accent border-accent/20";
                 }
+                if(angle) {
+                    angle.innerText = "90° (Senkrecht)";
+                    angle.className = "font-bold text-accent text-lg";
+                }
+                if(desc) desc.innerText = "Der Gluteus Maximus ist ideal für größere Volumina und ölige Trägerlösungen. Wichtig: Teile die Pobacke gedanklich in ein Kreuz (4 Quadranten). Injiziere AUSSCHLIESSLICH in den OBEREN, ÄUSSEREN Quadranten, um den Ischiasnerv zu vermeiden!";
+                if(rot) rot.innerHTML = `
+                    <li><strong>Z-Track-Methode:</strong> Haut leicht spannen, einstechen (meist tiefere Nadel nötig), injizieren und loslassen.</li>
+                    <li>Sicherster Bereich: Oberer äußerer Quadrant (ventrogluteal).</li>
+                    <li>Rotiere wöchentlich zwischen linker und rechter Seite.</li>
+                `;
             }
-            warnEl.classList.add('hidden');
-        }
 
-        function logCurrentMapZone() {
-            if(!currentMapZoneTitle) return;
-            let history = JSON.parse(localStorage.getItem('injection_history') || '[]');
-            history.unshift({
-                zone: currentMapZoneTitle,
-                time: Date.now()
-            });
-            localStorage.setItem('injection_history', JSON.stringify(history));
-            renderInjectionLog();
-            checkMapWarning();
+            if(typeof checkMapWarning === "function") checkMapWarning();
         }
 
         const CLOCK_LOCK_HOURS = 72;
@@ -2123,16 +2256,63 @@
             
             spots[hour] = Date.now();
             localStorage.setItem('peptide_clock_spots', JSON.stringify(spots));
+
+            const subSelect = document.getElementById('map-log-substance');
+            let subName = '';
+            if(subSelect && subSelect.value) {
+                subName = subSelect.options[subSelect.selectedIndex].text;
+                deductFromInventory(subSelect.value);
+            }
             
             let history = JSON.parse(localStorage.getItem('injection_history') || '[]');
             history.unshift({
                 zone: `Abdomen (Position ${hour} Uhr)`,
+                substance: subName,
                 time: Date.now()
             });
             localStorage.setItem('injection_history', JSON.stringify(history));
 
             renderClock();
             if(typeof renderInjectionLog === "function") renderInjectionLog();
+        }
+
+        function renderInjectionLog() {
+            const list = document.getElementById('injection-log-list');
+            if(!list) return;
+            
+            let history = JSON.parse(localStorage.getItem('injection_history') || '[]');
+            if(history.length === 0) {
+                list.innerHTML = '<p class="text-sm text-slate-500 text-center py-4">Noch keine Injektionen protokolliert.</p>';
+                return;
+            }
+
+            let html = '';
+            history.forEach(item => {
+                let date = new Date(item.time);
+                let timeStr = date.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+                let substanceText = item.substance ? `<span class="text-brand-400 font-bold ml-2 text-xs">${item.substance}</span>` : '';
+
+                html += `
+                    <div class="flex items-center justify-between p-3 rounded-xl border bg-slate-800/50 border-white/5 mb-2">
+                        <div class="flex items-center gap-3">
+                            <span class="text-lg">💉</span>
+                            <div>
+                                <span class="font-bold text-white block text-sm">${item.zone} ${substanceText}</span>
+                                <span class="text-[10px] text-slate-500">${timeStr} Uhr</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            list.innerHTML = html;
+        }
+
+        function clearInjectionLog() {
+            localStorage.removeItem('injection_history');
+            localStorage.removeItem('peptide_clock_spots');
+            renderInjectionLog();
+            renderClock();
+            checkMapWarning();
         }
 
         function initBloodPresets() {
@@ -2419,372 +2599,184 @@
             }, 2000);
         }
 
-        // --- NEW FUNCTIONS FOR PK CHART & LOGBUCH ---
-
-        let pkChartInstance = null;
-
-        function parseHalflife(hlStr) {
-            if (!hlStr) return 4;
-            let s = hlStr.toLowerCase();
-            let val = parseFloat(s.replace(/[^0-9.]/g, '')) || 1;
-            if (s.includes('m') && !s.includes('mo')) return val / 60; 
-            if (s.includes('tag') || s.includes('d')) return val * 24; 
-            if (s.includes('h')) return val; 
-            if (s.includes('kurz')) return 1;
-            if (s.includes('lang')) return 24;
-            return 4;
-        }
-
-        function parseFrequencyToHours(freqStr) {
-            if (!freqStr) return 24;
-            let s = freqStr.toLowerCase();
-            if (s.includes('2x/tag')) return 12;
-            if (s.includes('3x/tag')) return 8;
-            if (s.includes('4x/tag')) return 6;
-            if (s.includes('2x/wo')) return 84;
-            if (s.includes('3x/wo')) return 56;
-            if (s.includes('1x/wo') || s.includes('woche')) return 168;
-            return 24; 
-        }
-
-        function renderPKChart() {
-            const preEl = document.getElementById('calcPreset');
-            const doseMgEl = document.getElementById('calc-dose-mg');
-            const canvas = document.getElementById('pkChartCanvas');
-            const placeholder = document.getElementById('pkChartPlaceholder');
-            
-            if(!canvas || !placeholder) return;
-
-            if(!preEl || !preEl.value) {
-                canvas.style.display = 'none';
-                placeholder.style.display = 'flex';
-                if(pkChartInstance) pkChartInstance.destroy();
-                return;
-            }
-
-            const pep = RAW_DATA.find(i => i[0] === preEl.value);
-            if(!pep) return;
-
-            canvas.style.display = 'block';
-            placeholder.style.display = 'none';
-
-            const hlHours = parseHalflife(pep[9].halflife);
-            const freqHours = parseFrequencyToHours(pep[9].freq);
-            
-            let dose = 250;
-            if (doseMgEl) {
-                dose = (parseFloat(doseMgEl.value) || 0) * 1000;
-            } else {
-                let doseStr = pep[9].normal || "250mcg";
-                if (doseStr.toLowerCase().includes("mg")) dose = (parseFloat(doseStr) || 0) * 1000;
-                else dose = parseFloat(doseStr) || 250;
-            }
-
-            const maxHours = 336; // 14 Tage Vorschau
-            let labels = [];
-            let data = [];
-            let currentLevel = 0;
-
-            for(let i=0; i<=maxHours; i++) {
-                if (i > 0) {
-                    currentLevel = currentLevel * Math.pow(0.5, 1 / hlHours);
-                }
-                if (i % freqHours === 0) {
-                    currentLevel += dose;
-                }
-                labels.push(i);
-                data.push(currentLevel);
-            }
-
-            const ctx = canvas.getContext('2d');
-            if (pkChartInstance) pkChartInstance.destroy();
-
-            pkChartInstance = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Plasma Level (mcg)',
-                        data: data,
-                        borderColor: '#818cf8',
-                        backgroundColor: 'rgba(99, 102, 241, 0.15)',
-                        borderWidth: 2,
-                        fill: true,
-                        pointRadius: 0,
-                        tension: 0.4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            mode: 'index',
-                            intersect: false,
-                            backgroundColor: 'rgba(15, 23, 42, 0.9)',
-                            titleColor: '#94a3b8',
-                            bodyColor: '#fff',
-                            borderColor: 'rgba(255,255,255,0.1)',
-                            borderWidth: 1,
-                            callbacks: {
-                                title: function(context) {
-                                    let val = context[0].label;
-                                    return 'Tag ' + Math.floor(val/24) + ' (' + (val%24) + 'h)';
-                                },
-                                label: function(context) {
-                                    return context.parsed.y.toFixed(1) + ' mcg';
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        x: {
-                            ticks: {
-                                callback: function(val, index) {
-                                    return index % 24 === 0 ? 'Tag ' + (index/24) : '';
-                                },
-                                color: '#64748b',
-                                maxRotation: 0
-                            },
-                            grid: { display: false }
-                        },
-                        y: {
-                            beginAtZero: true,
-                            ticks: { color: '#64748b' },
-                            grid: { color: 'rgba(255,255,255,0.05)' }
-                        }
-                    }
-                }
-            });
-        }
-
-        function renderInjectionLog() {
-            const list = document.getElementById('injection-log-list');
-            if(!list) return;
-            let history = JSON.parse(localStorage.getItem('injection_history') || '[]');
-            
-            if(history.length === 0) {
-                list.innerHTML = '<p class="text-slate-500 text-sm text-center py-8">Noch keine Injektionen protokolliert.</p>';
-                return;
-            }
-
-            list.innerHTML = history.map(h => {
-                const date = new Date(h.time);
-                const dateStr = date.toLocaleDateString('de-DE') + ' ' + date.toLocaleTimeString('de-DE', {hour: '2-digit', minute:'2-digit'});
-                const hoursAgo = (Date.now() - h.time) / (1000 * 60 * 60);
-                let status = '';
-                
-                if(hoursAgo < 72) {
-                    const hLeft = Math.ceil(72 - hoursAgo);
-                    status = `<span class="px-2 py-1 rounded bg-rose-500/10 text-rose-400 border border-rose-500/20 text-[10px] font-bold">Gesperrt (${hLeft}h)</span>`;
-                } else {
-                    status = `<span class="px-2 py-1 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold">Freigegeben</span>`;
-                }
-                
-                return `
-                    <div class="flex justify-between items-center border-b border-white/5 py-3 last:border-0 hover:bg-white/[0.02] transition-colors rounded-lg px-2">
-                        <div>
-                            <span class="font-bold text-white text-sm block mb-0.5">${h.zone}</span>
-                            <span class="text-xs text-slate-500 flex items-center gap-1"><span class="text-base">🕒</span> ${dateStr}</span>
-                        </div>
-                        <div class="text-right shrink-0 ml-4">
-                            ${status}
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function clearInjectionLog() {
-            localStorage.removeItem('injection_history');
-            localStorage.removeItem('peptide_clock_spots');
-            renderInjectionLog();
-            renderClock();
-            if(typeof checkMapWarning === "function") checkMapWarning();
-        }
-
-        // --- 3D BODY MAP ENGINE (THREE.JS) ---
+        // --- NEU: 3D Engine für das Body-Modell ---
         function initThreeJSMap() {
-            const container = document.getElementById('three-container');
-            if (!container) return;
+            const container = document.getElementById('threejs-container');
+            const loading = document.getElementById('threejs-loading');
+            if(!container || typeof THREE === 'undefined') return;
 
-            // Setup
             const scene = new THREE.Scene();
-            const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 100);
-            camera.position.set(0, 1.5, 10);
+            
+            const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
+            camera.position.set(0, 0, 12);
 
-            const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
             renderer.setSize(container.clientWidth, container.clientHeight);
             renderer.setPixelRatio(window.devicePixelRatio);
             container.appendChild(renderer.domElement);
 
-            // Orbit Controls (360° Drehung)
             const controls = new THREE.OrbitControls(camera, renderer.domElement);
-            controls.enableDamping = true;
-            controls.dampingFactor = 0.05;
-            controls.enableZoom = false; // Scrollen verhindern
+            controls.enableZoom = true;
+            controls.minDistance = 5;
+            controls.maxDistance = 20;
             controls.enablePan = false;
-            controls.minPolarAngle = Math.PI / 4;
-            controls.maxPolarAngle = Math.PI / 1.5;
+            controls.minPolarAngle = Math.PI/2 - 0.5;
+            controls.maxPolarAngle = Math.PI/2 + 0.5;
+            controls.autoRotate = true;
+            controls.autoRotateSpeed = 1.5;
 
-            // Beleuchtung für den Hologramm-Look
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+            const bodyGroup = new THREE.Group();
+            
+            const glassMaterial = new THREE.MeshPhysicalMaterial({
+                color: 0x1e293b,
+                metalness: 0.8,
+                roughness: 0.2,
+                transmission: 0.9,
+                transparent: true,
+                opacity: 0.5,
+                wireframe: true,
+                wireframeLinewidth: 1
+            });
+
+            // Torso Parts
+            const head = new THREE.Mesh(new THREE.SphereGeometry(0.8, 16, 16), glassMaterial);
+            head.position.set(0, 4.2, 0);
+            bodyGroup.add(head);
+
+            const chest = new THREE.Mesh(new THREE.CylinderGeometry(1.4, 1.1, 2.8, 16), glassMaterial);
+            chest.position.y = 1.8;
+            bodyGroup.add(chest);
+
+            const abdomen = new THREE.Mesh(new THREE.CylinderGeometry(1.1, 1.2, 2.2, 16), glassMaterial);
+            abdomen.position.y = -0.7;
+            bodyGroup.add(abdomen);
+
+            const shoulderL = new THREE.Mesh(new THREE.SphereGeometry(0.7, 16, 16), glassMaterial);
+            shoulderL.position.set(-1.8, 2.8, 0);
+            bodyGroup.add(shoulderL);
+
+            const shoulderR = new THREE.Mesh(new THREE.SphereGeometry(0.7, 16, 16), glassMaterial);
+            shoulderR.position.set(1.8, 2.8, 0);
+            bodyGroup.add(shoulderR);
+
+            const legGeo = new THREE.CylinderGeometry(0.6, 0.45, 3.5, 12);
+            const legL = new THREE.Mesh(legGeo, glassMaterial);
+            legL.position.set(-0.65, -3.5, 0);
+            bodyGroup.add(legL);
+
+            const legR = new THREE.Mesh(legGeo, glassMaterial);
+            legR.position.set(0.65, -3.5, 0);
+            bodyGroup.add(legR);
+
+            scene.add(bodyGroup);
+
+            // Lighting
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
             scene.add(ambientLight);
-            const dirLight = new THREE.DirectionalLight(0x818cf8, 1);
+
+            const dirLight = new THREE.DirectionalLight(0x818cf8, 2);
             dirLight.position.set(5, 5, 5);
             scene.add(dirLight);
-            const backLight = new THREE.DirectionalLight(0x38bdf8, 0.8);
+
+            const backLight = new THREE.DirectionalLight(0x38bdf8, 1.5);
             backLight.position.set(-5, 5, -5);
             scene.add(backLight);
 
-            const bodyGroup = new THREE.Group();
-            scene.add(bodyGroup);
-
-            // Material: Transparentes, medizinisches Hologramm
-            const bodyMat = new THREE.MeshStandardMaterial({
-                color: 0x0f172a,
-                roughness: 0.3,
-                metalness: 0.8,
-                transparent: true,
-                opacity: 0.85
-            });
-            const edgeMat = new THREE.LineBasicMaterial({ color: 0x334155, linewidth: 1 });
-
-            function addBodyPart(geom, y, z = 0) {
-                const mesh = new THREE.Mesh(geom, bodyMat);
-                mesh.position.set(0, y, z);
-                const edges = new THREE.EdgesGeometry(geom);
-                const line = new THREE.LineSegments(edges, edgeMat);
-                mesh.add(line);
-                bodyGroup.add(mesh);
-                return mesh;
-            }
-
-            function addLimb(geom, x, y, z) {
-                const mesh = new THREE.Mesh(geom, bodyMat);
+            // Hotspots
+            const points = [];
+            const createPoint = (x, y, z, color, zoneId) => {
+                const geo = new THREE.SphereGeometry(0.2, 16, 16);
+                const mat = new THREE.MeshBasicMaterial({ color: color });
+                const mesh = new THREE.Mesh(geo, mat);
                 mesh.position.set(x, y, z);
-                const edges = new THREE.EdgesGeometry(geom);
-                const line = new THREE.LineSegments(edges, edgeMat);
-                mesh.add(line);
-                bodyGroup.add(mesh);
-                return mesh;
-            }
-
-            // Abstraktes Körper-Gitter zusammenbauen
-            const torsoGeom = new THREE.CylinderGeometry(1.2, 1.0, 2.5, 16);
-            addBodyPart(torsoGeom, 1.5);
-            
-            const pelvisGeom = new THREE.CylinderGeometry(1.0, 1.1, 1.5, 16);
-            addBodyPart(pelvisGeom, -0.5);
-            
-            const headGeom = new THREE.SphereGeometry(0.7, 16, 16);
-            addBodyPart(headGeom, 3.8);
-
-            // Gliedmaßen
-            addLimb(new THREE.SphereGeometry(0.5, 16, 16), -1.6, 2.3, 0); // Schulter L
-            addLimb(new THREE.SphereGeometry(0.5, 16, 16), 1.6, 2.3, 0);  // Schulter R
-            addLimb(new THREE.CylinderGeometry(0.3, 0.25, 2, 12), -1.8, 1.0, 0); // Arm L
-            addLimb(new THREE.CylinderGeometry(0.3, 0.25, 2, 12), 1.8, 1.0, 0);  // Arm R
-            addLimb(new THREE.CylinderGeometry(0.45, 0.35, 2.5, 12), -0.5, -2.5, 0); // Bein L
-            addLimb(new THREE.CylinderGeometry(0.45, 0.35, 2.5, 12), 0.5, -2.5, 0);  // Bein R
-
-            // Hotspots (Injektionsstellen)
-            const hotspots = [];
-            const matSubq = new THREE.MeshBasicMaterial({ color: 0x10b981 }); // Grün (SubQ)
-            const matIm = new THREE.MeshBasicMaterial({ color: 0x38bdf8 });   // Blau (IM)
-            const matHover = new THREE.MeshBasicMaterial({ color: 0xffffff }); // Weiß (Hover)
-
-            function createHotspot(x, y, z, mat, id, scale=1) {
-                const mesh = new THREE.Mesh(new THREE.SphereGeometry(0.15 * scale, 16, 16), mat);
-                mesh.position.set(x, y, z);
-                mesh.userData = { id: id, originalMat: mat };
-                bodyGroup.add(mesh);
-                hotspots.push(mesh);
+                mesh.userData = { zoneId: zoneId };
                 
-                // Integriertes Leuchten für jeden Hotspot
-                const light = new THREE.PointLight(mat.color, 0.5, 1.5);
-                mesh.add(light);
-            }
+                const halo = new THREE.Mesh(
+                    new THREE.SphereGeometry(0.35, 16, 16),
+                    new THREE.MeshBasicMaterial({ color: color, transparent: true, opacity: 0.3 })
+                );
+                mesh.add(halo);
 
-            // Vorne: Bauch (SubQ)
-            createHotspot(-0.4, -0.4, 1.05, matSubq, 'subq-bauch');
-            createHotspot(0.4, -0.4, 1.05, matSubq, 'subq-bauch');
-            // Seite: Love Handles (SubQ)
-            createHotspot(-1.1, -0.2, 0, matSubq, 'subq-love');
-            createHotspot(1.1, -0.2, 0, matSubq, 'subq-love');
-            // Schultern (IM)
-            createHotspot(-1.8, 2.4, 0.2, matIm, 'im-schulter');
-            createHotspot(1.8, 2.4, 0.2, matIm, 'im-schulter');
-            // Beine: Oberschenkel außen (IM)
-            createHotspot(-0.8, -2.0, 0.3, matIm, 'im-bein');
-            createHotspot(0.8, -2.0, 0.3, matIm, 'im-bein');
-            // Hinten: Gluteus/Gesäß (IM) - Sichtbar bei Drehung
-            createHotspot(-0.5, -0.8, -1.1, matIm, 'im-gluteus', 1.2);
-            createHotspot(0.5, -0.8, -1.1, matIm, 'im-gluteus', 1.2);
+                bodyGroup.add(mesh);
+                points.push(mesh);
+            };
 
-            // Raycaster (Klick/Hover Erkennung in 3D)
+            const COLOR_SUBQ = 0x10b981; 
+            const COLOR_IM = 0x38bdf8;   
+
+            createPoint(0, -0.7, 1.25, COLOR_SUBQ, 'subq-bauch');
+            createPoint(-1.25, -0.7, 0.4, COLOR_SUBQ, 'subq-love');
+            createPoint(1.25, -0.7, 0.4, COLOR_SUBQ, 'subq-love');
+            createPoint(-2.0, 2.6, 0, COLOR_IM, 'im-schulter');
+            createPoint(2.0, 2.6, 0, COLOR_IM, 'im-schulter');
+            createPoint(-0.9, -2.8, 0.2, COLOR_IM, 'im-bein');
+            createPoint(0.9, -2.8, 0.2, COLOR_IM, 'im-bein');
+            // Back spots (Gluteus)
+            createPoint(-0.7, -1.2, -1.1, COLOR_IM, 'im-gluteus');
+            createPoint(0.7, -1.2, -1.1, COLOR_IM, 'im-gluteus');
+
             const raycaster = new THREE.Raycaster();
             const mouse = new THREE.Vector2();
 
-            container.addEventListener('mousemove', (e) => {
+            container.addEventListener('mousedown', () => controls.autoRotate = false);
+            
+            container.addEventListener('click', (event) => {
                 const rect = container.getBoundingClientRect();
-                mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
-                mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+                mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+                mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
 
                 raycaster.setFromCamera(mouse, camera);
-                const intersects = raycaster.intersectObjects(hotspots);
-
-                // Reset
-                hotspots.forEach(h => h.material = h.userData.originalMat);
-                container.style.cursor = 'move';
+                const intersects = raycaster.intersectObjects(points);
 
                 if (intersects.length > 0) {
-                    intersects[0].object.material = matHover;
-                    container.style.cursor = 'pointer';
+                    controls.autoRotate = false;
+                    const zoneId = intersects[0].object.userData.zoneId;
+                    showMapInfo(zoneId);
+                    
+                    const obj = intersects[0].object;
+                    const origScale = obj.scale.clone();
+                    obj.scale.set(1.5, 1.5, 1.5);
+                    setTimeout(() => obj.scale.copy(origScale), 200);
                 }
             });
 
-            container.addEventListener('click', (e) => {
-                raycaster.setFromCamera(mouse, camera);
-                const intersects = raycaster.intersectObjects(hotspots);
-                if (intersects.length > 0) {
-                    showMapInfo(intersects[0].object.userData.id);
-                }
+            window.addEventListener('resize', () => {
+                if(!container) return;
+                camera.aspect = container.clientWidth / container.clientHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(container.clientWidth, container.clientHeight);
             });
 
-            // Animations-Loop
+            if(loading) loading.style.display = 'none';
+
+            const clock = new THREE.Clock();
             function animate() {
                 requestAnimationFrame(animate);
                 controls.update();
                 
-                // Sanftes "Schweben" (Atmen) des gesamten Modells
-                const time = Date.now() * 0.001;
-                bodyGroup.position.y = Math.sin(time) * 0.1;
+                const t = clock.getElapsedTime();
+                points.forEach(p => {
+                    const scale = 1 + Math.sin(t * 4) * 0.15;
+                    p.children[0].scale.set(scale, scale, scale); 
+                });
 
                 renderer.render(scene, camera);
             }
             animate();
-
-            // Resize Helper, der vom Router gerufen wird
-            window.triggerThreeResize = function() {
-                if(container.clientWidth > 0) {
-                    camera.aspect = container.clientWidth / container.clientHeight;
-                    camera.updateProjectionMatrix();
-                    renderer.setSize(container.clientWidth, container.clientHeight);
-                }
-            }
-            
-            window.addEventListener('resize', window.triggerThreeResize);
         }
 
         window.onload = function() {
             renderDatabase();
             calculateSyringe();
             updateStorageSimulation();
+            
+            // Failsafe-Init aller nachgelagerten Module, falls der User diese aktiviert hat
+            if(typeof initInventoryPresets === "function") initInventoryPresets();
+            if(typeof renderInventory === "function") renderInventory();
+            if(typeof updateMapSubstancePresets === "function") updateMapSubstancePresets();
             if(typeof renderInjectionLog === "function") renderInjectionLog();
             if(typeof renderPKChart === "function") renderPKChart();
-            initThreeJSMap();
+            if(typeof initThreeJSMap === "function") initThreeJSMap();
         };
     </script>
 </body>
