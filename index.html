@@ -2599,6 +2599,124 @@
             }, 2000);
         }
 
+        function initInventoryPresets() {
+            const select = document.getElementById('inv-select');
+            if(!select) return;
+            select.innerHTML = '<option value="">-- Bitte wählen --</option>';
+            RAW_DATA.forEach(p => {
+                select.innerHTML += `<option value="${p[0]}">${p[2]}</option>`;
+            });
+        }
+
+        function addInventoryItem() {
+            const sel = document.getElementById('inv-select');
+            const vials = parseFloat(document.getElementById('inv-vials').value);
+            const mg = parseFloat(document.getElementById('inv-mg').value);
+            const days = parseFloat(document.getElementById('inv-days').value);
+
+            if(!sel || !sel.value || isNaN(vials) || isNaN(mg) || isNaN(days)) return;
+
+            let inv = JSON.parse(localStorage.getItem('pep_inventory') || '{}');
+            inv[sel.value] = { vials, mg, days, totalDays: vials * days };
+            localStorage.setItem('pep_inventory', JSON.stringify(inv));
+
+            renderInventory();
+        }
+
+        function deductFromInventory(id) {
+            if(!id) return;
+            let inv = JSON.parse(localStorage.getItem('pep_inventory') || '{}');
+            if(inv[id]) {
+                // Zieht exakt 1 Tagesdosis ab
+                inv[id].totalDays -= 1;
+                inv[id].vials = inv[id].totalDays / inv[id].days;
+                if(inv[id].totalDays <= 0) {
+                    delete inv[id]; // Löschen, wenn aufgebraucht
+                }
+                localStorage.setItem('pep_inventory', JSON.stringify(inv));
+                if(typeof renderInventory === "function") renderInventory();
+            }
+        }
+
+        function renderInventory() {
+            const list = document.getElementById('inv-list');
+            if(!list) return;
+
+            let inv = JSON.parse(localStorage.getItem('pep_inventory') || '{}');
+            let html = '';
+            let hasWarning = false;
+
+            for(let id in inv) {
+                let item = inv[id];
+                let pep = RAW_DATA.find(p => p[0] === id);
+                let name = pep ? pep[2] : id;
+
+                let isCrit = item.totalDays < 14;
+                if(isCrit) hasWarning = true;
+
+                let bg = isCrit ? 'bg-rose-500/10 border-rose-500/30' : 'bg-slate-800/50 border-slate-700/50';
+                let txt = isCrit ? 'text-rose-400' : 'text-slate-300';
+                let mgLeft = (item.vials * item.mg).toFixed(1);
+
+                html += `
+                    <div class="flex items-center justify-between p-3 rounded-xl border ${bg} mb-2">
+                        <div>
+                            <span class="font-bold ${txt} block text-sm">${name}</span>
+                            <span class="text-[10px] text-slate-400">${item.vials.toFixed(2)} Vials übrig (${mgLeft} mg)</span>
+                        </div>
+                        <div class="text-right">
+                            <span class="font-mono font-bold ${isCrit ? 'text-rose-400' : 'text-white'} block">${Math.floor(item.totalDays)} Tage</span>
+                        </div>
+                    </div>
+                `;
+            }
+
+            if(html === '') {
+                html = '<p class="text-sm text-slate-500 text-center py-4">Kühlschrank ist leer.</p>';
+            }
+
+            list.innerHTML = html;
+
+            const warnBanner = document.getElementById('global-inv-warning');
+            const warnIcon = document.getElementById('nav-inv-warn');
+            if(warnBanner) {
+                warnBanner.style.display = hasWarning ? 'flex' : 'none';
+                warnBanner.classList.toggle('hidden', !hasWarning);
+            }
+            if(warnIcon) warnIcon.style.display = hasWarning ? 'inline-block' : 'none';
+        }
+
+        function updateMapSubstancePresets() {
+            const select = document.getElementById('map-log-substance');
+            if(!select) return;
+            select.innerHTML = '<option value="">-- Keine Zuordnung --</option>';
+            RAW_DATA.forEach(p => {
+                select.innerHTML += `<option value="${p[0]}">${p[2]}</option>`;
+            });
+        }
+
+        function logCurrentMapZone() {
+            if(!currentMapZoneTitle) return;
+
+            const subSelect = document.getElementById('map-log-substance');
+            let subName = '';
+            if(subSelect && subSelect.value) {
+                subName = subSelect.options[subSelect.selectedIndex].text;
+                // Automatisch vom Kühlschrank-Bestand abziehen
+                deductFromInventory(subSelect.value);
+            }
+
+            let history = JSON.parse(localStorage.getItem('injection_history') || '[]');
+            history.unshift({
+                zone: currentMapZoneTitle,
+                substance: subName,
+                time: Date.now()
+            });
+            localStorage.setItem('injection_history', JSON.stringify(history));
+
+            if(typeof renderInjectionLog === "function") renderInjectionLog();
+        }
+
         // --- NEU: 3D Engine für das Body-Modell ---
         function initThreeJSMap() {
             const container = document.getElementById('threejs-container');
