@@ -717,39 +717,50 @@
                     <!-- Left Column: Input Form & Recent Entries -->
                     <div class="xl:col-span-4 space-y-8">
                         <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-800 space-y-5">
-                            <h3 class="text-lg font-bold text-white border-b border-white/5 pb-2">Neuer Eintrag</h3>
+                            <div class="flex justify-between items-center border-b border-white/5 pb-3">
+                                <h3 class="text-lg font-bold text-white">Neuer Eintrag</h3>
+                                <input type="date" id="trk-date" class="bg-slate-800 border border-slate-600 rounded-lg py-1.5 px-3 text-xs text-white focus:border-brand-500 outline-none w-36 cursor-pointer font-mono">
+                            </div>
                             
-                            <div class="grid grid-cols-2 gap-4">
-                                <div class="space-y-2">
-                                    <label class="text-xs font-semibold text-slate-300">Datum</label>
-                                    <input type="date" id="trk-date" class="w-full bg-slate-800 border border-slate-600 rounded-xl py-2.5 px-3 text-sm text-white focus:border-emerald-500 outline-none">
-                                </div>
+                            <!-- Typ-Auswahl (Tabs) -->
+                            <div class="flex bg-slate-900 p-1 rounded-xl border border-slate-800">
+                                <button onclick="setTrackerType('injection', this)" class="tracker-type-btn flex-1 py-2 rounded-lg text-xs font-semibold bg-slate-700 text-white shadow-sm transition-all flex items-center justify-center gap-1.5"><span class="text-sm">💉</span> Dosis</button>
+                                <button onclick="setTrackerType('feedback', this)" class="tracker-type-btn flex-1 py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition-all flex items-center justify-center gap-1.5"><span class="text-sm">📊</span> Bio</button>
+                                <button onclick="setTrackerType('note', this)" class="tracker-type-btn flex-1 py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition-all flex items-center justify-center gap-1.5"><span class="text-sm">📝</span> Notiz</button>
+                            </div>
+
+                            <!-- Formular: Injektion -->
+                            <div id="trk-form-injection" class="trk-form-section block space-y-4 animate-fade-in-up">
                                 <div class="space-y-2">
                                     <label class="text-xs font-semibold text-slate-300">Substanz</label>
-                                    <select id="trk-pep" class="w-full bg-slate-800 border border-slate-600 rounded-xl py-2.5 px-3 text-sm text-white focus:border-emerald-500 outline-none">
-                                        <option value="">-- Keine --</option>
+                                    <select id="trk-pep" class="w-full bg-slate-800 border border-slate-600 rounded-xl py-2.5 px-3 text-sm text-white focus:border-brand-500 outline-none cursor-pointer">
+                                        <option value="">-- Bitte wählen --</option>
                                     </select>
+                                </div>
+                                <div class="space-y-2">
+                                    <label class="text-xs font-semibold text-slate-300">Verabreichte Dosis</label>
+                                    <input type="text" id="trk-dose" placeholder="z.B. 250mcg, 2 IU..." class="w-full bg-slate-800 border border-slate-600 rounded-xl py-2.5 px-3 text-sm text-white focus:border-brand-500 outline-none">
                                 </div>
                             </div>
 
-                            <div class="space-y-4 pt-2 border-t border-white/5">
-                                <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Bio-Feedback (1-10)</h4>
-                                
+                            <!-- Formular: Bio-Feedback -->
+                            <div id="trk-form-feedback" class="trk-form-section hidden space-y-4 animate-fade-in-up">
+                                <p class="text-xs text-slate-400 leading-relaxed mb-2">Wie fühlst du dich heute auf einer Skala von 1-10? (1 = Sehr schlecht, 10 = Perfekt)</p>
                                 <div class="grid grid-cols-3 gap-3">
                                     <div class="space-y-1">
-                                        <label class="text-[10px] text-slate-300">Schlaf</label>
+                                        <label class="text-[10px] text-slate-300 uppercase tracking-wider font-bold">Schlaf</label>
                                         <select id="trk-sleep" class="w-full bg-slate-800 border border-slate-600 rounded-lg py-1.5 px-2 text-xs text-white focus:border-emerald-500 outline-none cursor-pointer">
                                             <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5" selected>5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option>
                                         </select>
                                     </div>
                                     <div class="space-y-1">
-                                        <label class="text-[10px] text-slate-300">Schmerz</label>
+                                        <label class="text-[10px] text-slate-300 uppercase tracking-wider font-bold">Schmerz</label>
                                         <select id="trk-pain" class="w-full bg-slate-800 border border-slate-600 rounded-lg py-1.5 px-2 text-xs text-white focus:border-rose-500 outline-none cursor-pointer">
                                             <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5" selected>5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option>
                                         </select>
                                     </div>
                                     <div class="space-y-1">
-                                        <label class="text-[10px] text-slate-300">Energie</label>
+                                        <label class="text-[10px] text-slate-300 uppercase tracking-wider font-bold">Energie</label>
                                         <select id="trk-mood" class="w-full bg-slate-800 border border-slate-600 rounded-lg py-1.5 px-2 text-xs text-white focus:border-brand-500 outline-none cursor-pointer">
                                             <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5" selected>5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option>
                                         </select>
@@ -757,13 +768,16 @@
                                 </div>
                             </div>
 
-                            <div class="space-y-2 pt-2 border-t border-white/5">
-                                <label class="text-xs font-semibold text-slate-300">Notiz (Optional)</label>
-                                <textarea id="trk-note" rows="2" placeholder="Besondere Vorkommnisse, Dosis-Änderung..." class="w-full bg-slate-800 border border-slate-600 rounded-xl py-2 px-3 text-sm text-white focus:border-emerald-500 outline-none resize-none"></textarea>
+                            <!-- Formular: Notiz -->
+                            <div id="trk-form-note" class="trk-form-section hidden space-y-4 animate-fade-in-up">
+                                <div class="space-y-2">
+                                    <label class="text-xs font-semibold text-slate-300">Tagebuch / Freitext</label>
+                                    <textarea id="trk-note" rows="3" placeholder="Krankheitsverlauf, Besonderheiten beim Training, Anpassung der Injektion..." class="w-full bg-slate-800 border border-slate-600 rounded-xl py-2 px-3 text-sm text-white focus:border-brand-500 outline-none resize-none"></textarea>
+                                </div>
                             </div>
 
-                            <button onclick="saveTrackerEntry()" class="w-full py-3 bg-emerald-500/20 text-emerald-400 border border-emerald-500/50 hover:bg-emerald-500 hover:text-white rounded-xl text-sm font-bold transition-all shadow-glow-success">
-                                Speichern & im Kalender markieren
+                            <button onclick="saveTrackerEntry()" class="w-full py-3 bg-brand-500/20 text-brand-400 border border-brand-500/50 hover:bg-brand-500 hover:text-white rounded-xl text-sm font-bold transition-all shadow-glow-brand mt-2">
+                                Eintrag speichern
                             </button>
                         </div>
 
@@ -802,7 +816,8 @@
                         
                         <div class="mt-6 flex gap-4 text-[10px] text-slate-400 justify-center">
                             <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-brand-500/80"></span> Injektion</div>
-                            <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-500/80"></span> Notiz / Symptom</div>
+                            <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-400/80"></span> Bio-Feedback</div>
+                            <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-400/80"></span> Notiz</div>
                             <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full border border-emerald-500"></span> Heute</div>
                         </div>
                     </div>
@@ -1457,6 +1472,7 @@
 
         let loadedCount = typeof RAW_DATA !== 'undefined' ? RAW_DATA.length : 0;
         let pkChartInstance = null;
+        let activeTrackerType = 'injection';
 
         function router(viewId) {
             document.querySelectorAll('.view-panel').forEach(p => { 
@@ -3047,18 +3063,41 @@
 
         let calCurrentDate = new Date();
 
+        function setTrackerType(type, btn) {
+            activeTrackerType = type;
+            // Tabs Styling
+            document.querySelectorAll('.tracker-type-btn').forEach(b => {
+                b.className = "tracker-type-btn flex-1 py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition-all flex items-center justify-center gap-1.5";
+            });
+            btn.className = "tracker-type-btn flex-1 py-2 rounded-lg text-xs font-semibold bg-slate-700 text-white shadow-sm transition-all flex items-center justify-center gap-1.5";
+            
+            // Sections umschalten
+            document.querySelectorAll('.trk-form-section').forEach(s => {
+                s.classList.add('hidden');
+                s.classList.remove('block');
+            });
+            const targetSec = document.getElementById('trk-form-' + type);
+            if(targetSec) {
+                targetSec.classList.remove('hidden');
+                targetSec.classList.add('block');
+            }
+        }
+
         function initTracker() {
-            // Set today's date in input
+            // Set today's date in input (Lokale Zeit)
             const dateInput = document.getElementById('trk-date');
             if(dateInput) {
                 const today = new Date();
-                dateInput.value = today.toISOString().split('T')[0];
+                const year = today.getFullYear();
+                const month = String(today.getMonth() + 1).padStart(2, '0');
+                const day = String(today.getDate()).padStart(2, '0');
+                dateInput.value = `${year}-${month}-${day}`;
             }
 
             // Populate substance select
             const select = document.getElementById('trk-pep');
             if(select) {
-                select.innerHTML = '<option value="">-- Keine (Nur Symptome) --</option>';
+                select.innerHTML = '<option value="">-- Bitte wählen --</option>';
                 RAW_DATA.forEach(p => {
                     select.innerHTML += `<option value="${p[0]}">${p[2]}</option>`;
                 });
@@ -3075,37 +3114,49 @@
 
         function saveTrackerEntry() {
             const dateVal = document.getElementById('trk-date').value;
-            const pepVal = document.getElementById('trk-pep').value;
-            const sleepVal = document.getElementById('trk-sleep').value;
-            const painVal = document.getElementById('trk-pain').value;
-            const moodVal = document.getElementById('trk-mood').value;
-            const noteVal = document.getElementById('trk-note').value;
-
             if(!dateVal) return;
 
-            let pepName = "";
-            if(pepVal) {
-                const p = RAW_DATA.find(x => x[0] === pepVal);
-                if(p) pepName = p[2];
-            }
-
-            const entry = {
+            let entry = {
                 id: Date.now().toString(),
                 date: dateVal, // YYYY-MM-DD
-                peptide: pepName,
-                sleep: sleepVal,
-                pain: painVal,
-                mood: moodVal,
-                note: noteVal
+                type: activeTrackerType
             };
 
-            let data = JSON.parse(localStorage.getItem('tracker_data') || '[]');
-            data.unshift(entry); // Add to beginning
-            localStorage.setItem('tracker_data', JSON.stringify(data));
+            // Daten je nach ausgewähltem Tab speichern
+            if(activeTrackerType === 'injection') {
+                const pepVal = document.getElementById('trk-pep').value;
+                const doseVal = document.getElementById('trk-dose') ? document.getElementById('trk-dose').value : '';
+                let pepName = "";
+                if(pepVal) {
+                    const p = RAW_DATA.find(x => x[0] === pepVal);
+                    if(p) pepName = p[2];
+                }
+                entry.peptide = pepName;
+                entry.dose = doseVal;
+                
+                // Formular nach dem Speichern zurücksetzen
+                document.getElementById('trk-dose').value = "";
+                document.getElementById('trk-pep').value = "";
+            } 
+            else if(activeTrackerType === 'feedback') {
+                entry.sleep = document.getElementById('trk-sleep').value;
+                entry.pain = document.getElementById('trk-pain').value;
+                entry.mood = document.getElementById('trk-mood').value;
+                
+                // Zurücksetzen auf neutrale Mitte (5)
+                document.getElementById('trk-sleep').value = "5";
+                document.getElementById('trk-pain').value = "5";
+                document.getElementById('trk-mood').value = "5";
+            } 
+            else if(activeTrackerType === 'note') {
+                entry.note = document.getElementById('trk-note').value;
+                document.getElementById('trk-note').value = "";
+            }
 
-            // Reset optional fields
-            document.getElementById('trk-note').value = "";
-            document.getElementById('trk-pep').value = "";
+            // In localStorage speichern
+            let data = JSON.parse(localStorage.getItem('tracker_data') || '[]');
+            data.unshift(entry); // Neueste Einträge nach oben
+            localStorage.setItem('tracker_data', JSON.stringify(data));
 
             renderTrackerCalendar();
             renderTrackerRecent();
@@ -3135,27 +3186,41 @@
             const showData = data.slice(0, 15);
             
             showData.forEach(item => {
-                let pepHtml = item.peptide ? `<span class="bg-brand-500/20 text-brand-400 px-2 py-0.5 rounded text-[10px] font-bold ml-2 border border-brand-500/30">${item.peptide}</span>` : '';
-                let noteHtml = item.note ? `<p class="text-[10px] text-slate-400 mt-2 italic border-l border-white/10 pl-2">"${item.note}"</p>` : '';
-                
-                // Format Date nicely
                 let dateObj = new Date(item.date);
                 let dateStr = dateObj.toLocaleDateString('de-DE', { day: '2-digit', month: 'short' });
 
-                html += `
-                    <div class="p-3 rounded-xl bg-slate-800/40 border border-white/5 hover:border-slate-600 transition-colors">
-                        <div class="flex justify-between items-start mb-2">
-                            <div class="flex items-center">
-                                <span class="text-xs font-bold text-slate-300">${dateStr}</span>
-                                ${pepHtml}
-                            </div>
-                        </div>
-                        <div class="flex gap-3 text-[10px] font-mono mb-1">
+                let icon = '';
+                let contentHtml = '';
+
+                // Dynamisches Rendering je nach Eintragstyp
+                if (item.type === 'injection' || (item.type === undefined && item.peptide)) {
+                    icon = '<span class="text-brand-400 text-lg">💉</span>';
+                    let doseText = item.dose ? ` <span class="text-xs text-slate-400 ml-1">(${item.dose})</span>` : '';
+                    let subName = item.peptide ? item.peptide : 'Unbekannt';
+                    contentHtml = `<span class="text-sm font-bold text-white">${subName}</span>${doseText}`;
+                } 
+                else if (item.type === 'feedback' || (item.type === undefined && item.sleep)) {
+                    icon = '<span class="text-emerald-400 text-lg">📊</span>';
+                    contentHtml = `
+                        <div class="flex gap-3 text-[10px] font-mono mt-1 w-full justify-between pr-4">
                             <span class="text-emerald-400" title="Schlaf">SLP: ${item.sleep}</span>
                             <span class="text-rose-400" title="Schmerz">PAIN: ${item.pain}</span>
                             <span class="text-brand-400" title="Wohlbefinden">ENG: ${item.mood}</span>
                         </div>
-                        ${noteHtml}
+                    `;
+                } 
+                else if (item.type === 'note' || (item.type === undefined && item.note)) {
+                    icon = '<span class="text-amber-400 text-lg">📝</span>';
+                    contentHtml = `<p class="text-xs text-slate-300 italic">"${item.note}"</p>`;
+                }
+
+                html += `
+                    <div class="p-3 rounded-xl bg-slate-800/40 border border-white/5 flex items-start gap-3 hover:border-slate-600 transition-colors">
+                        <div class="flex-shrink-0 mt-0.5">${icon}</div>
+                        <div class="flex-grow">
+                            <div class="text-[10px] font-bold text-slate-500 mb-0.5">${dateStr}</div>
+                            ${contentHtml}
+                        </div>
                     </div>
                 `;
             });
@@ -3180,7 +3245,6 @@
             const daysInMonth = new Date(year, month + 1, 0).getDate();
 
             let data = JSON.parse(localStorage.getItem('tracker_data') || '[]');
-            // Create a lookup map for faster rendering: lookup['2026-07-29'] = array of entries
             let lookup = {};
             data.forEach(entry => {
                 if(!lookup[entry.date]) lookup[entry.date] = [];
@@ -3189,12 +3253,10 @@
 
             let html = '';
             
-            // Empty slots before 1st of month
             for(let i = 0; i < startDay; i++) {
                 html += `<div class="aspect-square rounded-xl bg-slate-900/20 border border-transparent"></div>`;
             }
 
-            // Lokales Datum statt UTC verwenden
             const localToday = new Date();
             const todayStr = `${localToday.getFullYear()}-${String(localToday.getMonth()+1).padStart(2, '0')}-${String(localToday.getDate()).padStart(2, '0')}`;
 
@@ -3209,19 +3271,20 @@
                     bgClass = "bg-slate-800/60 border-emerald-500/50 shadow-[inset_0_0_10px_rgba(16,185,129,0.1)]";
                 }
 
-                // Markers
+                // Generiere Dots basierend auf Typ
                 let markersHtml = '';
-                let hasInjection = entries.some(e => e.peptide !== "");
-                let hasNoteOrSymptom = entries.some(e => e.note !== "" || e.sleep !== "5" || e.pain !== "5" || e.mood !== "5"); // Assuming 5 is baseline
+                let hasInjection = entries.some(e => e.type === 'injection' || (!e.type && e.peptide));
+                let hasFeedback = entries.some(e => e.type === 'feedback' || (!e.type && e.sleep));
+                let hasNote = entries.some(e => e.type === 'note' || (!e.type && e.note));
 
-                if (hasInjection) markersHtml += `<span class="w-2 h-2 rounded-full bg-brand-500 shadow-[0_0_8px_rgba(99,102,241,0.6)]"></span>`;
-                if (hasNoteOrSymptom && !hasInjection) markersHtml += `<span class="w-2 h-2 rounded-full bg-amber-500"></span>`;
-                else if (hasNoteOrSymptom) markersHtml += `<span class="w-2 h-2 rounded-full bg-amber-500 shadow-[0_0_5px_rgba(245,158,11,0.5)]"></span>`;
+                if (hasInjection) markersHtml += `<span class="w-2 h-2 rounded-full bg-brand-500 shadow-[0_0_8px_rgba(99,102,241,0.6)]" title="Injektion"></span>`;
+                if (hasFeedback) markersHtml += `<span class="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_5px_rgba(52,211,153,0.5)]" title="Bio-Feedback"></span>`;
+                if (hasNote) markersHtml += `<span class="w-2 h-2 rounded-full bg-amber-400 shadow-[0_0_5px_rgba(251,191,36,0.5)]" title="Notiz"></span>`;
 
                 html += `
                     <div class="aspect-square rounded-xl border ${bgClass} p-1.5 flex flex-col justify-between transition-all cursor-pointer group" onclick="document.getElementById('trk-date').value='${dateStr}';">
                         <span class="text-xs font-bold ${isToday ? 'text-emerald-400' : 'text-slate-400 group-hover:text-white'}">${day}</span>
-                        <div class="flex justify-end gap-1">
+                        <div class="flex justify-end gap-0.5 flex-wrap">
                             ${markersHtml}
                         </div>
                     </div>
