@@ -4,8 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Peptide Bank // Premium Database</title>
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     
     <script>
@@ -122,6 +126,7 @@
                 <button onclick="router('db')" id="nav-db" class="nav-btn whitespace-nowrap shrink-0 px-3 py-2 rounded-full text-xs font-semibold transition-all duration-300 bg-brand-500 text-white shadow-md">Datenbank</button>
                 <button onclick="router('calc')" id="nav-calc" class="nav-btn whitespace-nowrap shrink-0 px-3 py-2 rounded-full text-xs font-semibold text-slate-400 hover:text-white transition-all duration-300">Rechner</button>
                 <button onclick="router('map')" id="nav-map" class="nav-btn whitespace-nowrap shrink-0 px-3 py-2 rounded-full text-xs font-semibold text-slate-400 hover:text-white transition-all duration-300">Injektion</button>
+                <button onclick="router('tracker')" id="nav-tracker" class="nav-btn whitespace-nowrap shrink-0 px-3 py-2 rounded-full text-xs font-semibold text-slate-400 hover:text-white transition-all duration-300 flex items-center gap-1">Journal <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-glow-success"></span></button>
                 <button onclick="router('blood')" id="nav-blood" class="nav-btn whitespace-nowrap shrink-0 px-3 py-2 rounded-full text-xs font-semibold text-slate-400 hover:text-white transition-all duration-300">Blutbild</button>
                 <button onclick="router('storage')" id="nav-storage" class="nav-btn whitespace-nowrap shrink-0 px-3 py-2 rounded-full text-xs font-semibold text-slate-400 hover:text-white transition-all duration-300">Stabilität</button>
                 <button onclick="router('inventory')" id="nav-inventory" class="nav-btn whitespace-nowrap shrink-0 px-3 py-2 rounded-full text-xs font-semibold text-slate-400 hover:text-white transition-all duration-300 flex items-center gap-1">Bestand <span id="nav-inv-warn" class="hidden text-[10px]">⚠️</span></button>
@@ -143,7 +148,14 @@
 
     <main class="flex-grow max-w-[1600px] mx-auto w-full px-4 sm:px-8 py-10 relative z-10">
 
-        <!-- Global Inventory Warning -->
+        <div class="mb-8 bg-indigo-500/10 border border-indigo-500/30 p-4 sm:p-5 rounded-2xl flex items-start sm:items-center gap-4 shadow-[0_0_20px_rgba(99,102,241,0.15)] backdrop-blur-sm">
+            <div class="text-3xl shrink-0">🔬</div>
+            <div>
+                <h4 class="font-bold text-indigo-400 text-sm mb-1 uppercase tracking-wider">Rein akademischer & biochemischer Kontext</h4>
+                <p class="text-xs text-slate-300 leading-relaxed">Diese Datenbankstruktur und die darin enthaltenen Daten dienen <strong>ausschließlich Bildungszwecken und der wissenschaftlichen Ausarbeitung</strong>. Es besteht keinerlei Absicht oder Anleitung zur praktischen Anwendung, zur Einnahme oder zum Erwerb der hier referenzierten Substanzen.</p>
+            </div>
+        </div>
+
         <div id="global-inv-warning" class="hidden mb-8 bg-rose-500/10 border border-rose-500/20 p-4 rounded-2xl items-center justify-between shadow-[0_0_15px_rgba(244,63,94,0.1)]">
             <div class="flex items-center gap-4">
                 <span class="text-2xl">⚠️</span>
@@ -320,7 +332,6 @@
                 </div>
             </div>
 
-            <!-- Zyklus-Planer Card -->
             <div class="glass-card rounded-3xl p-6 sm:p-10">
                 <div class="mb-8">
                     <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-semibold mb-4">
@@ -376,7 +387,6 @@
                 </div>
             </div>
 
-            <!-- PK Chart Card -->
             <div class="glass-card rounded-3xl p-6 sm:p-10">
                 <div class="mb-8">
                     <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-500/10 border border-brand-500/20 text-brand-400 text-xs font-semibold mb-4">
@@ -404,8 +414,12 @@
             <div class="glass-card rounded-3xl p-6 lg:p-10">
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
                     
-                    <div class="flex justify-center items-center relative bg-slate-900/50 rounded-2xl border border-slate-800 p-4">
-                        <svg viewBox="0 0 200 400" class="w-full max-w-[300px] drop-shadow-2xl">
+                    <div class="flex justify-center items-center relative bg-slate-900/50 rounded-2xl border border-slate-800 p-4 overflow-hidden min-h-[450px]">
+                        <!-- Three.js Container Background (Optional 3D Model placeholder) -->
+                        <div id="threejs-container" class="absolute inset-0 w-full h-full opacity-60 mix-blend-screen pointer-events-none z-0"></div>
+                        <div id="threejs-loading" class="absolute top-4 left-4 text-[10px] text-slate-500 z-10">3D-Modell aktiv</div>
+                        
+                        <svg viewBox="0 0 200 400" class="w-full max-w-[300px] drop-shadow-2xl z-10 relative pointer-events-auto">
                             <!-- Silhouette Base -->
                             <path d="M70,40 Q100,10 130,40 L140,80 Q160,90 170,120 L160,220 L135,220 L130,180 L130,350 Q100,380 95,350 L95,230 L90,230 L90,350 Q60,380 55,350 L55,180 L50,220 L25,220 L15,120 Q25,90 45,80 Z" fill="#1e293b" stroke="#334155" stroke-width="2" />
                             
@@ -428,7 +442,7 @@
                             <ellipse cx="125" cy="280" rx="12" ry="30" class="map-zone map-im" onclick="showMapInfo('im-bein')" />
                         </svg>
 
-                        <div class="absolute bottom-4 left-4 bg-slate-900/90 border border-slate-700 p-3 rounded-xl backdrop-blur-md text-xs space-y-2">
+                        <div class="absolute bottom-4 left-4 bg-slate-900/90 border border-slate-700 p-3 rounded-xl backdrop-blur-md text-xs space-y-2 z-20">
                             <div class="flex items-center gap-2">
                                 <div class="w-3 h-3 rounded-full bg-emerald-500/50 border border-emerald-500 shadow-glow-success"></div>
                                 <span class="text-slate-300 font-bold">Subkutan (SC)</span>
@@ -440,7 +454,7 @@
                         </div>
                     </div>
                     
-                    <div class="flex flex-col space-y-6">
+                    <div class="flex flex-col space-y-6 z-10 relative">
                         <div class="bg-slate-900/50 p-6 rounded-2xl border border-white/5 shadow-inner flex-grow h-full">
                             <div id="map-info-default" class="block h-full flex flex-col justify-center items-center text-center space-y-3">
                                 <span class="text-4xl">👆</span>
@@ -508,8 +522,7 @@
                     </div>
                 </div>
 
-                <!-- Injektions-Historie -->
-                <div class="mt-10 pt-10 border-t border-white/10">
+                <div class="mt-10 pt-10 border-t border-white/10 relative z-10">
                     <div class="flex justify-between items-end mb-6">
                         <div>
                             <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-500/10 border border-brand-500/20 text-brand-400 text-xs font-semibold mb-3">
@@ -683,6 +696,114 @@
                         <h3 class="text-lg font-bold text-white mb-4 border-b border-white/5 pb-4">Aktueller Vorrat</h3>
                         <div id="inv-list" class="space-y-3 flex-grow overflow-y-auto max-h-[400px] pr-2 scrollbar-hide">
                             <!-- JS Inject -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- NEW TRACKER VIEW -->
+        <div id="view-tracker" class="view-panel hidden space-y-8">
+            <div class="glass-card rounded-3xl p-6 sm:p-10">
+                <div class="mb-8">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold mb-4">
+                        <span class="text-base">📊</span> Quantified Self
+                    </div>
+                    <h2 class="text-3xl font-bold text-white mb-2">Zyklus & Symptom Tracker</h2>
+                    <p class="text-slate-400 text-sm">Protokolliere Applikationen und bewerte Wirkungen oder Nebenwirkungen auf einer Skala von 1-10, um langfristige Korrelationen zu erkennen.</p>
+                </div>
+
+                <div class="grid grid-cols-1 xl:grid-cols-12 gap-10">
+                    <!-- Left Column: Input Form & Recent Entries -->
+                    <div class="xl:col-span-4 space-y-8">
+                        <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-800 space-y-5">
+                            <h3 class="text-lg font-bold text-white border-b border-white/5 pb-2">Neuer Eintrag</h3>
+                            
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="space-y-2">
+                                    <label class="text-xs font-semibold text-slate-300">Datum</label>
+                                    <input type="date" id="trk-date" class="w-full bg-slate-800 border border-slate-600 rounded-xl py-2.5 px-3 text-sm text-white focus:border-emerald-500 outline-none">
+                                </div>
+                                <div class="space-y-2">
+                                    <label class="text-xs font-semibold text-slate-300">Substanz</label>
+                                    <select id="trk-pep" class="w-full bg-slate-800 border border-slate-600 rounded-xl py-2.5 px-3 text-sm text-white focus:border-emerald-500 outline-none">
+                                        <option value="">-- Keine --</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="space-y-4 pt-2 border-t border-white/5">
+                                <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Bio-Feedback (1-10)</h4>
+                                
+                                <div class="grid grid-cols-3 gap-3">
+                                    <div class="space-y-1">
+                                        <label class="text-[10px] text-slate-300">Schlaf</label>
+                                        <select id="trk-sleep" class="w-full bg-slate-800 border border-slate-600 rounded-lg py-1.5 px-2 text-xs text-white focus:border-emerald-500 outline-none cursor-pointer">
+                                            <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5" selected>5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option>
+                                        </select>
+                                    </div>
+                                    <div class="space-y-1">
+                                        <label class="text-[10px] text-slate-300">Schmerz</label>
+                                        <select id="trk-pain" class="w-full bg-slate-800 border border-slate-600 rounded-lg py-1.5 px-2 text-xs text-white focus:border-rose-500 outline-none cursor-pointer">
+                                            <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5" selected>5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option>
+                                        </select>
+                                    </div>
+                                    <div class="space-y-1">
+                                        <label class="text-[10px] text-slate-300">Energie</label>
+                                        <select id="trk-mood" class="w-full bg-slate-800 border border-slate-600 rounded-lg py-1.5 px-2 text-xs text-white focus:border-brand-500 outline-none cursor-pointer">
+                                            <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5" selected>5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="space-y-2 pt-2 border-t border-white/5">
+                                <label class="text-xs font-semibold text-slate-300">Notiz (Optional)</label>
+                                <textarea id="trk-note" rows="2" placeholder="Besondere Vorkommnisse, Dosis-Änderung..." class="w-full bg-slate-800 border border-slate-600 rounded-xl py-2 px-3 text-sm text-white focus:border-emerald-500 outline-none resize-none"></textarea>
+                            </div>
+
+                            <button onclick="saveTrackerEntry()" class="w-full py-3 bg-emerald-500/20 text-emerald-400 border border-emerald-500/50 hover:bg-emerald-500 hover:text-white rounded-xl text-sm font-bold transition-all shadow-glow-success">
+                                Speichern & im Kalender markieren
+                            </button>
+                        </div>
+
+                        <!-- Letzte Einträge -->
+                        <div class="bg-slate-900/30 p-6 rounded-2xl border border-white/5">
+                            <div class="flex justify-between items-center mb-4 border-b border-white/5 pb-2">
+                                <h3 class="text-sm font-bold text-white">Letzte Einträge</h3>
+                                <button onclick="clearTrackerData()" class="text-[10px] text-rose-400 hover:text-rose-300 transition-colors">Verlauf löschen</button>
+                            </div>
+                            <div id="tracker-recent-list" class="space-y-3 max-h-[300px] overflow-y-auto pr-2 scrollbar-hide">
+                                <!-- Populated via JS -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Visual Calendar -->
+                    <div class="xl:col-span-8 bg-slate-900/50 border border-white/5 rounded-2xl p-6 flex flex-col">
+                        <div class="flex justify-between items-center mb-6 border-b border-white/5 pb-4">
+                            <h3 class="text-xl font-bold text-white" id="cal-month-title">Monat Jahr</h3>
+                            <div class="flex gap-2">
+                                <button onclick="changeCalMonth(-1)" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                </button>
+                                <button onclick="changeCalMonth(1)" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-7 gap-2 text-center text-xs font-bold text-slate-500 mb-2">
+                            <div>Mo</div><div>Di</div><div>Mi</div><div>Do</div><div>Fr</div><div>Sa</div><div>So</div>
+                        </div>
+                        <div id="tracker-calendar-grid" class="grid grid-cols-7 gap-2 flex-grow">
+                            <!-- JS Inject -->
+                        </div>
+                        
+                        <div class="mt-6 flex gap-4 text-[10px] text-slate-400 justify-center">
+                            <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-brand-500/80"></span> Injektion</div>
+                            <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-500/80"></span> Notiz / Symptom</div>
+                            <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full border border-emerald-500"></span> Heute</div>
                         </div>
                     </div>
                 </div>
@@ -1680,7 +1801,7 @@
                             <button onclick="router('calc'); loadDirectToCalc('${p.id}')" class="flex-1 py-2 rounded-xl text-[10px] font-bold bg-white/5 hover:bg-brand-500/20 text-slate-300 hover:text-brand-400 border border-white/10 transition-colors flex items-center justify-center gap-1.5">
                                 🧪 Rechner
                             </button>
-                            <button onclick="router('stack'); setTimeout(() => { const cb = document.querySelector('.stack-checkbox[value=\\'${p.name}\\']'); if(cb){ cb.checked = true; generateStackReport(); } }, 100);" class="flex-1 py-2 rounded-xl text-[10px] font-bold bg-white/5 hover:bg-brand-500/20 text-slate-300 hover:text-brand-400 border border-white/10 transition-colors flex items-center justify-center gap-1.5">
+                            <button onclick="router('stack'); setTimeout(() => { document.querySelectorAll('.stack-checkbox').forEach(cb => { if(cb.value === '${p.name.replace(/'/g, "\\'")}') cb.checked = true; }); generateStackReport(); }, 100);" class="flex-1 py-2 rounded-xl text-[10px] font-bold bg-white/5 hover:bg-brand-500/20 text-slate-300 hover:text-brand-400 border border-white/10 transition-colors flex items-center justify-center gap-1.5">
                                 🧬 Stacker
                             </button>
                         </div>
@@ -1782,6 +1903,20 @@
             const conc = totalMcg / ml;
             const units = (doseMcg / conc) * 100;
             
+            if(isNaN(units) || !isFinite(units) || units <= 0) {
+                if(resUnits) resUnits.innerText = "0.0";
+                if(resConc) resConc.innerText = "0.00 mg/ml";
+                if(resDoses) resDoses.innerText = "0 Dosen";
+                
+                if(fluid) fluid.style.width = "0%";
+                if(rod) rod.style.width = "100%";
+                if(thumb) {
+                    thumb.style.width = "12px";
+                    thumb.style.right = "-12px";
+                }
+                return;
+            }
+
             const limitedUnits = Math.min(100, Math.max(0, units));
             
             if(resUnits) resUnits.innerText = (Math.round(units * 10) / 10).toFixed(1);
@@ -2200,6 +2335,32 @@
             if(typeof checkMapWarning === "function") checkMapWarning();
         }
 
+        function checkMapWarning() {
+            const badge = document.getElementById('map-warning-badge');
+            const text = document.getElementById('map-warning-text');
+            if(!badge || !text) return;
+
+            let history = JSON.parse(localStorage.getItem('injection_history') || '[]');
+            let lastInjection = history.find(h => h.zone && h.zone.startsWith(currentMapZoneTitle));
+
+            if(lastInjection) {
+                let diffMs = Date.now() - lastInjection.time;
+                let diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+                
+                if(diffHours < 72) {
+                    text.innerText = `Zuletzt vor ${diffHours} Stunden in dieser Zone injiziert. Gewebe-Rotation zwingend empfohlen!`;
+                    badge.classList.remove('hidden');
+                    badge.classList.add('flex');
+                } else {
+                    badge.classList.add('hidden');
+                    badge.classList.remove('flex');
+                }
+            } else {
+                badge.classList.add('hidden');
+                badge.classList.remove('flex');
+            }
+        }
+
         const CLOCK_LOCK_HOURS = 72;
 
         function renderClock() {
@@ -2312,7 +2473,7 @@
             localStorage.removeItem('peptide_clock_spots');
             renderInjectionLog();
             renderClock();
-            checkMapWarning();
+            if (typeof checkMapWarning === "function") checkMapWarning();
         }
 
         function initBloodPresets() {
@@ -2716,13 +2877,14 @@
 
             if(typeof renderInjectionLog === "function") renderInjectionLog();
         }
-
         // --- NEU: 3D Engine für das Body-Modell ---
         function initThreeJSMap() {
             const container = document.getElementById('threejs-container');
             const loading = document.getElementById('threejs-loading');
             if(!container || typeof THREE === 'undefined') return;
 
+            container.innerHTML = '<div id="threejs-loading" class="absolute top-4 left-4 text-[10px] text-slate-500 z-10">3D-Modell aktiv</div>';
+            
             const scene = new THREE.Scene();
             
             const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
@@ -2883,6 +3045,192 @@
             animate();
         }
 
+        let calCurrentDate = new Date();
+
+        function initTracker() {
+            // Set today's date in input
+            const dateInput = document.getElementById('trk-date');
+            if(dateInput) {
+                const today = new Date();
+                dateInput.value = today.toISOString().split('T')[0];
+            }
+
+            // Populate substance select
+            const select = document.getElementById('trk-pep');
+            if(select) {
+                select.innerHTML = '<option value="">-- Keine (Nur Symptome) --</option>';
+                RAW_DATA.forEach(p => {
+                    select.innerHTML += `<option value="${p[0]}">${p[2]}</option>`;
+                });
+            }
+
+            renderTrackerCalendar();
+            renderTrackerRecent();
+        }
+
+        function changeCalMonth(dir) {
+            calCurrentDate.setMonth(calCurrentDate.getMonth() + dir);
+            renderTrackerCalendar();
+        }
+
+        function saveTrackerEntry() {
+            const dateVal = document.getElementById('trk-date').value;
+            const pepVal = document.getElementById('trk-pep').value;
+            const sleepVal = document.getElementById('trk-sleep').value;
+            const painVal = document.getElementById('trk-pain').value;
+            const moodVal = document.getElementById('trk-mood').value;
+            const noteVal = document.getElementById('trk-note').value;
+
+            if(!dateVal) return;
+
+            let pepName = "";
+            if(pepVal) {
+                const p = RAW_DATA.find(x => x[0] === pepVal);
+                if(p) pepName = p[2];
+            }
+
+            const entry = {
+                id: Date.now().toString(),
+                date: dateVal, // YYYY-MM-DD
+                peptide: pepName,
+                sleep: sleepVal,
+                pain: painVal,
+                mood: moodVal,
+                note: noteVal
+            };
+
+            let data = JSON.parse(localStorage.getItem('tracker_data') || '[]');
+            data.unshift(entry); // Add to beginning
+            localStorage.setItem('tracker_data', JSON.stringify(data));
+
+            // Reset optional fields
+            document.getElementById('trk-note').value = "";
+            document.getElementById('trk-pep').value = "";
+
+            renderTrackerCalendar();
+            renderTrackerRecent();
+        }
+
+        function clearTrackerData() {
+            if(confirm("Möchtest du den gesamten Quantified Self Verlauf wirklich löschen?")) {
+                localStorage.removeItem('tracker_data');
+                renderTrackerCalendar();
+                renderTrackerRecent();
+            }
+        }
+
+        function renderTrackerRecent() {
+            const list = document.getElementById('tracker-recent-list');
+            if(!list) return;
+
+            let data = JSON.parse(localStorage.getItem('tracker_data') || '[]');
+            
+            if(data.length === 0) {
+                list.innerHTML = '<p class="text-sm text-slate-500 text-center py-4">Noch keine Einträge vorhanden.</p>';
+                return;
+            }
+
+            let html = '';
+            // Show only top 15 entries for performance
+            const showData = data.slice(0, 15);
+            
+            showData.forEach(item => {
+                let pepHtml = item.peptide ? `<span class="bg-brand-500/20 text-brand-400 px-2 py-0.5 rounded text-[10px] font-bold ml-2 border border-brand-500/30">${item.peptide}</span>` : '';
+                let noteHtml = item.note ? `<p class="text-[10px] text-slate-400 mt-2 italic border-l border-white/10 pl-2">"${item.note}"</p>` : '';
+                
+                // Format Date nicely
+                let dateObj = new Date(item.date);
+                let dateStr = dateObj.toLocaleDateString('de-DE', { day: '2-digit', month: 'short' });
+
+                html += `
+                    <div class="p-3 rounded-xl bg-slate-800/40 border border-white/5 hover:border-slate-600 transition-colors">
+                        <div class="flex justify-between items-start mb-2">
+                            <div class="flex items-center">
+                                <span class="text-xs font-bold text-slate-300">${dateStr}</span>
+                                ${pepHtml}
+                            </div>
+                        </div>
+                        <div class="flex gap-3 text-[10px] font-mono mb-1">
+                            <span class="text-emerald-400" title="Schlaf">SLP: ${item.sleep}</span>
+                            <span class="text-rose-400" title="Schmerz">PAIN: ${item.pain}</span>
+                            <span class="text-brand-400" title="Wohlbefinden">ENG: ${item.mood}</span>
+                        </div>
+                        ${noteHtml}
+                    </div>
+                `;
+            });
+            list.innerHTML = html;
+        }
+
+        function renderTrackerCalendar() {
+            const grid = document.getElementById('tracker-calendar-grid');
+            const title = document.getElementById('cal-month-title');
+            if(!grid || !title) return;
+
+            const year = calCurrentDate.getFullYear();
+            const month = calCurrentDate.getMonth();
+            
+            const monthNames = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
+            title.innerText = `${monthNames[month]} ${year}`;
+
+            // Calculate days
+            const firstDayIndex = new Date(year, month, 1).getDay();
+            // Adjust to Monday as first day of week (0=Mon, 6=Sun)
+            const startDay = firstDayIndex === 0 ? 6 : firstDayIndex - 1; 
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+            let data = JSON.parse(localStorage.getItem('tracker_data') || '[]');
+            // Create a lookup map for faster rendering: lookup['2026-07-29'] = array of entries
+            let lookup = {};
+            data.forEach(entry => {
+                if(!lookup[entry.date]) lookup[entry.date] = [];
+                lookup[entry.date].push(entry);
+            });
+
+            let html = '';
+            
+            // Empty slots before 1st of month
+            for(let i = 0; i < startDay; i++) {
+                html += `<div class="aspect-square rounded-xl bg-slate-900/20 border border-transparent"></div>`;
+            }
+
+            // Lokales Datum statt UTC verwenden
+            const localToday = new Date();
+            const todayStr = `${localToday.getFullYear()}-${String(localToday.getMonth()+1).padStart(2, '0')}-${String(localToday.getDate()).padStart(2, '0')}`;
+
+            for(let day = 1; day <= daysInMonth; day++) {
+                let dateStr = `${year}-${String(month+1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                let entries = lookup[dateStr] || [];
+                
+                let isToday = dateStr === todayStr;
+                let bgClass = "bg-slate-800/40 border-white/5 hover:border-slate-500";
+                
+                if (isToday) {
+                    bgClass = "bg-slate-800/60 border-emerald-500/50 shadow-[inset_0_0_10px_rgba(16,185,129,0.1)]";
+                }
+
+                // Markers
+                let markersHtml = '';
+                let hasInjection = entries.some(e => e.peptide !== "");
+                let hasNoteOrSymptom = entries.some(e => e.note !== "" || e.sleep !== "5" || e.pain !== "5" || e.mood !== "5"); // Assuming 5 is baseline
+
+                if (hasInjection) markersHtml += `<span class="w-2 h-2 rounded-full bg-brand-500 shadow-[0_0_8px_rgba(99,102,241,0.6)]"></span>`;
+                if (hasNoteOrSymptom && !hasInjection) markersHtml += `<span class="w-2 h-2 rounded-full bg-amber-500"></span>`;
+                else if (hasNoteOrSymptom) markersHtml += `<span class="w-2 h-2 rounded-full bg-amber-500 shadow-[0_0_5px_rgba(245,158,11,0.5)]"></span>`;
+
+                html += `
+                    <div class="aspect-square rounded-xl border ${bgClass} p-1.5 flex flex-col justify-between transition-all cursor-pointer group" onclick="document.getElementById('trk-date').value='${dateStr}';">
+                        <span class="text-xs font-bold ${isToday ? 'text-emerald-400' : 'text-slate-400 group-hover:text-white'}">${day}</span>
+                        <div class="flex justify-end gap-1">
+                            ${markersHtml}
+                        </div>
+                    </div>
+                `;
+            }
+
+            grid.innerHTML = html;
+        }
+
         window.onload = function() {
             renderDatabase();
             calculateSyringe();
@@ -2895,6 +3243,7 @@
             if(typeof renderInjectionLog === "function") renderInjectionLog();
             if(typeof renderPKChart === "function") renderPKChart();
             if(typeof initThreeJSMap === "function") initThreeJSMap();
+            if(typeof initTracker === "function") initTracker();
         };
     </script>
 </body>
