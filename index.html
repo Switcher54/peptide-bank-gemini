@@ -40,6 +40,7 @@
                         'glow-brand': '0 0 20px rgba(99, 102, 241, 0.3)',
                         'glow-success': '0 0 20px rgba(16, 185, 129, 0.3)',
                         'glow-accent': '0 0 20px rgba(56, 189, 248, 0.3)',
+                        'glow-danger': '0 0 20px rgba(244, 63, 94, 0.3)',
                     },
                     animation: {
                         'float': 'float 6s ease-in-out infinite',
@@ -108,6 +109,20 @@
 
     <div class="fixed top-0 left-1/4 w-[500px] h-[500px] bg-brand-600/20 rounded-full blur-[120px] pointer-events-none z-0"></div>
     <div class="fixed bottom-0 right-1/4 w-[400px] h-[400px] bg-accent/10 rounded-full blur-[100px] pointer-events-none z-0"></div>
+
+    <div id="custom-confirm" class="fixed inset-0 z-[100] hidden items-center justify-center bg-base/80 backdrop-blur-sm opacity-0 transition-opacity duration-300">
+        <div class="bg-surface border border-white/10 p-6 rounded-2xl max-w-sm w-full mx-4 shadow-[0_0_40px_rgba(0,0,0,0.5)] transform scale-95 transition-transform duration-300" id="custom-confirm-box">
+            <div class="flex items-center gap-3 mb-4">
+                <span class="text-2xl">⚠️</span>
+                <h3 class="text-lg font-bold text-white" id="confirm-title">Bestätigung</h3>
+            </div>
+            <p class="text-sm text-slate-300 mb-6 leading-relaxed" id="confirm-msg">Möchtest du wirklich fortfahren?</p>
+            <div class="flex justify-end gap-3">
+                <button id="confirm-cancel" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-400 hover:bg-white/5 transition-colors">Abbrechen</button>
+                <button id="confirm-ok" class="px-4 py-2 rounded-xl text-xs font-bold bg-danger/20 text-danger border border-danger/50 hover:bg-danger hover:text-white transition-all shadow-glow-danger">Bestätigen</button>
+            </div>
+        </div>
+    </div>
 
     <header class="sticky top-0 z-50 glass-panel border-b border-white/5 py-4">
         <div class="max-w-[1600px] mx-auto px-4 sm:px-8 flex flex-col xl:flex-row items-center justify-between gap-4">
@@ -218,39 +233,16 @@
                                 Reconstitution Engine
                             </div>
                             <h2 class="text-3xl font-bold text-white mb-2">Präzisions-Rechner</h2>
-                            <p class="text-slate-400 text-sm">Berechne das exakte Mischverhältnis für die sterile Rekonstitution an der U100-Spritze.</p>
+                            <p class="text-slate-400 text-sm">Berechne das exakte Mischverhältnis für die sterile Rekonstitution an der U100-Spritze. Multi-Vial Support für Stacks.</p>
                         </div>
 
-                        <div class="space-y-5 bg-slate-900/50 p-6 rounded-2xl border border-slate-800">
-                            <div class="space-y-2">
-                                <label class="text-xs font-semibold text-slate-300">Schnellauswahl (Preset)</label>
-                                <select id="calcPreset" onchange="loadPresetToCalc()" class="w-full bg-slate-800 border border-slate-600 rounded-xl py-2.5 px-4 text-sm text-white focus:border-brand-500 outline-none">
-                                    <option value="">-- Manuelle Eingabe --</option>
-                                </select>
-                            </div>
-                            <div class="h-px bg-slate-800 w-full"></div>
-                            <div class="space-y-2">
-                                <label class="text-xs font-semibold text-slate-300">Wirkstoff im Vial (mg)</label>
-                                <div class="relative">
-                                    <input type="number" id="calc-mg" value="5" step="1" min="1" oninput="calculateSyringe()" class="w-full bg-slate-800 border border-slate-600 rounded-xl py-2.5 px-4 text-sm text-white focus:border-brand-500 outline-none font-mono">
-                                    <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-slate-500 font-bold">mg</span>
-                                </div>
-                            </div>
-                            <div class="space-y-2">
-                                <label class="text-xs font-semibold text-slate-300">BAC-Wasser (ml)</label>
-                                <div class="relative">
-                                    <input type="number" id="calc-ml" value="2" step="0.5" min="0.5" oninput="calculateSyringe()" class="w-full bg-slate-800 border border-slate-600 rounded-xl py-2.5 px-4 text-sm text-white focus:border-brand-500 outline-none font-mono">
-                                    <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-slate-500 font-bold">ml</span>
-                                </div>
-                            </div>
-                            <div class="space-y-2">
-                                <label class="text-xs font-semibold text-slate-300">Einzeldosis (mg)</label>
-                                <div class="relative">
-                                    <input type="number" id="calc-dose-mg" value="0.25" step="0.05" min="0.01" oninput="calculateSyringe()" class="w-full bg-slate-800 border border-slate-600 rounded-xl py-2.5 px-4 text-sm text-white focus:border-brand-500 outline-none font-mono">
-                                    <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-slate-500 font-bold">mg</span>
-                                </div>
-                            </div>
+                        <div id="calc-vials-container" class="space-y-4">
+                            <!-- JS wird hier die Vials einfügen, Standardmäßig 1 -->
                         </div>
+                        
+                        <button onclick="addCalcVial()" class="w-full py-3 bg-slate-800/50 hover:bg-slate-700/50 text-brand-400 border border-dashed border-slate-600 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2 shadow-inner">
+                            <span class="text-lg">+</span> Weiteres Peptid zur Spritze hinzufügen
+                        </button>
                     </div>
 
                     <div class="lg:col-span-7 flex flex-col justify-center space-y-8">
@@ -263,39 +255,28 @@
                             <p class="text-xs text-slate-500 mt-2">Einheiten / Ticks auf der Insulinspritze</p>
                         </div>
 
-                        <!-- NEUES SPRITZEN DESIGN -->
                         <div class="relative p-6 sm:p-10 flex items-center justify-center bg-slate-900/40 rounded-3xl border border-white/5 shadow-2xl overflow-hidden backdrop-blur-sm">
                             
-                            <!-- Technischer Grid-Hintergrund -->
                             <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjEiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4wNSkiLz48L3N2Zz4=')] [mask-image:linear-gradient(to_bottom,transparent,black,transparent)] pointer-events-none"></div>
 
-                            <!-- Nadel -->
                             <div class="w-10 h-[2px] bg-gradient-to-r from-transparent via-slate-500 to-slate-400 absolute left-2 sm:left-4 rounded-l-full shadow-sm z-0"></div>
 
-                            <!-- Glaskörper (Barrel) -->
                             <div class="w-full h-16 bg-slate-900/80 border border-slate-600/50 rounded-lg relative flex items-center shadow-[inset_0_4px_20px_rgba(0,0,0,0.6)] overflow-hidden z-10 backdrop-blur-md">
                                 
-                                <!-- Glas-Lichtreflexionen für 3D Look -->
                                 <div class="absolute top-0 left-0 w-full h-[30%] bg-gradient-to-b from-white/10 to-transparent z-30 pointer-events-none"></div>
                                 <div class="absolute bottom-0 left-0 w-full h-[20%] bg-gradient-to-t from-white/5 to-transparent z-30 pointer-events-none"></div>
 
-                                <!-- Flüssigkeit & Gummi-Stopper -->
                                 <div id="syringe-fluid" class="h-full relative transition-all duration-700 ease-out" style="width: 10%;">
-                                    <!-- Leuchtendes Peptid -->
                                     <div class="absolute inset-0 bg-gradient-to-r from-brand-600/80 via-brand-400/90 to-accent/90 shadow-[0_0_30px_rgba(56,189,248,0.5)]"></div>
                                     
-                                    <!-- Schwarzer Gummi-Kolben -->
                                     <div class="absolute right-0 top-0 bottom-0 w-3 bg-gradient-to-r from-slate-800 to-slate-950 border-l border-white/20 shadow-[-2px_0_8px_rgba(0,0,0,0.6)] rounded-l-[2px] z-20">
-                                        <!-- Rillen im Gummi -->
                                         <div class="absolute right-[2px] top-0 bottom-0 w-[1px] bg-black/80"></div>
                                         <div class="absolute right-[6px] top-0 bottom-0 w-[1px] bg-black/80"></div>
                                     </div>
                                 </div>
 
-                                <!-- Durchsichtiger Plastik-Schaft (verbindet Gummi mit Daumen) -->
                                 <div id="syringe-rod" class="absolute right-0 h-3 bg-white/5 border-y border-white/10 top-1/2 -translate-y-1/2 transition-all duration-700 ease-out z-0" style="width: 90%;"></div>
 
-                                <!-- Ticks & Mess-Skala -->
                                 <div class="absolute inset-0 flex justify-between px-4 items-end pb-1 pointer-events-none select-none font-mono text-[9px] text-slate-300 font-bold z-40">
                                     <div class="flex flex-col items-center justify-end h-full"><span class="mb-1">0</span><div class="w-px h-2.5 bg-slate-400/80"></div></div>
                                     <div class="flex flex-col items-center justify-end h-full"><span class="mb-1">10</span><div class="w-px h-2.5 bg-slate-400/80"></div></div>
@@ -311,21 +292,8 @@
                                 </div>
                             </div>
 
-                            <!-- Ende der Spritze & Daumen-Drücker -->
                             <div class="w-8 h-12 bg-gradient-to-b from-slate-700 to-slate-800 border-y border-r border-slate-600 rounded-r-xl flex-shrink-0 z-10 shadow-[4px_0_15px_rgba(0,0,0,0.4)] relative flex items-center justify-end">
-                                <!-- Der Teil, der nach hinten ausfährt, wenn man aufzieht -->
                                 <div id="syringe-thumb" class="absolute h-8 bg-gradient-to-r from-slate-600 to-slate-500 rounded-r-md border border-slate-400/30 transition-all duration-700 ease-out" style="width: 12px; right: -12px;"></div>
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-2 gap-4">
-                            <div class="bg-slate-800/50 p-4 rounded-2xl border border-slate-700/50 text-center">
-                                <span class="text-slate-400 text-xs font-semibold block mb-1">Konzentration</span>
-                                <span class="text-white font-mono font-bold text-lg" id="res-conc">2.50 mg/ml</span>
-                            </div>
-                            <div class="bg-slate-800/50 p-4 rounded-2xl border border-slate-700/50 text-center">
-                                <span class="text-slate-400 text-xs font-semibold block mb-1">Ergiebigkeit</span>
-                                <span class="text-white font-mono font-bold text-lg" id="res-doses">20 Dosen</span>
                             </div>
                         </div>
                     </div>
@@ -364,7 +332,7 @@
                                 <span id="cycle-mg-label" class="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-slate-500 font-bold">mg/Tag</span>
                             </div>
                         </div>
-                        <p class="text-[10px] text-slate-500 mt-2">Hinweis: Die Fläschchen-Größe (Vial mg) wird automatisch aus dem oberen Rechner übernommen.</p>
+                        <p class="text-[10px] text-slate-500 mt-2">Hinweis: Die Fläschchen-Größe (Vial mg) wird automatisch von "Wirkstoff 1" des oberen Rechners übernommen.</p>
                     </div>
                     
                     <div class="lg:col-span-7 bg-slate-900/50 border border-white/5 rounded-2xl p-6 flex flex-col">
@@ -415,9 +383,7 @@
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
                     
                     <div class="flex justify-center items-center relative bg-slate-900/50 rounded-2xl border border-slate-800 p-4 overflow-hidden min-h-[450px]">
-                        <!-- Three.js Container Background (Optional 3D Model placeholder) -->
                         <div id="threejs-container" class="absolute inset-0 w-full h-full opacity-60 mix-blend-screen pointer-events-none z-0"></div>
-                        <div id="threejs-loading" class="absolute top-4 left-4 text-[10px] text-slate-500 z-10">3D-Modell aktiv</div>
                         
                         <svg viewBox="0 0 200 400" class="w-full max-w-[300px] drop-shadow-2xl z-10 relative pointer-events-auto">
                             <!-- Silhouette Base -->
@@ -488,7 +454,6 @@
                                     <div id="map-clock-container" class="hidden flex-col items-center justify-center bg-slate-800/50 p-6 rounded-xl border border-white/5 mt-4 shadow-inner relative">
                                         <h4 class="font-bold text-brand-400 mb-6 flex items-center gap-2"><span class="text-lg">🕒</span> Interaktive Uhren-Methode</h4>
                                         <div id="clock-ui" class="relative w-48 h-48 rounded-full border-2 border-dashed border-slate-600/50 flex items-center justify-center">
-                                            <!-- Spots werden via JS eingefügt -->
                                         </div>
                                         <p class="text-[10px] text-slate-500 mt-6 text-center leading-relaxed">Klicke nach der Injektion auf eine Zahl. Sie wird für 72 Stunden gesperrt (Rot), um Gewebeverhärtungen zu vermeiden.</p>
                                     </div>
@@ -531,10 +496,9 @@
                             </div>
                             <h3 class="text-2xl font-bold text-white">Injektions-Logbuch</h3>
                         </div>
-                        <button onclick="clearInjectionLog()" class="px-3 py-1.5 bg-rose-500/10 text-rose-400 border border-rose-500/20 hover:bg-rose-500/20 rounded-lg text-xs font-bold transition-all">Log leeren</button>
+                        <button onclick="customConfirm('Möchtest du das gesamte Logbuch inklusive der Uhren-Blockaden unwiderruflich löschen?', clearInjectionLog)" class="px-3 py-1.5 bg-rose-500/10 text-rose-400 border border-rose-500/20 hover:bg-rose-500/20 rounded-lg text-xs font-bold transition-all">Log leeren</button>
                     </div>
                     <div class="bg-slate-900/50 rounded-2xl border border-white/5 p-4 max-h-[300px] overflow-y-auto scrollbar-hide" id="injection-log-list">
-                        <!-- Log Items via JS -->
                     </div>
                 </div>
 
@@ -653,7 +617,6 @@
             </div>
         </div>
 
-        <!-- INVENTORY VIEW -->
         <div id="view-inventory" class="view-panel hidden space-y-8">
             <div class="glass-card rounded-3xl p-6 sm:p-10">
                 <div class="mb-8">
@@ -695,14 +658,12 @@
                     <div class="lg:col-span-7 bg-slate-900/50 border border-white/5 rounded-2xl p-6 flex flex-col">
                         <h3 class="text-lg font-bold text-white mb-4 border-b border-white/5 pb-4">Aktueller Vorrat</h3>
                         <div id="inv-list" class="space-y-3 flex-grow overflow-y-auto max-h-[400px] pr-2 scrollbar-hide">
-                            <!-- JS Inject -->
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- NEW TRACKER VIEW -->
         <div id="view-tracker" class="view-panel hidden space-y-8">
             <div class="glass-card rounded-3xl p-6 sm:p-10">
                 <div class="mb-8">
@@ -714,7 +675,6 @@
                 </div>
 
                 <div class="grid grid-cols-1 xl:grid-cols-12 gap-10">
-                    <!-- Left Column: Input Form & Recent Entries -->
                     <div class="xl:col-span-4 space-y-8">
                         <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-800 space-y-5">
                             <div class="flex justify-between items-center border-b border-white/5 pb-3">
@@ -722,14 +682,12 @@
                                 <input type="date" id="trk-date" class="bg-slate-800 border border-slate-600 rounded-lg py-1.5 px-3 text-xs text-white focus:border-brand-500 outline-none w-36 cursor-pointer font-mono">
                             </div>
                             
-                            <!-- Typ-Auswahl (Tabs) -->
                             <div class="flex bg-slate-900 p-1 rounded-xl border border-slate-800">
                                 <button onclick="setTrackerType('injection', this)" class="tracker-type-btn flex-1 py-2 rounded-lg text-xs font-semibold bg-slate-700 text-white shadow-sm transition-all flex items-center justify-center gap-1.5"><span class="text-sm">💉</span> Dosis</button>
                                 <button onclick="setTrackerType('feedback', this)" class="tracker-type-btn flex-1 py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition-all flex items-center justify-center gap-1.5"><span class="text-sm">📊</span> Bio</button>
                                 <button onclick="setTrackerType('note', this)" class="tracker-type-btn flex-1 py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition-all flex items-center justify-center gap-1.5"><span class="text-sm">📝</span> Notiz</button>
                             </div>
 
-                            <!-- Formular: Injektion -->
                             <div id="trk-form-injection" class="trk-form-section block space-y-4 animate-fade-in-up">
                                 <div class="space-y-2">
                                     <label class="text-xs font-semibold text-slate-300">Substanz</label>
@@ -743,7 +701,6 @@
                                 </div>
                             </div>
 
-                            <!-- Formular: Bio-Feedback -->
                             <div id="trk-form-feedback" class="trk-form-section hidden space-y-4 animate-fade-in-up">
                                 <p class="text-xs text-slate-400 leading-relaxed mb-2">Wie fühlst du dich heute auf einer Skala von 1-10? (1 = Sehr schlecht, 10 = Perfekt)</p>
                                 <div class="grid grid-cols-3 gap-3">
@@ -768,7 +725,6 @@
                                 </div>
                             </div>
 
-                            <!-- Formular: Notiz -->
                             <div id="trk-form-note" class="trk-form-section hidden space-y-4 animate-fade-in-up">
                                 <div class="space-y-2">
                                     <label class="text-xs font-semibold text-slate-300">Tagebuch / Freitext</label>
@@ -781,19 +737,16 @@
                             </button>
                         </div>
 
-                        <!-- Letzte Einträge -->
                         <div class="bg-slate-900/30 p-6 rounded-2xl border border-white/5">
                             <div class="flex justify-between items-center mb-4 border-b border-white/5 pb-2">
                                 <h3 class="text-sm font-bold text-white">Letzte Einträge</h3>
-                                <button onclick="clearTrackerData()" class="text-[10px] text-rose-400 hover:text-rose-300 transition-colors">Verlauf löschen</button>
+                                <button onclick="customConfirm('Möchtest du den gesamten Quantified Self Verlauf wirklich löschen?', clearTrackerData)" class="text-[10px] text-rose-400 hover:text-rose-300 transition-colors">Verlauf löschen</button>
                             </div>
                             <div id="tracker-recent-list" class="space-y-3 max-h-[300px] overflow-y-auto pr-2 scrollbar-hide">
-                                <!-- Populated via JS -->
                             </div>
                         </div>
                     </div>
 
-                    <!-- Right Column: Visual Calendar -->
                     <div class="xl:col-span-8 bg-slate-900/50 border border-white/5 rounded-2xl p-6 flex flex-col">
                         <div class="flex justify-between items-center mb-6 border-b border-white/5 pb-4">
                             <h3 class="text-xl font-bold text-white" id="cal-month-title">Monat Jahr</h3>
@@ -811,7 +764,6 @@
                             <div>Mo</div><div>Di</div><div>Mi</div><div>Do</div><div>Fr</div><div>Sa</div><div>So</div>
                         </div>
                         <div id="tracker-calendar-grid" class="grid grid-cols-7 gap-2 flex-grow">
-                            <!-- JS Inject -->
                         </div>
                         
                         <div class="mt-6 flex gap-4 text-[10px] text-slate-400 justify-center">
@@ -885,7 +837,6 @@
                     <div class="lg:col-span-5 space-y-4">
                         <input type="text" id="stack-search" oninput="filterStack()" placeholder="Substanz suchen..." class="w-full bg-slate-900/50 border border-slate-700 rounded-xl py-2.5 px-4 text-sm text-white focus:border-brand-500 outline-none">
                         <div class="h-[300px] overflow-y-auto space-y-2 pr-2 scrollbar-hide" id="stack-list">
-                            <!-- Populated via JS -->
                         </div>
                     </div>
                     <div class="lg:col-span-7 bg-slate-900/50 border border-white/5 rounded-2xl p-6 flex flex-col">
@@ -1880,72 +1831,172 @@
             if(countEl) countEl.innerText = displayed;
         }
 
-        function calculateSyringe() {
-            const mgEl = document.getElementById('calc-mg');
-            const mlEl = document.getElementById('calc-ml');
-            const doseMgEl = document.getElementById('calc-dose-mg');
-            
-            if(!mgEl || !mlEl || !doseMgEl) return;
+        let calcVialCount = 0;
+        const calcColors = [
+            'from-brand-600/80 via-brand-400/90 to-accent/90',
+            'from-emerald-600/80 via-emerald-400/90 to-teal-400/90',
+            'from-amber-600/80 via-amber-400/90 to-orange-400/90',
+            'from-purple-600/80 via-purple-400/90 to-fuchsia-400/90'
+        ];
+        const calcShadows = [
+            'shadow-[0_0_20px_rgba(56,189,248,0.5)]',
+            'shadow-[0_0_20px_rgba(16,185,129,0.5)]',
+            'shadow-[0_0_20px_rgba(245,158,11,0.5)]',
+            'shadow-[0_0_20px_rgba(192,38,211,0.5)]'
+        ];
 
-            const mg = parseFloat(mgEl.value) || 0;
-            const ml = parseFloat(mlEl.value) || 0;
-            const doseMg = parseFloat(doseMgEl.value) || 0;
+        function addCalcVial() {
+            if (calcVialCount >= 4) {
+                alert("Maximal 4 Wirkstoffe in einer Spritze!");
+                return;
+            }
+            const idx = calcVialCount;
+            calcVialCount++;
+            
+            let optionsHtml = '<option value="">-- Manuelle Eingabe --</option>';
+            RAW_DATA.forEach(item => {
+                optionsHtml += `<option value="${item[0]}">${item[2]}</option>`;
+            });
+
+            const html = `
+                <div class="bg-slate-900/50 p-5 rounded-2xl border ${idx > 0 ? 'border-dashed border-slate-700' : 'border-slate-800'} relative calc-vial-block animate-fade-in-up" id="calc-vial-block-${idx}">
+                    ${idx > 0 ? `<button onclick="removeCalcVial(${idx})" class="absolute top-3 right-3 w-6 h-6 flex items-center justify-center rounded-full bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white transition-colors text-xs shadow-inner">✖</button>` : ''}
+                    <div class="space-y-4">
+                        <div class="space-y-2 pr-6">
+                            <label class="text-xs font-semibold text-slate-300">Wirkstoff ${idx + 1} (Preset)</label>
+                            <select id="calc-preset-${idx}" onchange="loadPresetToCalc(${idx})" class="w-full bg-slate-800 border border-slate-600 rounded-xl py-2 px-3 text-sm text-white focus:border-brand-500 outline-none preset-select shadow-inner">
+                                ${optionsHtml}
+                            </select>
+                        </div>
+                        <div class="grid grid-cols-3 gap-3">
+                            <div class="space-y-1.5">
+                                <label class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block text-center">Vial (mg)</label>
+                                <input type="number" id="calc-mg-${idx}" value="5" step="1" min="1" oninput="calculateSyringe()" class="w-full bg-slate-800 border border-slate-600 rounded-lg py-2 px-1 text-sm text-white focus:border-brand-500 outline-none font-mono text-center shadow-inner">
+                            </div>
+                            <div class="space-y-1.5">
+                                <label class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block text-center">BAC (ml)</label>
+                                <input type="number" id="calc-ml-${idx}" value="2" step="0.5" min="0.5" oninput="calculateSyringe()" class="w-full bg-slate-800 border border-slate-600 rounded-lg py-2 px-1 text-sm text-white focus:border-brand-500 outline-none font-mono text-center shadow-inner">
+                            </div>
+                            <div class="space-y-1.5">
+                                <label class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block text-center">Dosis (mg)</label>
+                                <input type="number" id="calc-dose-mg-${idx}" value="0.25" step="0.05" min="0.01" oninput="calculateSyringe()" class="w-full bg-slate-800 border border-slate-600 rounded-lg py-2 px-1 text-sm text-white focus:border-brand-500 outline-none font-mono text-center shadow-inner">
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center bg-slate-800/50 p-2.5 rounded-lg border border-slate-700/50 shadow-inner">
+                            <div class="flex flex-col">
+                                <span class="text-[9px] text-slate-400 uppercase tracking-wider">Menge für Spritze</span>
+                                <span class="text-sm font-bold text-white font-mono" id="calc-units-out-${idx}">0.0 U</span>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-[10px] font-medium text-slate-400 block"><span id="calc-conc-out-${idx}" class="text-slate-300 font-bold">2.50</span> mg/ml</span>
+                                <span class="text-[10px] font-medium text-slate-400 block"><span id="calc-doses-out-${idx}" class="text-slate-300 font-bold">20</span> Dosen pro Vial</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('calc-vials-container').insertAdjacentHTML('beforeend', html);
+            calculateSyringe();
+        }
+
+        function removeCalcVial(idx) {
+            const block = document.getElementById(`calc-vial-block-${idx}`);
+            if(block) block.remove();
+            calculateSyringe();
+        }
+
+        function calculateSyringe() {
+            let totalUnits = 0;
+            const vialBlocks = document.querySelectorAll('.calc-vial-block');
+            
+            let isFirstForCycle = true;
+
+            vialBlocks.forEach((block, i) => {
+                const idx = block.id.split('-').pop();
+                const mgEl = document.getElementById(`calc-mg-${idx}`);
+                const mlEl = document.getElementById(`calc-ml-${idx}`);
+                const doseMgEl = document.getElementById(`calc-dose-mg-${idx}`);
+                const outEl = document.getElementById(`calc-units-out-${idx}`);
+                
+                if(!mgEl || !mlEl || !doseMgEl) return;
+
+                const mg = parseFloat(mgEl.value) || 0;
+                const ml = parseFloat(mlEl.value) || 0;
+                const doseMg = parseFloat(doseMgEl.value) || 0;
+
+                let units = 0;
+                if(mg > 0 && ml > 0 && doseMg > 0) {
+                    const totalMcg = mg * 1000;
+                    const doseMcg = doseMg * 1000;
+                    const conc = totalMcg / ml;
+                    units = (doseMcg / conc) * 100;
+                    
+                    const concOutEl = document.getElementById(`calc-conc-out-${idx}`);
+                    const dosesOutEl = document.getElementById(`calc-doses-out-${idx}`);
+                    
+                    if(concOutEl) concOutEl.innerText = (mg / ml).toFixed(2);
+                    if(dosesOutEl) dosesOutEl.innerText = Math.floor(totalMcg / doseMcg);
+                }
+                
+                if(outEl) {
+                    if (isNaN(units) || !isFinite(units) || units < 0) {
+                        outEl.innerText = "0.0 U";
+                    } else {
+                        outEl.innerText = (Math.round(units * 10) / 10).toFixed(1) + " U";
+                        totalUnits += units;
+                    }
+                }
+            });
 
             const resUnits = document.getElementById('res-units');
-            const resConc = document.getElementById('res-conc');
-            const resDoses = document.getElementById('res-doses');
-            
-            // UI Elemente der Spritze
-            const fluid = document.getElementById('syringe-fluid');
+            if(resUnits) resUnits.innerText = (Math.round(totalUnits * 10) / 10).toFixed(1);
+
+            const fluidContainer = document.getElementById('syringe-fluid');
             const rod = document.getElementById('syringe-rod');
             const thumb = document.getElementById('syringe-thumb');
 
-            if(mg <= 0 || ml <= 0 || doseMg <= 0) {
-                if(resUnits) resUnits.innerText = "0.0";
-                if(resConc) resConc.innerText = "0.00 mg/ml";
-                if(resDoses) resDoses.innerText = "0 Dosen";
-                
-                if(fluid) fluid.style.width = "0%";
-                if(rod) rod.style.width = "100%";
-                if(thumb) {
-                    thumb.style.width = "12px";
-                    thumb.style.right = "-12px";
+            const limitedTotal = Math.min(100, Math.max(0, totalUnits));
+            
+            if (fluidContainer) {
+                fluidContainer.style.width = limitedTotal + "%";
+                if (totalUnits > 0) {
+                    let flexFluidHtml = '';
+                    vialBlocks.forEach((block, i) => {
+                        const idx = block.id.split('-').pop();
+                        const outEl = document.getElementById(`calc-units-out-${idx}`);
+                        const uStr = outEl ? parseFloat(outEl.innerText) : 0;
+                        if (uStr > 0) {
+                            const colorClass = calcColors[i % calcColors.length];
+                            const shadowClass = calcShadows[i % calcShadows.length];
+                            const pct = (uStr / totalUnits) * 100;
+                            flexFluidHtml += `
+                                <div class="h-full relative transition-all duration-700 ease-out border-r border-black/30 last:border-0 z-10" style="width: ${pct}%;">
+                                    <div class="absolute inset-0 bg-gradient-to-r ${colorClass} ${shadowClass}"></div>
+                                </div>`;
+                        }
+                    });
+                    fluidContainer.className = "h-full relative transition-all duration-700 ease-out flex";
+                    fluidContainer.innerHTML = flexFluidHtml + `
+                        <div class="absolute right-0 top-0 bottom-0 w-3 bg-gradient-to-r from-slate-800 to-slate-950 border-l border-white/20 shadow-[-2px_0_8px_rgba(0,0,0,0.6)] rounded-l-[2px] z-20">
+                            <div class="absolute right-[2px] top-0 bottom-0 w-[1px] bg-black/80"></div>
+                            <div class="absolute right-[6px] top-0 bottom-0 w-[1px] bg-black/80"></div>
+                        </div>
+                    `;
+                } else {
+                    fluidContainer.innerHTML = `
+                        <div class="absolute right-0 top-0 bottom-0 w-3 bg-gradient-to-r from-slate-800 to-slate-950 border-l border-white/20 shadow-[-2px_0_8px_rgba(0,0,0,0.6)] rounded-l-[2px] z-20">
+                            <div class="absolute right-[2px] top-0 bottom-0 w-[1px] bg-black/80"></div>
+                            <div class="absolute right-[6px] top-0 bottom-0 w-[1px] bg-black/80"></div>
+                        </div>
+                    `;
                 }
-                return;
             }
-
-            const totalMcg = mg * 1000;
-            const doseMcg = doseMg * 1000;
-            const conc = totalMcg / ml;
-            const units = (doseMcg / conc) * 100;
             
-            if(isNaN(units) || !isFinite(units) || units <= 0) {
-                if(resUnits) resUnits.innerText = "0.0";
-                if(resConc) resConc.innerText = "0.00 mg/ml";
-                if(resDoses) resDoses.innerText = "0 Dosen";
-                
-                if(fluid) fluid.style.width = "0%";
-                if(rod) rod.style.width = "100%";
-                if(thumb) {
-                    thumb.style.width = "12px";
-                    thumb.style.right = "-12px";
-                }
-                return;
-            }
-
-            const limitedUnits = Math.min(100, Math.max(0, units));
+            if(rod) rod.style.width = (100 - limitedTotal) + "%";
             
-            if(resUnits) resUnits.innerText = (Math.round(units * 10) / 10).toFixed(1);
-            if(resConc) resConc.innerText = (mg / ml).toFixed(2) + " mg/ml";
-            if(resDoses) resDoses.innerText = Math.floor(totalMcg / doseMcg) + " Dosen";
-            
-            // Animation der Spritzen-Elemente updaten
-            if(fluid) fluid.style.width = limitedUnits + "%";
-            if(rod) rod.style.width = (100 - limitedUnits) + "%";
-            
-            // Drücker schiebt sich dynamisch nach hinten, je mehr Units geladen sind
             if(thumb) {
-                const thumbExtension = 12 + (limitedUnits / 100) * 30; 
+                const thumbExtension = 12 + (limitedTotal / 100) * 30; 
                 thumb.style.width = thumbExtension + "px";
                 thumb.style.right = "-" + thumbExtension + "px";
             }
@@ -1955,19 +2006,60 @@
         }
 
         function initCalcPresets() {
-            const s = document.getElementById('calcPreset');
-            if(!s) return;
-            s.innerHTML = '<option value="">-- Manuelle Eingabe --</option>';
-            RAW_DATA.forEach(item => {
-                const name = item[2];
-                const id = item[0];
-                s.innerHTML += `<option value="${id}">${name}</option>`;
-            });
+            const container = document.getElementById('calc-vials-container');
+            if(!container) return;
+            container.innerHTML = '';
+            calcVialCount = 0;
+            addCalcVial();
         }
 
-        function loadPresetToCalc() {
-            const el = document.getElementById('calcPreset');
-            if(el) loadDirectToCalc(el.value);
+        function loadPresetToCalc(idx) {
+            const el = document.getElementById(`calc-preset-${idx}`);
+            if(!el) return;
+            const id = el.value;
+            if(!id) return;
+            const pep = RAW_DATA.find(i => i[0] === id);
+            if(!pep) return;
+            
+            const doseMgEl = document.getElementById(`calc-dose-mg-${idx}`);
+            
+            let doseStr = pep[9].normal || "250mcg";
+            let doseMcg = 250;
+            if (doseStr.toLowerCase().includes("mg")) {
+                doseMcg = (parseFloat(doseStr) || 0) * 1000;
+            } else {
+                doseMcg = parseFloat(doseStr) || 250;
+            }
+            
+            if(doseMgEl) doseMgEl.value = doseMcg / 1000;
+
+            if (idx === 0) {
+                let freqStr = pep[9].freq.toLowerCase();
+                let multi = 1;
+                let isWeekly = false;
+
+                if (freqStr.includes("wo") || freqStr.includes("woche") || freqStr.includes("wöchentlich")) {
+                    isWeekly = true;
+                    if (freqStr.includes("2x")) multi = 2;
+                    else if (freqStr.includes("3x")) multi = 3;
+                    else if (freqStr.includes("4x")) multi = 4;
+                } else {
+                    if (freqStr.includes("2x")) multi = 2;
+                    else if (freqStr.includes("3x")) multi = 3;
+                    else if (freqStr.includes("4x")) multi = 4;
+                }
+                
+                const cycleFreqSelect = document.getElementById('cycle-freq');
+                if (cycleFreqSelect) {
+                    cycleFreqSelect.value = isWeekly ? 'weekly' : 'daily';
+                    if (typeof updateCycleLabel === 'function') updateCycleLabel();
+                }
+                
+                const cycleMgInput = document.getElementById('cycle-mg-interval');
+                if (cycleMgInput) cycleMgInput.value = (doseMcg * multi) / 1000;
+            }
+
+            calculateSyringe();
         }
 
         function loadDirectToCalc(id) {
@@ -1975,10 +2067,17 @@
             const pep = RAW_DATA.find(i => i[0] === id);
             if(!pep) return;
             
-            const presetEl = document.getElementById('calcPreset');
-            const mgEl = document.getElementById('calc-mg');
-            const mlEl = document.getElementById('calc-ml');
-            const doseMgEl = document.getElementById('calc-dose-mg');
+            const container = document.getElementById('calc-vials-container');
+            if(container) {
+                container.innerHTML = '';
+                calcVialCount = 0;
+                addCalcVial();
+            }
+            
+            const presetEl = document.getElementById('calc-preset-0');
+            const mgEl = document.getElementById('calc-mg-0');
+            const mlEl = document.getElementById('calc-ml-0');
+            const doseMgEl = document.getElementById('calc-dose-mg-0');
             
             if(presetEl) presetEl.value = id;
             if(mgEl) mgEl.value = 5;
@@ -2030,7 +2129,7 @@
         function renderPKChart() {
             const ctx = document.getElementById('pkChartCanvas');
             const placeholder = document.getElementById('pkChartPlaceholder');
-            const presetId = document.getElementById('calcPreset')?.value;
+            const presetId = document.getElementById('calc-preset-0')?.value;
 
             if (!ctx) return;
 
@@ -2057,7 +2156,7 @@
             else if(hlStr.includes('Kurz')) hlHours = 1;
             else if(hlStr.includes('Lang')) hlHours = 72;
 
-            const doseMg = parseFloat(document.getElementById('calc-dose-mg')?.value) || 0.25;
+            const doseMg = parseFloat(document.getElementById('calc-dose-mg-0')?.value) || 0.25;
 
             let labels = [];
             let data = [];
@@ -2110,8 +2209,8 @@
         function calculateCycleBudget() {
             const wEl = document.getElementById('cycle-weeks');
             const mgIntervalEl = document.getElementById('cycle-mg-interval');
-            const mgEl = document.getElementById('calc-mg');
-            const preEl = document.getElementById('calcPreset');
+            const mgEl = document.getElementById('calc-mg-0');
+            const preEl = document.getElementById('calc-preset-0');
             
             if(!wEl || !mgIntervalEl || !mgEl || !preEl) return;
 
