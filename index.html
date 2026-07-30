@@ -370,6 +370,10 @@
                         Bitte wähle oben ein Peptid aus, um die Simulation zu starten.
                     </div>
                 </div>
+                
+                <!-- NEW: Smart Insights Container for Re-dosing -->
+                <div id="pk-insights" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
+                </div>
             </div>
         </div>
 
@@ -1909,15 +1913,15 @@
                         <div class="grid grid-cols-3 gap-3">
                             <div class="space-y-1.5">
                                 <label class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block text-center">Vial (mg)</label>
-                                <input type="number" id="calc-mg-${idx}" value="5" step="1" min="1" oninput="calculateSyringe()" class="w-full bg-slate-800 border border-slate-600 rounded-lg py-2 px-1 text-sm text-white focus:border-brand-500 outline-none font-mono text-center shadow-inner">
+                                <input type="number" id="calc-mg-${idx}" value="10" step="1" min="1" oninput="calculateSyringe()" class="w-full bg-slate-800 border border-slate-600 rounded-lg py-2 px-1 text-sm text-white focus:border-brand-500 outline-none font-mono text-center shadow-inner">
                             </div>
                             <div class="space-y-1.5">
                                 <label class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block text-center">BAC (ml)</label>
-                                <input type="number" id="calc-ml-${idx}" value="2" step="0.5" min="0.5" oninput="calculateSyringe()" class="w-full bg-slate-800 border border-slate-600 rounded-lg py-2 px-1 text-sm text-white focus:border-brand-500 outline-none font-mono text-center shadow-inner">
+                                <input type="number" id="calc-ml-${idx}" value="1" step="0.5" min="0.5" oninput="calculateSyringe()" class="w-full bg-slate-800 border border-slate-600 rounded-lg py-2 px-1 text-sm text-white focus:border-brand-500 outline-none font-mono text-center shadow-inner">
                             </div>
                             <div class="space-y-1.5">
                                 <label class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block text-center">Dosis (mg)</label>
-                                <input type="number" id="calc-dose-mg-${idx}" value="0.25" step="0.05" min="0.01" oninput="calculateSyringe()" class="w-full bg-slate-800 border border-slate-600 rounded-lg py-2 px-1 text-sm text-white focus:border-brand-500 outline-none font-mono text-center shadow-inner">
+                                <input type="number" id="calc-dose-mg-${idx}" value="1" step="0.05" min="0.01" oninput="calculateSyringe()" class="w-full bg-slate-800 border border-slate-600 rounded-lg py-2 px-1 text-sm text-white focus:border-brand-500 outline-none font-mono text-center shadow-inner">
                             </div>
                         </div>
                         <div class="flex justify-between items-center bg-slate-800/50 p-2.5 rounded-lg border border-slate-700/50 shadow-inner">
@@ -1926,8 +1930,8 @@
                                 <span class="text-sm font-bold text-white font-mono" id="calc-units-out-${idx}">0.0 U</span>
                             </div>
                             <div class="text-right">
-                                <span class="text-[10px] font-medium text-slate-400 block"><span id="calc-conc-out-${idx}" class="text-slate-300 font-bold">2.50</span> mg/ml</span>
-                                <span class="text-[10px] font-medium text-slate-400 block"><span id="calc-doses-out-${idx}" class="text-slate-300 font-bold">20</span> Dosen pro Vial</span>
+                                <span class="text-[10px] font-medium text-slate-400 block"><span id="calc-conc-out-${idx}" class="text-slate-300 font-bold">10.00</span> mg/ml</span>
+                                <span class="text-[10px] font-medium text-slate-400 block"><span id="calc-doses-out-${idx}" class="text-slate-300 font-bold">10</span> Dosen pro Vial</span>
                             </div>
                         </div>
                     </div>
@@ -2167,11 +2171,33 @@
         function renderPKChart() {
             const ctx = document.getElementById('pkChartCanvas');
             const placeholder = document.getElementById('pkChartPlaceholder');
-            const presetId = document.getElementById('calc-preset-0')?.value;
+            const insightsContainer = document.getElementById('pk-insights');
 
             if (!ctx) return;
 
-            if (!presetId) {
+            const vialBlocks = document.querySelectorAll('.calc-vial-block');
+            let activeSubstances = [];
+
+            vialBlocks.forEach((block, i) => {
+                const idx = block.id.split('-').pop();
+                const presetEl = document.getElementById(`calc-preset-${idx}`);
+                const doseEl = document.getElementById(`calc-dose-mg-${idx}`);
+                
+                if (presetEl && presetEl.value) {
+                    const pep = RAW_DATA.find(item => item[0] === presetEl.value);
+                    if (pep) {
+                        activeSubstances.push({
+                            pep: pep,
+                            dose: parseFloat(doseEl.value) || 0.25,
+                            index: i
+                        });
+                    }
+                }
+            });
+
+            if (insightsContainer) insightsContainer.innerHTML = '';
+
+            if (activeSubstances.length === 0) {
                 if (placeholder) placeholder.classList.remove('hidden');
                 if (pkChartInstance) {
                     pkChartInstance.destroy();
@@ -2180,38 +2206,134 @@
                 return;
             }
 
-            const pep = RAW_DATA.find(i => i[0] === presetId);
-            if (!pep) return;
-
             if (placeholder) placeholder.classList.add('hidden');
 
-            // Halbwertszeit extrahieren
-            let hlStr = pep[9].halflife;
-            let hlHours = 24; 
-            if(hlStr.includes('m') && !hlStr.includes('Mo')) hlHours = parseFloat(hlStr) / 60 || 0.5;
-            else if(hlStr.includes('h')) hlHours = parseFloat(hlStr) || 4;
-            else if(hlStr.includes('Tag')) hlHours = (parseFloat(hlStr) || 1) * 24;
-            else if(hlStr.includes('Kurz')) hlHours = 1;
-            else if(hlStr.includes('Lang')) hlHours = 72;
-
-            const doseMg = parseFloat(document.getElementById('calc-dose-mg-0')?.value) || 0.25;
+            const chartColors = [
+                { border: '#38bdf8', bg: 'rgba(56, 189, 248, 0.1)' }, // Accent (Blue)
+                { border: '#10b981', bg: 'rgba(16, 185, 129, 0.1)' }, // Success (Emerald)
+                { border: '#f59e0b', bg: 'rgba(245, 158, 11, 0.1)' }, // Warning (Amber)
+                { border: '#c026d3', bg: 'rgba(192, 38, 211, 0.1)' }  // Purple
+            ];
 
             let labels = [];
-            let data = [];
-            let currentLevel = 0;
-            
-            // Simulation über 14 Tage
-            for (let day = 0; day < 14; day++) {
-                for (let hour = 0; hour < 24; hour++) {
-                    if (hour === 0) currentLevel += doseMg; // Tägliche Injektion
-                    currentLevel = currentLevel * Math.pow(0.5, 1 / hlHours); // Exponentialer Zerfall
-                    
-                    if (hour === 0 || hour === 12) { 
-                        labels.push(`Tag ${day+1} (${hour}h)`);
-                        data.push(currentLevel);
-                    }
+            // Wir erzeugen Labels für jede Stunde in 14 Tagen (336 Stunden)
+            for (let h = 0; h <= 336; h++) {
+                if (h % 24 === 0) {
+                    labels.push(`Tag ${h/24 + 1}`);
+                } else {
+                    labels.push(`${h % 24}h`); // Verstecken wir später in den Optionen, dient aber für den Tooltip
                 }
             }
+
+            let datasets = [];
+
+            // Helfer-Funktion: Liest aus dem String (z.B. "1-2x/Tag") den Rhythmus in Stunden aus
+            function getIntervalHours(freq) {
+                let f = freq.toLowerCase();
+                if(f.includes('3x/tag') || f.includes('3x/täglich') || f.includes('3x am tag')) return 8;
+                if(f.includes('2x/tag') || f.includes('1-2x/tag') || f.includes('2x täglich')) return 12;
+                if(f.includes('4x/tag')) return 6;
+                if(f.includes('alle 2 tage') || f.includes('jeden 2. tag')) return 48;
+                if(f.includes('2x/wo')) return 84; // ca. 3.5 Tage
+                if(f.includes('3x/wo')) return 56;
+                if(f.includes('1x/wo') || f.includes('wöchentlich')) return 168; // 7 Tage
+                if(f.includes('einmalig')) return 999;
+                return 24; // Standard: 1x pro Tag
+            }
+
+            activeSubstances.forEach((sub, i) => {
+                let hlStr = sub.pep[9].halflife;
+                let hlHours = 24; 
+                if(hlStr.includes('m') && !hlStr.includes('Mo')) hlHours = parseFloat(hlStr) / 60 || 0.5;
+                else if(hlStr.includes('h')) hlHours = parseFloat(hlStr) || 4;
+                else if(hlStr.includes('Tag')) hlHours = (parseFloat(hlStr) || 1) * 24;
+                else if(hlStr.includes('Kurz')) hlHours = 1;
+                else if(hlStr.includes('Lang')) hlHours = 72;
+
+                const intervalHours = getIntervalHours(sub.pep[9].freq);
+                const decayPerHour = Math.pow(0.5, 1 / hlHours);
+
+                let data = [];
+                let currentLevel = 0;
+                
+                // Simulation exakt nach Einnahme-Rhythmus über 14 Tage
+                for (let h = 0; h <= 336; h++) {
+                    // Ist es Zeit für eine neue Injektion?
+                    if (h % intervalHours === 0) {
+                        currentLevel += sub.dose;
+                    }
+                    data.push(currentLevel);
+                    // Zerfall für die nächste Stunde berechnen
+                    currentLevel *= decayPerHour;
+                }
+
+                const color = chartColors[i % chartColors.length];
+
+                datasets.push({
+                    label: `${sub.pep[2]} (mg)`,
+                    data: data,
+                    borderColor: color.border,
+                    backgroundColor: color.bg,
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.3,
+                    pointRadius: 0,
+                    pointHoverRadius: 5
+                });
+
+                if (insightsContainer) {
+                    let freqStr = sub.pep[9].freq;
+                    let timingStr = sub.pep[9].timing;
+                    
+                    let dropTime = 2 * hlHours;
+                    let dropStr = dropTime + " h";
+                    if (dropTime > 48) {
+                        dropStr = (dropTime / 24).toFixed(1) + " Tage";
+                    } else if (dropTime < 1) {
+                        dropStr = Math.round(dropTime * 60) + " min";
+                    } else {
+                        dropStr = Math.round(dropTime) + " h";
+                    }
+                    
+                    // --- NEU: Berechnung für vollständigen Abbau (5.5 Halbwertszeiten) ---
+                    let clearanceTime = 5.5 * hlHours;
+                    let clearanceStr = clearanceTime + " h";
+                    if (clearanceTime > 48) {
+                        clearanceStr = (clearanceTime / 24).toFixed(1) + " Tage";
+                    } else if (clearanceTime < 1) {
+                        clearanceStr = Math.round(clearanceTime * 60) + " min";
+                    } else {
+                        clearanceStr = Math.round(clearanceTime) + " h";
+                    }
+
+                    insightsContainer.innerHTML += `
+                        <div class="bg-slate-800/40 p-4 rounded-xl border-l-2 shadow-inner hover:bg-slate-800/60 transition-colors" style="border-left-color: ${color.border}">
+                            <div class="flex justify-between items-start mb-3">
+                                <h4 class="font-bold text-white text-sm truncate pr-2" title="${sub.pep[2]}">${sub.pep[2]}</h4>
+                                <span class="text-[9px] px-2 py-0.5 rounded bg-slate-900 border border-white/5 text-slate-300 font-mono flex-shrink-0">${sub.dose.toFixed(2)} mg</span>
+                            </div>
+                            <div class="space-y-2">
+                                <div class="flex justify-between text-xs items-center bg-slate-900/50 px-2.5 py-1.5 rounded-lg border border-white/5" title="Wirkungsabfall unter 25% (2 Halbwertszeiten)">
+                                    <span class="text-slate-400">Abfall (<25%):</span>
+                                    <span class="font-bold text-rose-400">nach ${dropStr}</span>
+                                </div>
+                                <div class="flex justify-between text-xs items-center bg-slate-900/50 px-2.5 py-1.5 rounded-lg border border-white/5" title="Klinisch vollständig abgebaut (5.5 Halbwertszeiten)">
+                                    <span class="text-slate-400">Komplett abgebaut:</span>
+                                    <span class="font-bold text-slate-300">nach ${clearanceStr}</span>
+                                </div>
+                                <div class="flex justify-between text-xs items-center bg-slate-900/50 px-2.5 py-1.5 rounded-lg border border-white/5">
+                                    <span class="text-slate-400">Erneute Gabe:</span>
+                                    <span class="font-bold text-emerald-400">${freqStr}</span>
+                                </div>
+                                <div class="flex justify-between text-xs items-center bg-slate-900/50 px-2.5 py-1.5 rounded-lg border border-white/5">
+                                    <span class="text-slate-400">Tageszeit:</span>
+                                    <span class="font-bold text-brand-400">${timingStr}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+            });
 
             if (pkChartInstance) {
                 pkChartInstance.destroy();
@@ -2221,24 +2343,49 @@
                 type: 'line',
                 data: {
                     labels: labels,
-                    datasets: [{
-                        label: 'Plasma-Level (mg)',
-                        data: data,
-                        borderColor: '#38bdf8',
-                        backgroundColor: 'rgba(56, 189, 248, 0.1)',
-                        borderWidth: 2,
-                        fill: true,
-                        tension: 0.4,
-                        pointRadius: 0
-                    }]
+                    datasets: datasets
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: { legend: { display: false }, tooltip: { mode: 'index', intersect: false } },
+                    plugins: { 
+                        legend: { 
+                            display: true,
+                            labels: { color: '#94a3b8', font: { size: 10, family: "'Plus Jakarta Sans', sans-serif" }, usePointStyle: true, boxWidth: 6 }
+                        }, 
+                        tooltip: { 
+                            mode: 'index', 
+                            intersect: false,
+                            callbacks: {
+                                title: function(tooltipItems) {
+                                    const index = tooltipItems[0].dataIndex;
+                                    const day = Math.floor(index / 24) + 1;
+                                    const hour = index % 24;
+                                    return `Tag ${day} - ${hour} Uhr`;
+                                }
+                            }
+                        } 
+                    },
                     scales: {
-                        x: { display: false },
+                        x: { 
+                            display: true,
+                            grid: { color: 'rgba(255, 255, 255, 0.05)', drawTicks: false },
+                            ticks: { 
+                                color: '#64748b',
+                                font: { size: 10, weight: 'bold' },
+                                maxRotation: 0,
+                                autoSkip: false,
+                                callback: function(val, index) {
+                                    // Zeigt nur die Labels an, die glatt durch 24 teilbar sind (also die Tage)
+                                    return index % 24 === 0 ? labels[index] : null;
+                                }
+                            }
+                        },
                         y: { beginAtZero: true, grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { color: '#94a3b8' } }
+                    },
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
                     }
                 }
             });
