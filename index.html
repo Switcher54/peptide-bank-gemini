@@ -382,40 +382,32 @@
             <div class="glass-card rounded-3xl p-6 lg:p-10">
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
                     
-                    <div class="flex justify-center items-center relative bg-slate-900/50 rounded-2xl border border-slate-800 p-4 overflow-hidden min-h-[450px]">
-                        <div id="threejs-container" class="absolute inset-0 w-full h-full opacity-60 mix-blend-screen pointer-events-none z-0"></div>
+                    <!-- NEUER 3D CONTAINER -->
+                    <div class="flex justify-center items-center relative bg-slate-900/80 rounded-2xl border border-slate-700/50 overflow-hidden min-h-[450px] shadow-[inset_0_0_50px_rgba(0,0,0,0.5)] cursor-move group">
                         
-                        <svg viewBox="0 0 200 400" class="w-full max-w-[300px] drop-shadow-2xl z-10 relative pointer-events-auto">
-                            <!-- Silhouette Base -->
-                            <path d="M70,40 Q100,10 130,40 L140,80 Q160,90 170,120 L160,220 L135,220 L130,180 L130,350 Q100,380 95,350 L95,230 L90,230 L90,350 Q60,380 55,350 L55,180 L50,220 L25,220 L15,120 Q25,90 45,80 Z" fill="#1e293b" stroke="#334155" stroke-width="2" />
-                            
-                            <!-- Subkutan (Bauch/Hüfte) - Green -->
-                            <circle cx="100" cy="180" r="22" class="map-zone map-subq" onclick="showMapInfo('subq-bauch')" />
-                            <circle cx="100" cy="180" r="4" fill="#10b981" class="animate-ping-slow pointer-events-none" />
-                            <circle cx="100" cy="180" r="2" fill="#fff" class="pointer-events-none" />
-                            
-                            <ellipse cx="65" cy="185" rx="12" ry="18" class="map-zone map-subq" onclick="showMapInfo('subq-love')" />
-                            <ellipse cx="130" cy="185" rx="12" ry="18" class="map-zone map-subq" onclick="showMapInfo('subq-love')" />
-                            
-                            <!-- Intramuskulär (Schulter) - Blue -->
-                            <circle cx="35" cy="115" r="14" class="map-zone map-im" onclick="showMapInfo('im-schulter')" />
-                            <circle cx="35" cy="115" r="3" fill="#38bdf8" class="animate-ping-slow pointer-events-none" />
-                            <circle cx="160" cy="115" r="14" class="map-zone map-im" onclick="showMapInfo('im-schulter')" />
-                            <circle cx="160" cy="115" r="3" fill="#38bdf8" class="animate-ping-slow pointer-events-none" />
-                            
-                            <!-- Intramuskulär (Oberschenkel) - Blue -->
-                            <ellipse cx="70" cy="280" rx="12" ry="30" class="map-zone map-im" onclick="showMapInfo('im-bein')" />
-                            <ellipse cx="125" cy="280" rx="12" ry="30" class="map-zone map-im" onclick="showMapInfo('im-bein')" />
-                        </svg>
+                        <!-- 3D Canvas -->
+                        <div id="threejs-container" class="absolute inset-0 w-full h-full z-10 touch-none"></div>
+                        
+                        <!-- Lade-Animation -->
+                        <div id="threejs-loading" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-3 z-20 transition-opacity duration-500">
+                            <div class="w-8 h-8 border-4 border-brand-500 border-t-transparent rounded-full animate-spin"></div>
+                            <span class="text-xs text-brand-400 font-bold uppercase tracking-widest bg-slate-900/80 px-3 py-1 rounded-full backdrop-blur-sm">Initialisiere Engine...</span>
+                        </div>
+                        
+                        <!-- UI Overlay Hint -->
+                        <div class="absolute top-4 right-4 bg-brand-500/20 text-brand-300 border border-brand-500/30 px-3 py-1.5 rounded-full text-[10px] font-bold z-20 pointer-events-none flex items-center gap-1.5 backdrop-blur-md opacity-70 group-hover:opacity-100 transition-opacity">
+                            <span>👆</span> Ziehen zum Rotieren
+                        </div>
 
-                        <div class="absolute bottom-4 left-4 bg-slate-900/90 border border-slate-700 p-3 rounded-xl backdrop-blur-md text-xs space-y-2 z-20">
+                        <!-- Legende -->
+                        <div class="absolute bottom-4 left-4 bg-slate-900/90 border border-slate-700 p-3 rounded-xl backdrop-blur-md text-xs space-y-2 z-20 pointer-events-none shadow-xl">
                             <div class="flex items-center gap-2">
-                                <div class="w-3 h-3 rounded-full bg-emerald-500/50 border border-emerald-500 shadow-glow-success"></div>
-                                <span class="text-slate-300 font-bold">Subkutan (SC)</span>
+                                <div class="w-3 h-3 rounded-full bg-emerald-500 border border-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.8)] animate-pulse-slow"></div>
+                                <span class="text-slate-200 font-bold">Subkutan (SC)</span>
                             </div>
                             <div class="flex items-center gap-2">
-                                <div class="w-3 h-3 rounded-full bg-accent/50 border border-accent shadow-glow-accent"></div>
-                                <span class="text-slate-300 font-bold">Intramuskulär (IM)</span>
+                                <div class="w-3 h-3 rounded-full bg-accent border border-accent shadow-[0_0_10px_rgba(56,189,248,0.8)] animate-pulse-slow"></div>
+                                <span class="text-slate-200 font-bold">Intramuskulär (IM)</span>
                             </div>
                         </div>
                     </div>
@@ -3043,169 +3035,247 @@
             const container = document.getElementById('threejs-container');
             const loading = document.getElementById('threejs-loading');
             if(!container || typeof THREE === 'undefined') return;
-
-            container.innerHTML = '<div id="threejs-loading" class="absolute top-4 left-4 text-[10px] text-slate-500 z-10">3D-Modell aktiv</div>';
             
+            // Verhindere doppeltes Initialisieren
+            if(container.innerHTML !== '') return;
+
             const scene = new THREE.Scene();
             
-            const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
-            camera.position.set(0, 0, 12);
+            // Kamera anpassen, etwas tiefer fokussieren
+            const camera = new THREE.PerspectiveCamera(40, container.clientWidth / container.clientHeight, 0.1, 1000);
+            camera.position.set(0, 1.5, 17);
 
             const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
             renderer.setSize(container.clientWidth, container.clientHeight);
-            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Performance Boost
             container.appendChild(renderer.domElement);
 
             const controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.target.set(0, 1.5, 0); // Fokus auf Rumpfmitte
             controls.enableZoom = true;
-            controls.minDistance = 5;
-            controls.maxDistance = 20;
+            controls.minDistance = 6;
+            controls.maxDistance = 25;
             controls.enablePan = false;
-            controls.minPolarAngle = Math.PI/2 - 0.5;
-            controls.maxPolarAngle = Math.PI/2 + 0.5;
-            controls.autoRotate = true;
-            controls.autoRotateSpeed = 1.5;
+            // Beschränke Kamera auf vorderen bis leicht seitlichen Bereich
+            controls.minPolarAngle = Math.PI/2 - 0.6;
+            controls.maxPolarAngle = Math.PI/2 + 0.6;
+            controls.autoRotate = false; // Manuelles Ziehen
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
 
             const bodyGroup = new THREE.Group();
             
-            const glassMaterial = new THREE.MeshPhysicalMaterial({
-                color: 0x1e293b,
-                metalness: 0.8,
-                roughness: 0.2,
-                transmission: 0.9,
+            // High-End Medical Phantom Material (Lichtbrechung, Glas, organisch)
+            const bodyMat = new THREE.MeshPhysicalMaterial({
+                color: 0x0f172a,      
+                metalness: 0.1,       
+                roughness: 0.2,       
+                transmission: 0.6,    // Simuliert dicke Glas/Gel-Struktur
+                ior: 1.6,             // Index of Refraction
+                thickness: 2.0,       // Unterdrückt Streulicht
+                clearcoat: 1.0,       // Nasse/glänzende Oberfläche
+                clearcoatRoughness: 0.1,
                 transparent: true,
-                opacity: 0.5,
-                wireframe: true,
-                wireframeLinewidth: 1
+                opacity: 0.9,
+                side: THREE.DoubleSide
             });
 
-            // Torso Parts
-            const head = new THREE.Mesh(new THREE.SphereGeometry(0.8, 16, 16), glassMaterial);
-            head.position.set(0, 4.2, 0);
-            bodyGroup.add(head);
+            // Hilfsfunktion für hoch-organische Körperteile
+            const addPart = (geo, x, y, z, scaleX=1, scaleY=1, scaleZ=1, rotX=0, rotY=0, rotZ=0) => {
+                const mesh = new THREE.Mesh(geo, bodyMat);
+                mesh.position.set(x, y, z);
+                mesh.scale.set(scaleX, scaleY, scaleZ);
+                mesh.rotation.set(rotX, rotY, rotZ);
+                bodyGroup.add(mesh);
+                return mesh;
+            };
 
-            const chest = new THREE.Mesh(new THREE.CylinderGeometry(1.4, 1.1, 2.8, 16), glassMaterial);
-            chest.position.y = 1.8;
-            bodyGroup.add(chest);
+            const sphere = new THREE.SphereGeometry(1, 64, 64); // High-Res Kugeln
+            const cyl = new THREE.CylinderGeometry(1, 1, 1, 64);
 
-            const abdomen = new THREE.Mesh(new THREE.CylinderGeometry(1.1, 1.2, 2.2, 16), glassMaterial);
-            abdomen.position.y = -0.7;
-            bodyGroup.add(abdomen);
+            // Anatomisch detaillierter Körperaufbau
+            // Kopf & Hals
+            addPart(sphere, 0, 6.4, 0, 0.7, 0.9, 0.75); 
+            addPart(cyl, 0, 5.4, 0, 0.28, 0.8, 0.28); 
+            
+            // Torso Base
+            addPart(sphere, 0, 4.2, 0, 1.3, 1.1, 0.8); 
+            // Brustmuskeln (Pectorals) für Definition
+            addPart(sphere, -0.5, 4.3, 0.65, 0.6, 0.4, 0.2, 0.1, 0, -0.1); 
+            addPart(sphere, 0.5, 4.3, 0.65, 0.6, 0.4, 0.2, 0.1, 0, 0.1); 
+            
+            // Bauch & Taille (Abs)
+            addPart(cyl, 0, 2.7, 0, 1.0, 1.8, 0.7); 
+            addPart(sphere, 0, 2.7, 0.6, 0.8, 1.0, 0.2); // Leichte Bauchwölbung
+            
+            // Becken & Gluteus
+            addPart(sphere, 0, 1.2, 0, 1.25, 0.9, 0.8); 
+            addPart(sphere, -0.5, 1.2, -0.5, 0.55, 0.65, 0.55, -0.2, 0, 0); // Gluteus L
+            addPart(sphere, 0.5, 1.2, -0.5, 0.55, 0.65, 0.55, -0.2, 0, 0);  // Gluteus R
 
-            const shoulderL = new THREE.Mesh(new THREE.SphereGeometry(0.7, 16, 16), glassMaterial);
-            shoulderL.position.set(-1.8, 2.8, 0);
-            bodyGroup.add(shoulderL);
+            // Schultern (Deltoids)
+            addPart(sphere, -1.5, 4.4, 0, 0.55, 0.65, 0.55, 0, 0, 0.2);
+            addPart(sphere, 1.5, 4.4, 0, 0.55, 0.65, 0.55, 0, 0, -0.2);
 
-            const shoulderR = new THREE.Mesh(new THREE.SphereGeometry(0.7, 16, 16), glassMaterial);
-            shoulderR.position.set(1.8, 2.8, 0);
-            bodyGroup.add(shoulderR);
+            // Arme (Bizeps & Unterarme)
+            addPart(sphere, -1.8, 3.0, 0, 0.35, 1.0, 0.35, 0, 0, 0.15); // Oberarm L
+            addPart(sphere, 1.8, 3.0, 0, 0.35, 1.0, 0.35, 0, 0, -0.15); // Oberarm R
+            addPart(sphere, -2.05, 1.8, 0, 0.25, 0.25, 0.25); // Ellbogen L
+            addPart(sphere, 2.05, 1.8, 0, 0.25, 0.25, 0.25);  // Ellbogen R
+            addPart(cyl, -2.15, 0.7, 0, 0.22, 1.2, 0.22, 0, 0, 0.05); // Unterarm L
+            addPart(cyl, 2.15, 0.7, 0, 0.22, 1.2, 0.22, 0, 0, -0.05); // Unterarm R
 
-            const legGeo = new THREE.CylinderGeometry(0.6, 0.45, 3.5, 12);
-            const legL = new THREE.Mesh(legGeo, glassMaterial);
-            legL.position.set(-0.65, -3.5, 0);
-            bodyGroup.add(legL);
-
-            const legR = new THREE.Mesh(legGeo, glassMaterial);
-            legR.position.set(0.65, -3.5, 0);
-            bodyGroup.add(legR);
+            // Beine (Oberschenkel, Knie, Waden)
+            addPart(sphere, -0.65, -0.4, 0.1, 0.55, 1.4, 0.55, 0, 0, -0.05); // Quad L
+            addPart(sphere, 0.65, -0.4, 0.1, 0.55, 1.4, 0.55, 0, 0, 0.05);   // Quad R
+            addPart(sphere, -0.75, -2.1, 0.15, 0.3, 0.35, 0.3); // Knie L
+            addPart(sphere, 0.75, -2.1, 0.15, 0.3, 0.35, 0.3);  // Knie R
+            addPart(sphere, -0.8, -3.5, 0, 0.35, 1.1, 0.4, 0.05, 0, 0); // Wade L
+            addPart(sphere, 0.8, -3.5, 0, 0.35, 1.1, 0.4, 0.05, 0, 0);  // Wade R
 
             scene.add(bodyGroup);
 
-            // Lighting
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+            // Studio Lighting Setup (starkes Rim Lighting für Konturen)
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
             scene.add(ambientLight);
 
-            const dirLight = new THREE.DirectionalLight(0x818cf8, 2);
-            dirLight.position.set(5, 5, 5);
+            const dirLight = new THREE.DirectionalLight(0x818cf8, 4);
+            dirLight.position.set(5, 10, 5);
             scene.add(dirLight);
 
-            const backLight = new THREE.DirectionalLight(0x38bdf8, 1.5);
-            backLight.position.set(-5, 5, -5);
+            const backLight = new THREE.DirectionalLight(0x38bdf8, 5);
+            backLight.position.set(-8, 5, -8);
             scene.add(backLight);
+            
+            const fillLight = new THREE.PointLight(0x10b981, 2, 20);
+            fillLight.position.set(0, 2, 8);
+            scene.add(fillLight);
 
-            // Hotspots
+            // Hotspots (Injektionszonen)
             const points = [];
-            const createPoint = (x, y, z, color, zoneId) => {
+            const createPoint = (x, y, z, colorHex, zoneId) => {
                 const geo = new THREE.SphereGeometry(0.2, 16, 16);
-                const mat = new THREE.MeshBasicMaterial({ color: color });
+                const mat = new THREE.MeshBasicMaterial({ color: colorHex });
                 const mesh = new THREE.Mesh(geo, mat);
                 mesh.position.set(x, y, z);
                 mesh.userData = { zoneId: zoneId };
                 
-                const halo = new THREE.Mesh(
-                    new THREE.SphereGeometry(0.35, 16, 16),
-                    new THREE.MeshBasicMaterial({ color: color, transparent: true, opacity: 0.3 })
-                );
+                // Pulsierender Halo-Effekt
+                const haloGeo = new THREE.SphereGeometry(0.35, 16, 16);
+                const haloMat = new THREE.MeshBasicMaterial({ 
+                    color: colorHex, 
+                    transparent: true, 
+                    opacity: 0.4,
+                    blending: THREE.AdditiveBlending
+                });
+                const halo = new THREE.Mesh(haloGeo, haloMat);
                 mesh.add(halo);
+
+                // Äußerer Glow
+                const glowGeo = new THREE.SphereGeometry(0.5, 16, 16);
+                const glowMat = new THREE.MeshBasicMaterial({ 
+                    color: colorHex, 
+                    transparent: true, 
+                    opacity: 0.15,
+                    blending: THREE.AdditiveBlending
+                });
+                const glow = new THREE.Mesh(glowGeo, glowMat);
+                mesh.add(glow);
 
                 bodyGroup.add(mesh);
                 points.push(mesh);
             };
 
-            const COLOR_SUBQ = 0x10b981; 
-            const COLOR_IM = 0x38bdf8;   
+            const COLOR_SUBQ = 0x10b981; // Emerald (Subkutan)
+            const COLOR_IM = 0x38bdf8;   // Light Blue (Intramuskulär)
 
-            createPoint(0, -0.7, 1.25, COLOR_SUBQ, 'subq-bauch');
-            createPoint(-1.25, -0.7, 0.4, COLOR_SUBQ, 'subq-love');
-            createPoint(1.25, -0.7, 0.4, COLOR_SUBQ, 'subq-love');
-            createPoint(-2.0, 2.6, 0, COLOR_IM, 'im-schulter');
-            createPoint(2.0, 2.6, 0, COLOR_IM, 'im-schulter');
-            createPoint(-0.9, -2.8, 0.2, COLOR_IM, 'im-bein');
-            createPoint(0.9, -2.8, 0.2, COLOR_IM, 'im-bein');
-            // Back spots (Gluteus)
-            createPoint(-0.7, -1.2, -1.1, COLOR_IM, 'im-gluteus');
-            createPoint(0.7, -1.2, -1.1, COLOR_IM, 'im-gluteus');
+            // Angepasste Koordinaten an die neue Muskelstruktur
+            createPoint(0, 2.0, 0.95, COLOR_SUBQ, 'subq-bauch'); // Bauch
+            createPoint(-1.25, 1.8, 0.6, COLOR_SUBQ, 'subq-love'); // Hüfte L
+            createPoint(1.25, 1.8, 0.6, COLOR_SUBQ, 'subq-love'); // Hüfte R
+            createPoint(-1.7, 4.0, 0.1, COLOR_IM, 'im-schulter'); // Deltoid L
+            createPoint(1.7, 4.0, 0.1, COLOR_IM, 'im-schulter'); // Deltoid R
+            createPoint(-1.1, -0.6, 0.35, COLOR_IM, 'im-bein'); // Oberschenkel L
+            createPoint(1.1, -0.6, 0.35, COLOR_IM, 'im-bein'); // Oberschenkel R
+            createPoint(-0.7, 1.5, -0.85, COLOR_IM, 'im-gluteus'); // Gluteus L
+            createPoint(0.7, 1.5, -0.85, COLOR_IM, 'im-gluteus'); // Gluteus R
 
+            // Raycaster für Interaktionen
             const raycaster = new THREE.Raycaster();
             const mouse = new THREE.Vector2();
 
-            container.addEventListener('mousedown', () => controls.autoRotate = false);
-            
-            container.addEventListener('click', (event) => {
+            const handleInteraction = (event) => {
+                if(event.type !== 'touchend' && event.type !== 'click') return;
+
                 const rect = container.getBoundingClientRect();
-                mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-                mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+                let clientX, clientY;
+                
+                if (event.changedTouches && event.changedTouches.length > 0) {
+                    clientX = event.changedTouches[0].clientX;
+                    clientY = event.changedTouches[0].clientY;
+                } else if(event.clientX !== undefined) {
+                    clientX = event.clientX;
+                    clientY = event.clientY;
+                } else {
+                    return;
+                }
+
+                mouse.x = ((clientX - rect.left) / rect.width) * 2 - 1;
+                mouse.y = -((clientY - rect.top) / rect.height) * 2 + 1;
 
                 raycaster.setFromCamera(mouse, camera);
-                const intersects = raycaster.intersectObjects(points);
+                const intersects = raycaster.intersectObjects(points, true);
 
                 if (intersects.length > 0) {
-                    controls.autoRotate = false;
-                    const zoneId = intersects[0].object.userData.zoneId;
-                    showMapInfo(zoneId);
-                    
-                    const obj = intersects[0].object;
-                    const origScale = obj.scale.clone();
-                    obj.scale.set(1.5, 1.5, 1.5);
-                    setTimeout(() => obj.scale.copy(origScale), 200);
+                    let obj = intersects[0].object;
+                    if(obj.userData.zoneId === undefined && obj.parent && obj.parent.userData.zoneId) {
+                        obj = obj.parent;
+                    }
+
+                    const zoneId = obj.userData.zoneId;
+                    if(zoneId) {
+                        showMapInfo(zoneId);
+                        
+                        const origScale = obj.scale.clone();
+                        obj.scale.set(1.5, 1.5, 1.5);
+                        setTimeout(() => obj.scale.copy(origScale), 200);
+                    }
                 }
-            });
+            };
+
+            container.addEventListener('click', handleInteraction);
+            container.addEventListener('touchend', handleInteraction, {passive: true});
 
             window.addEventListener('resize', () => {
-                if(!container) return;
+                if(!container || container.clientWidth === 0) return;
                 camera.aspect = container.clientWidth / container.clientHeight;
                 camera.updateProjectionMatrix();
                 renderer.setSize(container.clientWidth, container.clientHeight);
             });
 
-            if(loading) loading.style.display = 'none';
+            if(loading) {
+                loading.style.opacity = '0';
+                setTimeout(() => loading.style.display = 'none', 500);
+            }
 
             const clock = new THREE.Clock();
+            
             function animate() {
                 requestAnimationFrame(animate);
                 
-                // --- FIX: Performance-Optimierung (Pausiert 3D, wenn unsichtbar) ---
                 const mapView = document.getElementById('view-map');
                 if (mapView && mapView.classList.contains('hidden')) return;
-                // -------------------------------------------------------------------
 
                 controls.update();
                 
                 const t = clock.getElapsedTime();
                 points.forEach(p => {
-                    const scale = 1 + Math.sin(t * 4) * 0.15;
-                    p.children[0].scale.set(scale, scale, scale); 
+                    const scale = 1 + Math.sin(t * 3) * 0.15; 
+                    if(p.children.length > 0) p.children[0].scale.set(scale, scale, scale); 
+                    if(p.children.length > 1) p.children[1].scale.set(scale * 1.1, scale * 1.1, scale * 1.1);
                 });
+
+                bodyGroup.position.y = Math.sin(t) * 0.05; // Sehr weiches Atmen
 
                 renderer.render(scene, camera);
             }
