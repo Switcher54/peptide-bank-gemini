@@ -117,13 +117,13 @@
     <div id="custom-confirm" class="fixed inset-0 z-[100] hidden items-center justify-center bg-base/80 backdrop-blur-sm opacity-0 transition-opacity duration-300">
         <div class="bg-surface border border-white/10 p-6 rounded-2xl max-w-sm w-full mx-4 shadow-[0_0_40px_rgba(0,0,0,0.5)] transform scale-95 transition-transform duration-300" id="custom-confirm-box">
             <div class="flex items-center gap-3 mb-4">
-                <span class="text-2xl">⚠️</span>
+                <span class="text-2xl" id="confirm-icon">⚠️</span>
                 <h3 class="text-lg font-bold text-white" id="confirm-title">Bestätigung</h3>
             </div>
             <p class="text-sm text-slate-300 mb-6 leading-relaxed" id="confirm-msg">Möchtest du wirklich fortfahren?</p>
             <div class="flex justify-end gap-3">
                 <button id="confirm-cancel" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-400 hover:bg-white/5 transition-colors">Abbrechen</button>
-                <button id="confirm-ok" class="px-4 py-2 rounded-xl text-xs font-bold bg-danger/20 text-danger border border-danger/50 hover:bg-danger hover:text-white transition-all shadow-glow-danger">Bestätigen</button>
+                <button id="confirm-ok" class="px-4 py-2 rounded-xl text-xs font-bold bg-brand-500/20 text-brand-400 border border-brand-500/50 hover:bg-brand-500 hover:text-white transition-all shadow-glow-brand">Bestätigen</button>
             </div>
         </div>
     </div>
@@ -375,7 +375,6 @@
                     </div>
                 </div>
                 
-                <!-- NEW: Smart Insights Container for Re-dosing -->
                 <div id="pk-insights" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
                 </div>
             </div>
@@ -390,19 +389,16 @@
             <div class="glass-card rounded-3xl p-6 lg:p-10">
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
                     
-                    <!-- NEUER 3D CONTAINER -->
                     <div class="flex justify-center items-center relative bg-slate-900/80 rounded-2xl border border-slate-700/50 overflow-hidden min-h-[450px] shadow-[inset_0_0_50px_rgba(0,0,0,0.5)] cursor-move group">
                         
                         <!-- 3D Canvas -->
                         <div id="threejs-container" class="absolute inset-0 w-full h-full z-10 touch-none"></div>
                         
-                        <!-- Lade-Animation -->
                         <div id="threejs-loading" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-3 z-20 transition-opacity duration-500">
                             <div class="w-8 h-8 border-4 border-brand-500 border-t-transparent rounded-full animate-spin"></div>
                             <span class="text-xs text-brand-400 font-bold uppercase tracking-widest bg-slate-900/80 px-3 py-1 rounded-full backdrop-blur-sm">Initialisiere Engine...</span>
                         </div>
                         
-                        <!-- UI Overlay Hint -->
                         <div class="absolute top-4 right-4 bg-brand-500/20 text-brand-300 border border-brand-500/30 px-3 py-1.5 rounded-full text-[10px] font-bold z-20 pointer-events-none flex items-center gap-1.5 backdrop-blur-md opacity-70 group-hover:opacity-100 transition-opacity">
                             <span>👆</span> Ziehen zum Rotieren
                         </div>
@@ -702,7 +698,7 @@
                                 </div>
                             </div>
 
-                            <!-- Formular: Bio-Feedback -->
+                            <div id="trk-form-feedback" class="trk-form-section hidden space-y-4 animate-fade-in-up">
                                 <div class="grid grid-cols-3 gap-3">
                                     <div class="space-y-1">
                                         <label class="text-[10px] text-slate-300 uppercase tracking-wider font-bold">Schlaf</label>
@@ -716,12 +712,12 @@
                                             <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5" selected>5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option>
                                         </select>
                                     </div>
-                                <div class="bg-slate-900/80 p-4 rounded-xl border border-white/5 mt-4 space-y-2">
-                                    <label class="text-xs font-semibold text-slate-300 block">Protokollierte Substanz</label>
-                                    <select id="map-log-substance" class="w-full bg-slate-800 border border-slate-600 rounded-xl py-2 px-3 text-sm text-white outline-none">
-                                        <option value="">-- Keine Zuordnung --</option>
-                                    </select>
-                                    <p class="text-[10px] text-slate-500">Zieht bei Protokollierung automatisch 1 Standard-Dosis vom Bestand ab.</p>
+                                    <div class="space-y-1">
+                                        <label class="text-[10px] text-slate-300 uppercase tracking-wider font-bold">Energie</label>
+                                        <select id="trk-mood" class="w-full bg-slate-800 border border-slate-600 rounded-lg py-1.5 px-2 text-xs text-white focus:border-brand-500 outline-none cursor-pointer">
+                                            <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5" selected>5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option>
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
 
@@ -736,7 +732,6 @@
                                 Eintrag speichern
                             </button>
                         </div>
-                        <!-- Letzte Einträge -->
                         <div class="bg-slate-900/30 p-6 rounded-2xl border border-white/5">
                             <div class="flex justify-between items-center mb-4 border-b border-white/5 pb-2">
                                 <h3 class="text-sm font-bold text-white">Letzte Einträge</h3>
@@ -1026,7 +1021,6 @@
 
     </main>
 
-    <!-- Mobile Bottom Navigation Bar -->
     <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-slate-900/90 backdrop-blur-xl border-t border-white/10 z-[100] px-2 py-3 pb-safe flex justify-around items-center shadow-[0_-10px_30px_rgba(0,0,0,0.5)]">
         <button onclick="router('db')" id="mob-nav-db" class="mob-nav-btn flex flex-col items-center gap-1 text-brand-400 relative drop-shadow-[0_0_8px_rgba(129,140,248,0.5)]">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
@@ -1098,7 +1092,7 @@
             ["semax","017/147","Semax","Nootropikum","neuro","NEURO","low",["BDNF- & NGF-Aktivierung im Hippocampus", "Kognition & Fokus (verbessertes Arbeitsgedächtnis)", "Neuroprotektion (eingesetzt bei ischämischem Schlaganfall)"],["Nasenschleimhautreizung (Trockenheit, Brennen)", "Schlafstörungen/Insomnie bei später Anwendung", "Theoretisches/anekdotisches Haarausfall-Risiko durch BDNF-Erhöhung"],{starter:"100mcg",normal:"300mcg",max:"1000mcg",freq:"1-2x/Tag",form:"Nasal",timing:"Morgens",cycle:"4 Wo",halflife:"2h"},"human","Klinisch zugelassen.",[{shop:"Europa-Peptide",price:"57.90",origin:"EU"},{shop:"Peptid24",price:"44.90",origin:"DE"},{shop:"Drakon Peptides",price:"34.90",origin:"EU"},{shop:"RCpeptides",price:"30.00",origin:"US"},{shop:"Rebirth Labs",price:"39.99",origin:"US"},{shop:"Austrian Peptides",price:"20.00",origin:"EU"},{shop:"r-phase",price:"24.90",origin:"EU"},{shop:"Kronen Peptide",price:"29.90",origin:"DE"},{shop:"Nova Labs",price:"44.99",origin:"EU"},{shop:"Helus Lab",price:"24.99",origin:"EU"}]],
             ["selank","018/147","Selank","Angstlöser","neuro","NEURO","low",["Anxiolyse ohne Sedierung (GABA-Modulation)", "Hemmt den Abbau körpereigener Enkephaline", "Positiv immunmodulatorisch auf Zytokinprofil (IL-6)"],["Milde Müdigkeit/Benommenheit bei hoher Dosis", "Lokale Irritation bei Nasalspray-Anwendung", "Geringe westliche Zulassungsevidenz"],{starter:"250mcg",normal:"500mcg",max:"3000mcg",freq:"1-3x/Tag",form:"Nasal",timing:"Bedarf",cycle:"4 Wo",halflife:"1.5h"},"human","Klinische Trials.",[{shop:"Europa-Peptide",price:"57.90",origin:"EU"},{shop:"Drakon Peptides",price:"39.90",origin:"EU"},{shop:"RCpeptides",price:"30.00",origin:"US"},{shop:"Premium Research Peptides",price:"27.20",origin:"EU"},{shop:"Rebirth Labs",price:"39.99",origin:"US"},{shop:"Austrian Peptides",price:"40.00",origin:"EU"},{shop:"r-phase",price:"23.99",origin:"EU"},{shop:"Kronen Peptide",price:"29.90",origin:"DE"},{shop:"Nova Labs",price:"44.99",origin:"EU"},{shop:"Helus Lab",price:"24.99",origin:"EU"}]],
             ["glutathione","019/147","Glutathion","Antioxidans","aging","ANTI-AGING","low",["Endogenes Antioxidans (neutralisiert freie Radikale)", "Hepatische Entgiftung (Phase-II-Biotransformation)", "Hautaufhellung (Inhibition der Tyrosinase)"],["Magen-Darm-Beschwerden bei oraler Gabe", "Bronchospasmus-Risiko bei Asthmatikern (inhalativ)", "Zinkmangel bei Langzeit-Hochdosistherapie"],{starter:"100mg",normal:"200mg",max:"600mg",freq:"1x/Tag",form:"IV/Subkutan",timing:"Morgens",cycle:"Dauerhaft",halflife:"Kurz"},"human","Leberstoffwechsel.",[{shop:"Rebirth Labs",price:"40.00",origin:"US"},{shop:"Austrian Peptides",price:"30.00",origin:"EU"},{shop:"Helus Lab",price:"29.99",origin:"EU"}]],
-            ["slupp332","020/147","SLU-PP-332","Exercise Mimetic","gewicht","GEWICHT","med",["ERR-Agonismus (imitiert Ausdauertraining)", "Mitochondriale Biogenese in der Skelettmuskulatur", "Beschleunigte Fettsäureoxidation (Fettabbau)"],["Keine Human-Sicherheitsdaten (reines Forschungssubstrat)", "Unbekanntes Kardiorisiko (Myokard-Einfluss)", "Metabolische Dysregulation bei Daueraktivierung"],{starter:"300mcg",normal:"1mg",max:"2mg",freq:"1x/Tag",form:"Oral",timing:"Morgens",cycle:"4-8 Wo",halflife:"12h"},"invitro","Science 2023.",[{shop:"Europa-Peptide",price:"79.90",origin:"EU"},{shop:"RCpeptides",price:"80.00",origin:"US"},{shop:"Premium Research Peptides",price:"89.99",origin:"EU"},{shop:"Rebirth Labs",price:"134.99",origin:"US"},{shop:"Austrian Peptides",price:"35.00",origin:"EU"},{shop:"Kronen Peptide",price:"36.90",origin:"DE"},{shop:"odipept",price:"119.00",origin:"DE"},{shop:"Slavic Labs",price:"69.07",origin:"EU"},{shop:"Helus Lab",price:"149.99",origin:"EU"}]],
+            ["slupp332","020/147","SLU-PP-332","Exercise Mimetic (Lyo / Pellets)","gewicht","GEWICHT","med",["ERR-Agonismus (imitiert Ausdauertraining)", "Mitochondriale Biogenese in der Skelettmuskulatur", "Beschleunigte Fettsäureoxidation (Fettabbau)"],["Keine Human-Sicherheitsdaten (reines Forschungssubstrat)", "Unbekanntes Kardiorisiko (Myokard-Einfluss)", "Metabolische Dysregulation bei Daueraktivierung", "Magenbeschwerden bei oraler Einnahme"],{starter:"1mg (Inj) / 10mg (Oral)",normal:"2mg (Inj) / 20mg (Oral)",max:"4mg (Inj) / 30mg (Oral)",freq:"1x/Tag",form:"Subkutan / Oral",timing:"Morgens",cycle:"4-8 Wo",halflife:"12h"},"invitro","Science 2023.",[{shop:"Europa-Peptide",price:"79.90",origin:"EU"},{shop:"RCpeptides",price:"80.00",origin:"US"},{shop:"Premium Research Peptides",price:"89.99",origin:"EU"},{shop:"Rebirth Labs",price:"134.99",origin:"US"},{shop:"Austrian Peptides",price:"35.00",origin:"EU"},{shop:"Kronen Peptide",price:"36.90",origin:"DE"},{shop:"odipept",price:"119.00",origin:"DE"},{shop:"Slavic Labs",price:"69.07",origin:"EU"},{shop:"Helus Lab",price:"149.99",origin:"EU"}]],
             
             ["tesamorelin","021/147","Tesamorelin","Viszeralfett","wachstum","WACHSTUM","med",["Viszeralfett-Reduktion (FDA-zugelassen bei Lipodystrophie)", "Stimuliert pulsatile HGH-Freisetzung", "Verbesserung des Lipidprofils (senkt Triglyceride)"],["Erhöhter Nüchternblutzucker/Glukoseintoleranz", "Gelenkschmerzen & Ödeme (Flüssigkeitsretention)", "Antikörperbildung bei längerer Anwendung"],{starter:"1mg",normal:"2mg",max:"2mg",freq:"1x/Tag",form:"Subkutan",timing:"Abends",cycle:"12-24 Wo",halflife:"30m"},"human","FDA-Zulassung.",[{shop:"Europa-Peptide",price:"32.90",origin:"EU"},{shop:"Peptid24",price:"49.90",origin:"DE"},{shop:"Drakon Peptides",price:"79.90",origin:"EU"},{shop:"Premium Research Peptides",price:"81.85",origin:"EU"},{shop:"Rebirth Labs",price:"50.00",origin:"US"},{shop:"Austrian Peptides",price:"70.00",origin:"EU"},{shop:"r-phase",price:"35.99",origin:"EU"},{shop:"Kronen Peptide",price:"39.90",origin:"DE"},{shop:"Nova Labs",price:"69.99",origin:"EU"},{shop:"Helus Lab",price:"34.99",origin:"EU"}]],
             ["igf1lr3","022/147","IGF-1 LR3","Hyperplasie","wachstum","WACHSTUM","high",["Induktion von Muskelhyperplasie (Aktivierung von Satellitenzellen)", "Starke Nährstoffpartitionierung (Glukose/AS in Muskeln)", "Verlängerte Halbwertszeit (20-30 Stunden)"],["Schwere, lebensbedrohliche Hypoglykämie", "Onkogenes Risiko (beschleunigt Tumor-/Zystenwachstum)", "Splanchnomegalie (Vergrößerung innerer Organe)"],{starter:"20mcg",normal:"50mcg",max:"100mcg",freq:"Post-Workout",form:"Subkutan",timing:"Nach Training",cycle:"4-6 Wo",halflife:"30h"},"animal","Extremes Wachstum.",[{shop:"Europa-Peptide",price:"62.90",origin:"EU"},{shop:"Peptid24",price:"44.90",origin:"DE"},{shop:"RCpeptides",price:"65.00",origin:"US"},{shop:"Rebirth Labs",price:"89.99",origin:"US"},{shop:"Austrian Peptides",price:"80.00",origin:"EU"},{shop:"Nova Labs",price:"84.99",origin:"EU"},{shop:"Helus Lab",price:"44.99",origin:"EU"}]],
@@ -1424,6 +1418,13 @@
                 if (item[0] === 'amino1mq') {
                     if (novaBiolabsPrices['amino1mqpellets']) item[12].push({ shop: "Nova Biolabs (Kapseln)", price: novaBiolabsPrices['amino1mqpellets'].toFixed(2), origin: "EU" });
                 }
+
+                // Pellets-Preise für SLU-PP-332
+                if (item[0] === 'slupp332') {
+                    if (peptidedeskPrices['slupp332pellets']) item[12].push({ shop: "Peptidedesk (Pellets)", price: peptidedeskPrices['slupp332pellets'].toFixed(2), origin: "EU" });
+                    if (primalpeptidePrices['slupp332pellets']) item[12].push({ shop: "Primalpeptide (Pellets)", price: primalpeptidePrices['slupp332pellets'].toFixed(2), origin: "EU" });
+                    if (novaBiolabsPrices['slupp332pellets']) item[12].push({ shop: "Nova Biolabs (Pellets)", price: novaBiolabsPrices['slupp332pellets'].toFixed(2), origin: "EU" });
+                }
             });
 
             // Völlig neue Peptide & Bundles am Ende anfügen
@@ -1439,7 +1440,6 @@
                 ["beyondgutpro", "152/150", "Beyond Gut Pro", "Darm-Synergie", "heilung", "REGENERATION", "low", ["Mikrobiom & Darmheilung"], ["Keine bekannt"], {starter:"1 Dosis", normal:"1 Dosis", max:"2 Dosen", freq:"Täglich", form:"Oral/Subkutan", timing:"Morgens", cycle:"4 Wo", halflife:"Kurz"}, "pilot", "Blend.", [{shop:"Beyond Peptides", price:"173.83", origin:"EU"}]],
                 ["beyondskin", "153/150", "Beyond Skin", "Haut-Synergie", "kosmetik", "KOSMETIK", "low", ["Kollagen & Hautbild"], ["Keine bekannt"], {starter:"1 Dosis", normal:"1 Dosis", max:"2 Dosen", freq:"Täglich", form:"Subkutan/Topisch", timing:"Abends", cycle:"Dauerhaft", halflife:"Lokal"}, "pilot", "Blend.", [{shop:"Beyond Peptides", price:"94.52", origin:"EU"}]],
                 ["beyondsleep", "154/150", "Beyond Sleep", "Schlaf-Synergie", "neuro", "NEURO", "low", ["Tiefschlaf & REM"], ["Morgenmüdigkeit"], {starter:"1 Dosis", normal:"1 Dosis", max:"2 Dosen", freq:"Vor Schlaf", form:"Subkutan/Nasal", timing:"Abends", cycle:"Bedarf", halflife:"Kurz"}, "pilot", "Blend.", [{shop:"Beyond Peptides", price:"43.96", origin:"EU"}]],
-                ["slupp332pellets", "155/150", "SLU-PP-332 Tabletten", "Oral Exercise Mimetic", "gewicht", "GEWICHT", "med", ["Mitochondriendichte", "Ausdauer (Oral)"], ["Magenbeschwerden"], {starter:"10mg", normal:"20mg", max:"30mg", freq:"1x/Tag", form:"Oral", timing:"Morgens", cycle:"4-8 Wo", halflife:"12h"}, "invitro", "Klinisch bewiesen.", [{shop:"Peptidedesk", price:"119.99", origin:"EU"}, {shop:"Nova Biolabs", price:"219.99", origin:"EU"}]],
                 ["eloralintide", "156/150", "Eloralintide", "GLP-1 / GIP / Glucagon / Amylin", "gewicht", "GEWICHT", "high", ["Stärkster Fettabbau"], ["Herzrasen", "Übelkeit"], {starter:"1mg", normal:"2mg", max:"5mg", freq:"1x/Wo", form:"Subkutan", timing:"Morgens", cycle:"Langzeit", halflife:"120h"}, "human", "Forschung.", [{shop:"Nova Biolabs", price:"249.99", origin:"EU"}]]
             );
         }
@@ -1505,12 +1505,12 @@
             // Update Desktop Nav
             document.querySelectorAll('.nav-btn').forEach(btn => {
                 if(btn.id !== 'nav-coupons') {
-                    btn.className = "nav-btn whitespace-nowrap px-3 py-2 rounded-full text-xs font-semibold text-slate-400 hover:text-white transition-all duration-300";
+                    btn.className = "nav-btn whitespace-nowrap shrink-0 px-3 py-2 rounded-full text-xs font-semibold text-slate-400 hover:text-white transition-all duration-300";
                 }
             });
             const activeBtn = document.getElementById('nav-' + viewId);
             if(activeBtn && viewId !== 'coupons') {
-                activeBtn.className = "nav-btn whitespace-nowrap px-3 py-2 rounded-full text-xs font-semibold transition-all duration-300 bg-brand-500 text-white shadow-md";
+                activeBtn.className = "nav-btn whitespace-nowrap shrink-0 px-3 py-2 rounded-full text-xs font-semibold transition-all duration-300 bg-brand-500 text-white shadow-md";
             }
 
             // Update Mobile Bottom Nav
@@ -1598,7 +1598,6 @@
             }
             localStorage.setItem('pep_favorites', JSON.stringify(favs));
             renderDatabase();
-            // Filter anwenden, um die aktuelle Such/Kategorie-Ansicht beizubehalten
             applyFilters();
         }
 
@@ -1654,7 +1653,6 @@
             
             let favs = JSON.parse(localStorage.getItem('pep_favorites') || '[]');
 
-            // Kopiere und sortiere RAW_DATA: Favoriten nach oben
             let sortedData = [...RAW_DATA].sort((a, b) => {
                 const aFav = favs.includes(a[0]) ? 1 : 0;
                 const bFav = favs.includes(b[0]) ? 1 : 0;
@@ -3179,6 +3177,15 @@
             }
         }
 
+        function removeInventoryItem(id) {
+            let inv = JSON.parse(localStorage.getItem('pep_inventory') || '{}');
+            if (inv[id]) {
+                delete inv[id];
+                localStorage.setItem('pep_inventory', JSON.stringify(inv));
+                renderInventory();
+            }
+        }
+
         function renderInventory() {
             const list = document.getElementById('inv-list');
             if(!list) return;
@@ -3200,13 +3207,16 @@
                 let mgLeft = (item.vials * item.mg).toFixed(1);
 
                 html += `
-                    <div class="flex items-center justify-between p-3 rounded-xl border ${bg} mb-2">
-                        <div>
+                    <div class="flex items-center justify-between p-3 rounded-xl border ${bg} mb-2 group">
+                        <div class="flex-grow">
                             <span class="font-bold ${txt} block text-sm">${name}</span>
                             <span class="text-[10px] text-slate-400">${item.vials.toFixed(2)} Vials übrig (${mgLeft} mg)</span>
                         </div>
-                        <div class="text-right">
+                        <div class="text-right flex items-center justify-end gap-4">
                             <span class="font-mono font-bold ${isCrit ? 'text-rose-400' : 'text-white'} block">${Math.floor(item.totalDays)} Tage</span>
+                            <button onclick="customConfirm('Möchtest du den Bestand für ${name.replace(/'/g, "\\'")} wirklich löschen?', () => removeInventoryItem('${id}'))" class="text-slate-500 hover:text-rose-500 transition-colors p-1" title="Diesen Bestand löschen">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                            </button>
                         </div>
                     </div>
                 `;
@@ -3257,7 +3267,7 @@
 
             if(typeof renderInjectionLog === "function") renderInjectionLog();
         }
-        // --- NEU: 3D Engine für das Body-Modell ---
+
         function initThreeJSMap() {
             const container = document.getElementById('threejs-container');
             const loading = document.getElementById('threejs-loading');
