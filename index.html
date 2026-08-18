@@ -1021,6 +1021,55 @@
 
     </main>
 
+    <!-- Prof. Dr. Pep KI Assistent -->
+    <div id="ai-chat-window" class="fixed bottom-24 right-4 sm:right-8 w-[350px] max-w-[calc(100vw-2rem)] bg-slate-900/95 backdrop-blur-xl border border-white/10 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.8)] z-[100] flex flex-col opacity-0 pointer-events-none translate-y-10 transition-all duration-300 overflow-hidden" style="height: 500px; max-height: 70vh;">
+        <!-- Header -->
+        <div class="bg-gradient-to-r from-brand-600 to-brand-500 p-4 flex justify-between items-center shadow-md relative z-10">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-lg shadow-inner">👨‍🔬</div>
+                <div>
+                    <h3 class="font-bold text-white text-sm">Prof. Dr. Pep</h3>
+                    <span class="text-[9px] text-brand-100 uppercase tracking-wider">Dein Labor-Bro</span>
+                </div>
+            </div>
+            <div class="flex gap-2">
+                <button onclick="toggleAISettings()" class="text-white/70 hover:text-white transition-colors" title="API Einstellungen"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg></button>
+                <button onclick="toggleAIChat()" class="text-white/70 hover:text-white transition-colors" title="Schließen"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+            </div>
+        </div>
+
+        <!-- Settings Area -->
+        <div id="ai-settings-area" class="hidden bg-slate-800 p-4 border-b border-white/5 shadow-inner">
+            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-2">Gemini API Schlüssel (Optional)</label>
+            <input type="password" id="ai-api-key" placeholder="AIzaSy..." class="w-full bg-slate-900 border border-slate-600 rounded-lg py-2 px-3 text-xs text-white focus:border-brand-500 outline-none font-mono mb-2">
+            <button onclick="saveAPIKey()" class="w-full bg-brand-500/20 text-brand-400 hover:bg-brand-500 hover:text-white border border-brand-500/50 py-1.5 rounded-lg text-xs font-bold transition-colors">Lokal Speichern</button>
+        </div>
+
+        <!-- Chat History -->
+        <div id="ai-messages" class="flex-grow p-4 overflow-y-auto space-y-4 scrollbar-hide bg-slate-900/50">
+            <div class="flex items-start gap-3">
+                <div class="w-6 h-6 rounded-full bg-brand-500/20 flex-shrink-0 flex items-center justify-center text-[10px]">👨‍🔬</div>
+                <div class="bg-slate-800 border border-white/5 rounded-2xl rounded-tl-sm p-3 text-xs text-slate-300 leading-relaxed shadow-sm">
+                    Gude! Ich bin Prof. Dr. Pep. Brauchst du biochemische Infos, Studien-Zusammenfassungen oder Hilfe bei Halbwertszeiten? (Ich bin ein Forscher, kein Arzt!)
+                </div>
+            </div>
+        </div>
+
+        <!-- Input Area -->
+        <div class="p-3 bg-slate-800 border-t border-white/10 flex gap-2">
+            <input type="text" id="ai-input" placeholder="Frag mich etwas..." onkeypress="if(event.key === 'Enter') sendAIMessage()" class="flex-grow bg-slate-900 border border-slate-700 rounded-xl py-2 px-3 text-xs text-white focus:border-brand-500 outline-none transition-colors">
+            <button onclick="sendAIMessage()" id="ai-send-btn" class="w-10 h-10 rounded-xl bg-brand-500 hover:bg-brand-400 text-white flex items-center justify-center transition-colors shadow-glow-brand shrink-0">
+                <svg class="w-4 h-4 translate-x-[-1px] translate-y-[1px]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Floating Action Button -->
+    <button onclick="toggleAIChat()" class="fixed bottom-24 right-4 sm:right-8 w-14 h-14 rounded-full bg-gradient-to-br from-brand-400 to-brand-600 text-white flex items-center justify-center shadow-glow-brand hover:scale-110 hover:rotate-12 transition-all duration-300 z-[90]">
+        <span class="text-2xl">👨‍🔬</span>
+    </button>
+
+    <!-- Mobile Bottom Navigation Bar -->
     <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-slate-900/90 backdrop-blur-xl border-t border-white/10 z-[100] px-2 py-3 pb-safe flex justify-around items-center shadow-[0_-10px_30px_rgba(0,0,0,0.5)]">
         <button onclick="router('db')" id="mob-nav-db" class="mob-nav-btn flex flex-col items-center gap-1 text-brand-400 relative drop-shadow-[0_0_8px_rgba(129,140,248,0.5)]">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
@@ -1500,6 +1549,13 @@
                 target.classList.add('block'); 
                 void target.offsetWidth; // Reflow for animation restart
                 target.classList.add('animate-fade-in-up');
+            }
+
+            // NEU: Fix für leere Injektions-Map (Erzwingt Neuberechnung der 3D Engine wenn Tab sichtbar wird)
+            if(viewId === 'map') {
+                setTimeout(() => {
+                    window.dispatchEvent(new Event('resize'));
+                }, 50);
             }
 
             // Update Desktop Nav
@@ -2597,99 +2653,54 @@
             if(logBtn) logBtn.style.display = 'flex';
 
             let rotationText = `
-                <li><strong>Uhren-Methode:</strong> Nimm den Bauchnabel als Mitte und rotiere jeden Tag um 2-3 cm weiter (wie bei einem Ziffernblatt).</li>
-                <li><strong>Seitenwechsel:</strong> Wechsle täglich zwischen linker und rechter Körperhälfte.</li>
+                <li><strong>Gewebe-Rotation:</strong> Verschiebe den Einstichpunkt bei jeder neuen Injektion um mindestens 2-3 cm.</li>
+                <li><strong>Seitenwechsel:</strong> Wechsle nach jeder Injektion zwischen der linken und rechten Körperhälfte.</li>
                 <li>Fühle vor der Injektion das Gewebe. Bei Verhärtungen (Knoten) die Stelle großräumig meiden.</li>
             `;
+
+            // Einheitliches Badge für alle SubQ-Zonen
+            if(badge) {
+                badge.innerText = "Subkutan (SC)";
+                badge.className = "px-2 py-0.5 rounded text-[10px] font-bold border uppercase tracking-wider mb-2 inline-block bg-emerald-500/10 text-emerald-400 border-emerald-500/20";
+            }
+            if(angle) {
+                angle.innerText = "45° (Pinch)";
+                angle.className = "font-bold text-emerald-400 text-lg";
+            }
 
             if(zoneId === 'subq-bauch') {
                 currentMapZoneTitle = "Abdomen (Bauchfett)";
                 if(title) title.innerText = currentMapZoneTitle;
-                if(badge) {
-                    badge.innerText = "Subkutan (SC)";
-                    badge.className = "px-2 py-0.5 rounded text-[10px] font-bold border uppercase tracking-wider mb-2 inline-block bg-emerald-500/10 text-emerald-400 border-emerald-500/20";
-                }
-                if(angle) {
-                    angle.innerText = "45° (Pinch)";
-                    angle.className = "font-bold text-emerald-400 text-lg";
-                }
-                if(desc) desc.innerText = "Der Goldstandard für Peptid-Injektionen. Das subkutane Fettgewebe am Bauch (mindestens 5cm Abstand zum Bauchnabel halten!) hat wenig Schmerzrezeptoren und eine langsame, gleichmäßige Resorptionsrate. Bilde mit zwei Fingern eine Hautfalte (Pinch) und injiziere im 45° Winkel.";
-                if(rot) rot.innerHTML = rotationText;
+                if(desc) desc.innerText = "Der Goldstandard für Peptid-Injektionen. Das subkutane Fettgewebe am Bauch (mindestens 5cm Abstand zum Bauchnabel halten!) hat wenig Schmerzrezeptoren und eine gleichmäßige Resorptionsrate. Bilde mit zwei Fingern eine Hautfalte (Pinch) und injiziere im 45° Winkel.";
+                if(rot) rot.innerHTML = `
+                    <li><strong>Uhrenzeiger-Methode:</strong> Stelle dir deinen Bauchnabel als Mitte einer Uhr vor. Starte bei 1 Uhr und wechsle bei jeder Injektion im Uhrzeigersinn zur nächsten Zahl.</li>
+                    <li>Halte stets 5 cm Abstand zum Bauchnabel.</li>
+                `;
                 
                 if(clockContainer) {
                     clockContainer.classList.remove('hidden');
                     clockContainer.classList.add('flex');
                     renderClock();
                 }
-                if(logBtn) logBtn.style.display = 'none';
+                if(logBtn) logBtn.style.display = 'none'; // Wird über die Uhr gesteuert
             } 
             else if(zoneId === 'subq-love') {
-                currentMapZoneTitle = "Hüfte (Love Handles)";
+                currentMapZoneTitle = "Hüfte / Rückenfett (Love Handles)";
                 if(title) title.innerText = currentMapZoneTitle;
-                if(badge) {
-                    badge.innerText = "Subkutan (SC)";
-                    badge.className = "px-2 py-0.5 rounded text-[10px] font-bold border uppercase tracking-wider mb-2 inline-block bg-emerald-500/10 text-emerald-400 border-emerald-500/20";
-                }
-                if(angle) {
-                    angle.innerText = "45° (Pinch)";
-                    angle.className = "font-bold text-emerald-400 text-lg";
-                }
-                if(desc) desc.innerText = "Hervorragende Alternative zum Bauch, wenn dort bereits Gewebeirritationen (Lipohypertrophie) vorhanden sind. Das Fettgewebe seitlich der Hüfte eignet sich perfekt für wasserbasierte Peptide. Hautfalte bilden und zügig im 45° Winkel einstechen.";
+                if(desc) desc.innerText = "Hervorragende Alternative zum Bauch, wenn dort bereits Gewebeirritationen vorhanden sind. Das Fettgewebe seitlich der Hüfte und am unteren Rücken eignet sich perfekt für wasserbasierte Peptide. Hautfalte bilden und zügig einstechen.";
                 if(rot) rot.innerHTML = rotationText;
             }
-            else if(zoneId === 'im-schulter') {
-                currentMapZoneTitle = "Deltoid (Seitliche Schulter)";
+            else if(zoneId === 'subq-arm') {
+                currentMapZoneTitle = "Oberarm-Rückseite (Trizeps Fett)";
                 if(title) title.innerText = currentMapZoneTitle;
-                if(badge) {
-                    badge.innerText = "Intramuskulär (IM)";
-                    badge.className = "px-2 py-0.5 rounded text-[10px] font-bold border uppercase tracking-wider mb-2 inline-block bg-accent/10 text-accent border-accent/20";
-                }
-                if(angle) {
-                    angle.innerText = "90° (Senkrecht)";
-                    angle.className = "font-bold text-accent text-lg";
-                }
-                if(desc) desc.innerText = "Geeignet für ölige Lösungen oder Peptide, die zwingend tief in den Muskel müssen. Die seitliche Schulter (Lateral Deltoid) hat wenig Nerven. Suche den mittleren Teil des Muskels. Haut NICHT falten (ggf. spannen) und die Nadel in einem raschen 90° Winkel komplett einführen.";
-                if(rot) rot.innerHTML = `
-                    <li><strong>Z-Track-Methode:</strong> Haut leicht zur Seite ziehen, einstechen, injizieren, Nadel ziehen und Haut loslassen (verschließt den Stichkanal).</li>
-                    <li>Wechsle bei jeder Injektion strikt zwischen linker und rechter Schulter.</li>
-                    <li>Niemals mehr als 1-2 ml in die Schulter injizieren.</li>
-                `;
+                if(desc) desc.innerText = "Sehr beliebte Stelle. Greife das Fettgewebe an der Rückseite des Oberarms (über dem Trizeps). Oft ist es hilfreich, den Arm auf einer Lehne abzustützen, um die Hautfalte gut mit der anderen Hand greifen zu können.";
+                if(rot) rot.innerHTML = rotationText;
             }
-            else if(zoneId === 'im-bein') {
-                currentMapZoneTitle = "Vastus Lateralis (Außenschenkel)";
+            else if(zoneId === 'subq-bein') {
+                currentMapZoneTitle = "Oberschenkel (Vorderseite)";
                 if(title) title.innerText = currentMapZoneTitle;
-                if(badge) {
-                    badge.innerText = "Intramuskulär (IM)";
-                    badge.className = "px-2 py-0.5 rounded text-[10px] font-bold border uppercase tracking-wider mb-2 inline-block bg-accent/10 text-accent border-accent/20";
-                }
-                if(angle) {
-                    angle.innerText = "90° (Senkrecht)";
-                    angle.className = "font-bold text-accent text-lg";
-                }
-                if(desc) desc.innerText = "Der mittlere, äußere Teil des Oberschenkels. Hier verläuft der Vastus Lateralis. Er ist sehr massiv und nimmt auch größere Injektionsvolumina gut auf. Teile den Oberschenkel gedanklich von Hüfte bis Knie in drei Teile. Injiziere in das mittlere Drittel auf der Außenseite (90° Winkel).";
-                if(rot) rot.innerHTML = `
-                    <li>Rotiere innerhalb des großen Muskelbauchs um einige Zentimeter hoch oder runter.</li>
-                    <li>Niemals auf die Bein-Innenseite (Oberschenkel-Arterie und Nerven!).</li>
-                    <li>Bein vor Injektion entlasten (nicht anspannen).</li>
-                `;
-            }
-            else if(zoneId === 'im-gluteus') {
-                currentMapZoneTitle = "Gluteus (Gesäßmuskel)";
-                if(title) title.innerText = currentMapZoneTitle;
-                if(badge) {
-                    badge.innerText = "Intramuskulär (IM)";
-                    badge.className = "px-2 py-0.5 rounded text-[10px] font-bold border uppercase tracking-wider mb-2 inline-block bg-accent/10 text-accent border-accent/20";
-                }
-                if(angle) {
-                    angle.innerText = "90° (Senkrecht)";
-                    angle.className = "font-bold text-accent text-lg";
-                }
-                if(desc) desc.innerText = "Der Gluteus Maximus ist ideal für größere Volumina und ölige Trägerlösungen. Wichtig: Teile die Pobacke gedanklich in ein Kreuz (4 Quadranten). Injiziere AUSSCHLIESSLICH in den OBEREN, ÄUSSEREN Quadranten, um den Ischiasnerv zu vermeiden!";
-                if(rot) rot.innerHTML = `
-                    <li><strong>Z-Track-Methode:</strong> Haut leicht spannen, einstechen (meist tiefere Nadel nötig), injizieren und loslassen.</li>
-                    <li>Sicherster Bereich: Oberer äußerer Quadrant (ventrogluteal).</li>
-                    <li>Rotiere wöchentlich zwischen linker und rechter Seite.</li>
-                `;
+                if(desc) desc.innerText = "Nutze die Vorder- oder Außenseite des mittleren Oberschenkels, wo sich gut eine Hautfalte greifen lässt. Vermeide zwingend die Oberschenkel-Innenseite (Nerven & Arterien!).";
+                if(rot) rot.innerHTML = rotationText;
             }
 
             if(typeof checkMapWarning === "function") checkMapWarning();
@@ -2727,7 +2738,11 @@
             const clockUI = document.getElementById('clock-ui');
             if (!clockUI) return;
             
-            clockUI.innerHTML = '<div class="w-3 h-3 bg-slate-700 rounded-full z-10 shadow-inner absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>';
+            // Schickes Uhr-Design: Bauchnabel in der Mitte + Führungsring
+            clockUI.innerHTML = `
+                <div class="absolute inset-0 m-auto w-28 h-28 rounded-full border border-slate-600/30 z-0"></div>
+                <div class="w-5 h-5 bg-slate-800 rounded-full z-10 shadow-[inset_0_2px_4px_rgba(0,0,0,0.6)] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center border border-slate-700/50" title="Bauchnabel (Abstand halten!)"></div>
+            `;
             
             let spotsStr = localStorage.getItem('peptide_clock_spots');
             let spots = spotsStr ? JSON.parse(spotsStr) : {};
@@ -2782,7 +2797,7 @@
             let subName = '';
             if(subSelect && subSelect.value) {
                 subName = subSelect.options[subSelect.selectedIndex].text;
-                deductFromInventory(subSelect.value);
+                if (typeof deductFromInventory === 'function') deductFromInventory(subSelect.value);
             }
             
             let history = JSON.parse(localStorage.getItem('injection_history') || '[]');
@@ -2795,455 +2810,6 @@
 
             renderClock();
             if(typeof renderInjectionLog === "function") renderInjectionLog();
-        }
-
-        function renderInjectionLog() {
-            const list = document.getElementById('injection-log-list');
-            if(!list) return;
-            
-            let history = JSON.parse(localStorage.getItem('injection_history') || '[]');
-            if(history.length === 0) {
-                list.innerHTML = '<p class="text-sm text-slate-500 text-center py-4">Noch keine Injektionen protokolliert.</p>';
-                return;
-            }
-
-            let html = '';
-            history.forEach(item => {
-                let date = new Date(item.time);
-                let timeStr = date.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-                let substanceText = item.substance ? `<span class="text-brand-400 font-bold ml-2 text-xs">${item.substance}</span>` : '';
-
-                html += `
-                    <div class="flex items-center justify-between p-3 rounded-xl border bg-slate-800/50 border-white/5 mb-2">
-                        <div class="flex items-center gap-3">
-                            <span class="text-lg">💉</span>
-                            <div>
-                                <span class="font-bold text-white block text-sm">${item.zone} ${substanceText}</span>
-                                <span class="text-[10px] text-slate-500">${timeStr} Uhr</span>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
-            list.innerHTML = html;
-        }
-
-        function clearInjectionLog() {
-            localStorage.removeItem('injection_history');
-            localStorage.removeItem('peptide_clock_spots');
-            renderInjectionLog();
-            renderClock();
-            if (typeof checkMapWarning === "function") checkMapWarning();
-        }
-
-        function initBloodPresets() {
-            const select = document.getElementById('blood-select');
-            if(!select) return;
-            select.innerHTML = '<option value="">-- Bitte wählen --</option>';
-            RAW_DATA.forEach(p => {
-                select.innerHTML += `<option value="${p[0]}">${p[2]}</option>`;
-            });
-        }
-
-        function renderBloodPanel() {
-            const select = document.getElementById('blood-select');
-            if(!select) return;
-            const val = select.value;
-            const res = document.getElementById('blood-results');
-            const place = document.getElementById('blood-placeholder');
-            
-            if(!val) {
-                if(res) res.classList.add('hidden');
-                if(place) place.classList.remove('hidden');
-                return;
-            }
-            
-            const pep = RAW_DATA.find(i => i[0] === val);
-            if(!pep) return;
-            
-            const bio = getBiomarkers(pep[2], pep[4]);
-            
-            const baseList = document.getElementById('blood-base-list');
-            const specList = document.getElementById('blood-specific-list');
-            
-            if(baseList) baseList.innerHTML = bio.base.map(b => `<li class="flex items-start gap-2"><span class="text-slate-500 mt-0.5">●</span>${b}</li>`).join('');
-            if(specList) specList.innerHTML = bio.spec.map(s => `<li class="flex items-start gap-2"><span class="text-brand-400 mt-0.5">●</span>${s}</li>`).join('');
-            
-            if(res) res.classList.remove('hidden');
-            if(place) place.classList.add('hidden');
-        }
-
-        let currentStorageState = 'dry';
-        let currentStorageTemp = 'fridge';
-
-        function setStorageState(state, btn) {
-            currentStorageState = state;
-            document.querySelectorAll('.storage-state-btn').forEach(b => {
-                b.className = "storage-state-btn flex-1 py-2.5 rounded-lg text-sm font-semibold text-slate-400 hover:text-white transition-all";
-            });
-            btn.className = "storage-state-btn flex-1 py-2.5 rounded-lg text-sm font-semibold bg-slate-700 text-white shadow-sm transition-all";
-            updateStorageSimulation();
-        }
-
-        function setStorageTemp(temp, btn) {
-            currentStorageTemp = temp;
-            document.querySelectorAll('.storage-temp-btn').forEach(b => {
-                b.className = "storage-temp-btn flex-1 py-2.5 rounded-lg text-sm font-semibold text-slate-400 hover:text-white transition-all";
-            });
-            btn.className = "storage-temp-btn flex-1 py-2.5 rounded-lg text-sm font-semibold bg-slate-700 text-white shadow-sm transition-all";
-            updateStorageSimulation();
-        }
-
-        function updateStorageSimulation() {
-            const lightEl = document.getElementById('storage-light');
-            const light = lightEl ? lightEl.checked : false;
-            
-            const lifeEl = document.getElementById('sim-result-life');
-            const descEl = document.getElementById('sim-result-desc');
-            const bar = document.getElementById('sim-result-bar');
-            const powder = document.getElementById('vial-powder');
-            const liquid = document.getElementById('vial-liquid');
-            const broken = document.getElementById('vial-broken');
-
-            if(broken) broken.classList.add('hidden');
-            if(powder && liquid) {
-                if(currentStorageState === 'dry') {
-                    powder.style.display = 'block';
-                    liquid.style.display = 'none';
-                } else {
-                    powder.style.display = 'none';
-                    liquid.style.display = 'block';
-                }
-            }
-
-            let life = "";
-            let desc = "";
-            let percent = 100;
-
-            if(currentStorageState === 'dry') {
-                if(currentStorageTemp === 'freezer') { life = "3 - 5 Jahre"; desc = "Optimal eingefroren. Nahezu kein chemischer Zerfall."; percent = 100; }
-                if(currentStorageTemp === 'fridge') { life = "12 - 24 Monate"; desc = "Kühl und trocken. Sehr stabil."; percent = 80; }
-                if(currentStorageTemp === 'room') { life = "3 - 6 Monate"; desc = "Zimmertemperatur. Langsamer Abbau beginnt."; percent = 50; }
-            } else { 
-                if(currentStorageTemp === 'freezer') {
-                    life = "ZERSTÖRT"; desc = "Frost zerstört die Peptidbindungen im flüssigen Zustand irreparabel."; percent = 0;
-                    if(broken) broken.classList.remove('hidden');
-                    if(powder) powder.style.display = 'none';
-                    if(liquid) liquid.style.display = 'none';
-                }
-                if(currentStorageTemp === 'fridge') { life = "2 - 4 Wochen"; desc = "Kühl gelagert. Standard für angemischte Vials."; percent = 30; }
-                if(currentStorageTemp === 'room') { life = "24 - 48 Stunden"; desc = "Gefahr! Peptid zerfällt rasant."; percent = 5; }
-            }
-
-            if(light && percent > 0) {
-                percent = Math.max(0, percent - 20);
-                desc += " UV-Licht beschleunigt den Zerfall zusätzlich massiv.";
-                if(life !== "ZERSTÖRT") life = "Stark Reduziert";
-            }
-
-            if(lifeEl) lifeEl.innerText = life;
-            if(descEl) descEl.innerText = desc;
-            if(bar) {
-                bar.style.width = percent + "%";
-                if(percent < 20) bar.className = "h-full transition-all duration-700 ease-out bg-rose-500";
-                else if(percent < 60) bar.className = "h-full transition-all duration-700 ease-out bg-amber-500";
-                else bar.className = "h-full transition-all duration-700 ease-out bg-emerald-500";
-            }
-        }
-
-        function setSportChannel(channel, btn) {
-            document.querySelectorAll('.sport-ch-btn').forEach(b => {
-                b.className = "sport-ch-btn p-4 rounded-xl border border-slate-700 hover:border-slate-500 text-left transition-all";
-            });
-            
-            let activeClass = "border-slate-700";
-            if(channel === 'heal') activeClass = "border-emerald-500/50 bg-emerald-500/10";
-            if(channel === 'muscle') activeClass = "border-brand-500/50 bg-brand-500/10";
-            if(channel === 'fat') activeClass = "border-amber-500/50 bg-amber-500/10";
-            if(channel === 'cell') activeClass = "border-purple-500/50 bg-purple-500/10";
-            
-            btn.className = `sport-ch-btn p-4 rounded-xl text-left transition-all border ${activeClass}`;
-
-            document.querySelectorAll('.sport-content').forEach(c => {
-                c.classList.add('hidden'); c.classList.remove('block');
-            });
-            const t = document.getElementById('sport-ch-' + channel);
-            if(t) { t.classList.remove('hidden'); t.classList.add('block'); }
-        }
-
-        function renderStackerList() {
-            const list = document.getElementById('stack-list');
-            if(!list) return;
-            list.innerHTML = '';
-            RAW_DATA.forEach(p => {
-                list.innerHTML += `
-                    <label class="flex items-center gap-3 p-2 hover:bg-slate-800/50 rounded-lg cursor-pointer transition-colors stack-item" data-name="${p[2].toLowerCase()}">
-                        <input type="checkbox" value="${p[2]}" class="stack-checkbox w-4 h-4 rounded border-slate-600 text-brand-500 focus:ring-brand-500 bg-slate-900" onchange="generateStackReport()">
-                        <span class="text-sm text-slate-300 font-medium">${p[2]}</span>
-                    </label>
-                `;
-            });
-        }
-
-        function filterStack() {
-            const searchEl = document.getElementById('stack-search');
-            if(!searchEl) return;
-            const q = searchEl.value.toLowerCase();
-            document.querySelectorAll('.stack-item').forEach(el => {
-                if(el.dataset.name.includes(q)) el.style.display = 'flex';
-                else el.style.display = 'none';
-            });
-        }
-
-        function generateStackReport() {
-            const selected = Array.from(document.querySelectorAll('.stack-checkbox:checked')).map(cb => cb.value);
-            const countDisplay = document.getElementById('stack-count-display');
-            const riskDisplay = document.getElementById('stack-risk-display');
-            const synDisplay = document.getElementById('stack-syn-display');
-            const analysisText = document.getElementById('stack-analysis-text');
-
-            if(!countDisplay || !riskDisplay || !synDisplay || !analysisText) return;
-
-            countDisplay.innerText = selected.length + " Moleküle";
-
-            if(selected.length === 0) {
-                riskDisplay.innerText = "-";
-                riskDisplay.className = "font-bold";
-                synDisplay.innerText = "-";
-                analysisText.innerText = "Bitte wähle Wirkstoffe aus der Liste, um die Analyse zu starten.";
-                analysisText.parentElement.className = "p-4 bg-slate-800/50 rounded-xl mt-4 border border-transparent transition-all";
-                return;
-            }
-
-            if(selected.length === 1) {
-                riskDisplay.innerText = "N/A";
-                riskDisplay.className = "font-bold text-slate-400";
-                synDisplay.innerText = "N/A";
-                analysisText.innerText = "Für eine Synergie-Analyse werden mindestens zwei Wirkstoffe benötigt.";
-                analysisText.parentElement.className = "p-4 bg-slate-800/50 rounded-xl mt-4 border border-transparent transition-all";
-                return;
-            }
-
-            let matchedRule = null;
-            
-            for(let rule of STACK_RULES) {
-                const isMatch = rule.peptides.every(p => selected.includes(p)) && selected.every(s => rule.peptides.includes(s));
-                if(isMatch) {
-                    matchedRule = rule;
-                    break;
-                }
-            }
-
-            if(!matchedRule) {
-                // Hole alle Daten-Objekte der gewählten Peptide aus der Datenbank
-                const selectedPeps = RAW_DATA.filter(p => selected.includes(p[2]));
-                
-                // Kategorien und Risikoprofile extrahieren
-                const cats = selectedPeps.map(p => p[4]);
-                const risks = selectedPeps.map(p => p[6]);
-                
-                const hasGewicht = cats.filter(c => c === 'gewicht').length > 1;
-                const hasWachstum = cats.filter(c => c === 'wachstum').length > 1;
-                const hasHeilung = cats.filter(c => c === 'heilung').length > 1;
-                const hasNeuro = cats.filter(c => c === 'neuro').length > 1;
-                const highRiskCount = risks.filter(r => r === 'high').length;
-
-                let dynType = 'unknown';
-                let dynTitle = 'Individueller Stack';
-                let dynDesc = 'Für diese Kombination gibt es keine festen Profile. Die Wirkstoffe stammen aus unterschiedlichen Kategorien. Prüfe manuell auf unerwünschte Interaktionen.';
-
-                // Hierarchie der Warnungen & Synergien
-                if (hasGewicht) {
-                    dynType = 'warning';
-                    dynTitle = 'Metabolische Überlagerung';
-                    dynDesc = 'Warnung: Du hast mehrere Wirkstoffe gewählt, die stark in den Blutzucker oder Appetit eingreifen (Gewicht/Metabolismus). Dies erhöht das Risiko für Hypoglykämie (Unterzuckerung) und gastrointestinale Beschwerden extrem. Genau überwachen!';
-                } else if (highRiskCount > 1) {
-                    dynType = 'danger';
-                    dynTitle = 'Kritisches Risikoprofil';
-                    dynDesc = 'Achtung: Du kombinierst mehrere Hochrisiko-Substanzen. Dies kann das ZNS, die Leber oder das kardiovaskuläre System massiv belasten. Von dieser Kombination wird dringend abgeraten!';
-                } else if (hasWachstum) {
-                    dynType = 'success';
-                    dynTitle = 'Anabole Sättigung / Synergie';
-                    dynDesc = 'Du kombinierst mehrere Wachstums-Wirkstoffe. Ein Andocken an unterschiedlichen Rezeptoren (z.B. GHRH + GHRP) ist hoch synergistisch. Am exakt selben Rezeptor droht jedoch eine schnelle Desensibilisierung.';
-                } else if (hasHeilung) {
-                    dynType = 'success';
-                    dynTitle = 'Systemische Heilung';
-                    dynDesc = 'Hervorragende Überlagerung von Regenerations-Peptiden. Verschiedene Heilungswege (Angiogenese, Zellmigration, Entzündungshemmung) ergänzen sich meist optimal, ohne sich gegenseitig zu blockieren.';
-                } else if (hasNeuro) {
-                    dynType = 'warning';
-                    dynTitle = 'ZNS-Überstimulation';
-                    dynDesc = 'Vorsicht bei der Kombination von Neuro-Peptiden oder Nootropika. Eine Überstimulation des zentralen Nervensystems kann zu paradoxer Erschöpfung (Neuro-Fatigue), Brain-Fog oder massiven Schlafstörungen führen.';
-                }
-
-                matchedRule = {
-                    title: dynTitle,
-                    description: dynDesc,
-                    type: dynType
-                };
-            }
-
-            if(matchedRule) {
-                synDisplay.innerText = matchedRule.title;
-                analysisText.innerText = matchedRule.description;
-                if(matchedRule.type === 'success') {
-                    riskDisplay.innerText = "Synergistisch";
-                    riskDisplay.className = "font-bold text-emerald-400";
-                    analysisText.parentElement.className = "p-4 rounded-xl mt-4 border transition-all bg-emerald-500/10 border-emerald-500/30 text-emerald-300";
-                } else if(matchedRule.type === 'warning') {
-                    riskDisplay.innerText = "Kontraproduktiv / Warnung";
-                    riskDisplay.className = "font-bold text-amber-400";
-                    analysisText.parentElement.className = "p-4 rounded-xl mt-4 border transition-all bg-amber-500/10 border-amber-500/30 text-amber-300";
-                } else if(matchedRule.type === 'danger') {
-                    riskDisplay.innerText = "Gefährlich";
-                    riskDisplay.className = "font-bold text-rose-400";
-                    analysisText.parentElement.className = "p-4 rounded-xl mt-4 border transition-all bg-rose-500/10 border-rose-500/30 text-rose-300";
-                } else {
-                    riskDisplay.innerText = "Unbekannt";
-                    riskDisplay.className = "font-bold text-slate-400";
-                    analysisText.parentElement.className = "p-4 bg-slate-800/50 rounded-xl mt-4 border border-white/5 transition-all text-slate-300";
-                }
-            }
-        }
-
-        function copyCoupon(code, btn, colorName) {
-            const tempInput = document.createElement("input");
-            tempInput.value = code;
-            document.body.appendChild(tempInput);
-            tempInput.select();
-            document.execCommand("copy");
-            document.body.removeChild(tempInput);
-
-            const originalHtml = btn.innerHTML;
-            btn.innerHTML = `<span>Code kopiert!</span> <span class="bg-emerald-500 text-white px-2 py-0.5 rounded text-[10px]">✓</span>`;
-            setTimeout(() => {
-                btn.innerHTML = originalHtml;
-            }, 2000);
-        }
-
-        function initInventoryPresets() {
-            const select = document.getElementById('inv-select');
-            if(!select) return;
-            select.innerHTML = '<option value="">-- Bitte wählen --</option>';
-            RAW_DATA.forEach(p => {
-                select.innerHTML += `<option value="${p[0]}">${p[2]}</option>`;
-            });
-        }
-
-        function addInventoryItem() {
-            const sel = document.getElementById('inv-select');
-            const vials = parseFloat(document.getElementById('inv-vials').value);
-            const mg = parseFloat(document.getElementById('inv-mg').value);
-            const days = parseFloat(document.getElementById('inv-days').value);
-
-            if(!sel || !sel.value || isNaN(vials) || isNaN(mg) || isNaN(days)) return;
-
-            let inv = JSON.parse(localStorage.getItem('pep_inventory') || '{}');
-            inv[sel.value] = { vials, mg, days, totalDays: vials * days };
-            localStorage.setItem('pep_inventory', JSON.stringify(inv));
-
-            renderInventory();
-        }
-
-        function deductFromInventory(id, doseMg) {
-            if(!id) return;
-            let inv = JSON.parse(localStorage.getItem('pep_inventory') || '{}');
-            if(inv[id]) {
-                if (!doseMg) {
-                    const pep = RAW_DATA.find(p => p[0] === id);
-                    if (pep) {
-                        let doseStr = pep[9].normal || "250mcg";
-                        if (doseStr.toLowerCase().includes("mg")) {
-                            doseMg = parseFloat(doseStr) || 1;
-                        } else {
-                            doseMg = (parseFloat(doseStr) || 250) / 1000;
-                        }
-                    } else {
-                        doseMg = 1;
-                    }
-                }
-                
-                let currentTotalMg = inv[id].vials * inv[id].mg;
-                currentTotalMg -= doseMg;
-                
-                if(currentTotalMg <= 0) {
-                    delete inv[id];
-                } else {
-                    inv[id].vials = currentTotalMg / inv[id].mg;
-                    let mgPerDay = inv[id].mg / inv[id].days;
-                    inv[id].totalDays = currentTotalMg / mgPerDay;
-                }
-                localStorage.setItem('pep_inventory', JSON.stringify(inv));
-                if(typeof renderInventory === "function") renderInventory();
-            }
-        }
-
-        function removeInventoryItem(id) {
-            let inv = JSON.parse(localStorage.getItem('pep_inventory') || '{}');
-            if (inv[id]) {
-                delete inv[id];
-                localStorage.setItem('pep_inventory', JSON.stringify(inv));
-                renderInventory();
-            }
-        }
-
-        function renderInventory() {
-            const list = document.getElementById('inv-list');
-            if(!list) return;
-
-            let inv = JSON.parse(localStorage.getItem('pep_inventory') || '{}');
-            let html = '';
-            let hasWarning = false;
-
-            for(let id in inv) {
-                let item = inv[id];
-                let pep = RAW_DATA.find(p => p[0] === id);
-                let name = pep ? pep[2] : id;
-
-                let isCrit = item.totalDays < 14;
-                if(isCrit) hasWarning = true;
-
-                let bg = isCrit ? 'bg-rose-500/10 border-rose-500/30' : 'bg-slate-800/50 border-slate-700/50';
-                let txt = isCrit ? 'text-rose-400' : 'text-slate-300';
-                let mgLeft = (item.vials * item.mg).toFixed(1);
-
-                html += `
-                    <div class="flex items-center justify-between p-3 rounded-xl border ${bg} mb-2 group">
-                        <div class="flex-grow">
-                            <span class="font-bold ${txt} block text-sm">${name}</span>
-                            <span class="text-[10px] text-slate-400">${item.vials.toFixed(2)} Vials übrig (${mgLeft} mg)</span>
-                        </div>
-                        <div class="text-right flex items-center justify-end gap-4">
-                            <span class="font-mono font-bold ${isCrit ? 'text-rose-400' : 'text-white'} block">${Math.floor(item.totalDays)} Tage</span>
-                            <button onclick="customConfirm('Möchtest du den Bestand für ${name.replace(/'/g, "\\'")} wirklich löschen?', () => removeInventoryItem('${id}'))" class="text-slate-500 hover:text-rose-500 transition-colors p-1" title="Diesen Bestand löschen">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                            </button>
-                        </div>
-                    </div>
-                `;
-            }
-
-            if(html === '') {
-                html = '<p class="text-sm text-slate-500 text-center py-4">Kühlschrank ist leer.</p>';
-            }
-
-            list.innerHTML = html;
-
-            const warnBanner = document.getElementById('global-inv-warning');
-            const warnIcon = document.getElementById('nav-inv-warn');
-            if(warnBanner) {
-                warnBanner.style.display = hasWarning ? 'flex' : 'none';
-                warnBanner.classList.toggle('hidden', !hasWarning);
-            }
-            if(warnIcon) warnIcon.style.display = hasWarning ? 'inline-block' : 'none';
-        }
-
-        function updateMapSubstancePresets() {
-            const select = document.getElementById('map-log-substance');
-            if(!select) return;
-            select.innerHTML = '<option value="">-- Keine Zuordnung --</option>';
-            RAW_DATA.forEach(p => {
-                select.innerHTML += `<option value="${p[0]}">${p[2]}</option>`;
-            });
         }
 
         function logCurrentMapZone() {
@@ -3268,255 +2834,368 @@
             if(typeof renderInjectionLog === "function") renderInjectionLog();
         }
 
+        // --- NEU: 3D Engine für das Body-Modell ---
         function initThreeJSMap() {
             const container = document.getElementById('threejs-container');
             const loading = document.getElementById('threejs-loading');
-            if(!container || typeof THREE === 'undefined') return;
+            
+            if(!container || typeof THREE === 'undefined') {
+                if(loading) loading.style.display = 'none';
+                return;
+            }
             
             // Verhindere doppeltes Initialisieren
             if(container.innerHTML !== '') return;
 
-            const scene = new THREE.Scene();
-            
-            // Kamera anpassen, etwas tiefer fokussieren
-            const camera = new THREE.PerspectiveCamera(40, container.clientWidth / container.clientHeight, 0.1, 1000);
-            camera.position.set(0, 1.5, 17);
+            try {
+                // Container für schwebende HTML-Labels (Texte über den Punkten)
+                const labelsContainer = document.createElement('div');
+                labelsContainer.id = 'threejs-labels';
+                labelsContainer.className = 'absolute inset-0 pointer-events-none z-30 overflow-hidden';
+                container.appendChild(labelsContainer);
 
-            const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-            renderer.setSize(container.clientWidth, container.clientHeight);
-            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Performance Boost
-            container.appendChild(renderer.domElement);
-
-            const controls = new THREE.OrbitControls(camera, renderer.domElement);
-            controls.target.set(0, 1.5, 0); // Fokus auf Rumpfmitte
-            controls.enableZoom = true;
-            controls.minDistance = 6;
-            controls.maxDistance = 25;
-            controls.enablePan = false;
-            // Beschränke Kamera auf vorderen bis leicht seitlichen Bereich
-            controls.minPolarAngle = Math.PI/2 - 0.6;
-            controls.maxPolarAngle = Math.PI/2 + 0.6;
-            controls.autoRotate = false; // Manuelles Ziehen
-            controls.enableDamping = true;
-            controls.dampingFactor = 0.05;
-
-            const bodyGroup = new THREE.Group();
-            
-            // High-End Medical Phantom Material (Lichtbrechung, Glas, organisch)
-            const bodyMat = new THREE.MeshPhysicalMaterial({
-                color: 0x0f172a,      
-                metalness: 0.1,       
-                roughness: 0.2,       
-                transmission: 0.6,    // Simuliert dicke Glas/Gel-Struktur
-                ior: 1.6,             // Index of Refraction
-                thickness: 2.0,       // Unterdrückt Streulicht
-                clearcoat: 1.0,       // Nasse/glänzende Oberfläche
-                clearcoatRoughness: 0.1,
-                transparent: true,
-                opacity: 0.9,
-                side: THREE.DoubleSide
-            });
-
-            // Hilfsfunktion für hoch-organische Körperteile
-            const addPart = (geo, x, y, z, scaleX=1, scaleY=1, scaleZ=1, rotX=0, rotY=0, rotZ=0) => {
-                const mesh = new THREE.Mesh(geo, bodyMat);
-                mesh.position.set(x, y, z);
-                mesh.scale.set(scaleX, scaleY, scaleZ);
-                mesh.rotation.set(rotX, rotY, rotZ);
-                bodyGroup.add(mesh);
-                return mesh;
-            };
-
-            const sphere = new THREE.SphereGeometry(1, 64, 64); // High-Res Kugeln
-            const cyl = new THREE.CylinderGeometry(1, 1, 1, 64);
-
-            // Anatomisch detaillierter Körperaufbau
-            // Kopf & Hals
-            addPart(sphere, 0, 6.4, 0, 0.7, 0.9, 0.75); 
-            addPart(cyl, 0, 5.4, 0, 0.28, 0.8, 0.28); 
-            
-            // Torso Base
-            addPart(sphere, 0, 4.2, 0, 1.3, 1.1, 0.8); 
-            // Brustmuskeln (Pectorals) für Definition
-            addPart(sphere, -0.5, 4.3, 0.65, 0.6, 0.4, 0.2, 0.1, 0, -0.1); 
-            addPart(sphere, 0.5, 4.3, 0.65, 0.6, 0.4, 0.2, 0.1, 0, 0.1); 
-            
-            // Bauch & Taille (Abs)
-            addPart(cyl, 0, 2.7, 0, 1.0, 1.8, 0.7); 
-            addPart(sphere, 0, 2.7, 0.6, 0.8, 1.0, 0.2); // Leichte Bauchwölbung
-            
-            // Becken & Gluteus
-            addPart(sphere, 0, 1.2, 0, 1.25, 0.9, 0.8); 
-            addPart(sphere, -0.5, 1.2, -0.5, 0.55, 0.65, 0.55, -0.2, 0, 0); // Gluteus L
-            addPart(sphere, 0.5, 1.2, -0.5, 0.55, 0.65, 0.55, -0.2, 0, 0);  // Gluteus R
-
-            // Schultern (Deltoids)
-            addPart(sphere, -1.5, 4.4, 0, 0.55, 0.65, 0.55, 0, 0, 0.2);
-            addPart(sphere, 1.5, 4.4, 0, 0.55, 0.65, 0.55, 0, 0, -0.2);
-
-            // Arme (Bizeps & Unterarme)
-            addPart(sphere, -1.8, 3.0, 0, 0.35, 1.0, 0.35, 0, 0, 0.15); // Oberarm L
-            addPart(sphere, 1.8, 3.0, 0, 0.35, 1.0, 0.35, 0, 0, -0.15); // Oberarm R
-            addPart(sphere, -2.05, 1.8, 0, 0.25, 0.25, 0.25); // Ellbogen L
-            addPart(sphere, 2.05, 1.8, 0, 0.25, 0.25, 0.25);  // Ellbogen R
-            addPart(cyl, -2.15, 0.7, 0, 0.22, 1.2, 0.22, 0, 0, 0.05); // Unterarm L
-            addPart(cyl, 2.15, 0.7, 0, 0.22, 1.2, 0.22, 0, 0, -0.05); // Unterarm R
-
-            // Beine (Oberschenkel, Knie, Waden)
-            addPart(sphere, -0.65, -0.4, 0.1, 0.55, 1.4, 0.55, 0, 0, -0.05); // Quad L
-            addPart(sphere, 0.65, -0.4, 0.1, 0.55, 1.4, 0.55, 0, 0, 0.05);   // Quad R
-            addPart(sphere, -0.75, -2.1, 0.15, 0.3, 0.35, 0.3); // Knie L
-            addPart(sphere, 0.75, -2.1, 0.15, 0.3, 0.35, 0.3);  // Knie R
-            addPart(sphere, -0.8, -3.5, 0, 0.35, 1.1, 0.4, 0.05, 0, 0); // Wade L
-            addPart(sphere, 0.8, -3.5, 0, 0.35, 1.1, 0.4, 0.05, 0, 0);  // Wade R
-
-            scene.add(bodyGroup);
-
-            // Studio Lighting Setup (starkes Rim Lighting für Konturen)
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
-            scene.add(ambientLight);
-
-            const dirLight = new THREE.DirectionalLight(0x818cf8, 4);
-            dirLight.position.set(5, 10, 5);
-            scene.add(dirLight);
-
-            const backLight = new THREE.DirectionalLight(0x38bdf8, 5);
-            backLight.position.set(-8, 5, -8);
-            scene.add(backLight);
-            
-            const fillLight = new THREE.PointLight(0x10b981, 2, 20);
-            fillLight.position.set(0, 2, 8);
-            scene.add(fillLight);
-
-            // Hotspots (Injektionszonen)
-            const points = [];
-            const createPoint = (x, y, z, colorHex, zoneId) => {
-                const geo = new THREE.SphereGeometry(0.2, 16, 16);
-                const mat = new THREE.MeshBasicMaterial({ color: colorHex });
-                const mesh = new THREE.Mesh(geo, mat);
-                mesh.position.set(x, y, z);
-                mesh.userData = { zoneId: zoneId };
+                const scene = new THREE.Scene();
                 
-                // Pulsierender Halo-Effekt
-                const haloGeo = new THREE.SphereGeometry(0.35, 16, 16);
-                const haloMat = new THREE.MeshBasicMaterial({ 
-                    color: colorHex, 
-                    transparent: true, 
-                    opacity: 0.4,
-                    blending: THREE.AdditiveBlending
-                });
-                const halo = new THREE.Mesh(haloGeo, haloMat);
-                mesh.add(halo);
-
-                // Äußerer Glow
-                const glowGeo = new THREE.SphereGeometry(0.5, 16, 16);
-                const glowMat = new THREE.MeshBasicMaterial({ 
-                    color: colorHex, 
-                    transparent: true, 
-                    opacity: 0.15,
-                    blending: THREE.AdditiveBlending
-                });
-                const glow = new THREE.Mesh(glowGeo, glowMat);
-                mesh.add(glow);
-
-                bodyGroup.add(mesh);
-                points.push(mesh);
-            };
-
-            const COLOR_SUBQ = 0x10b981; // Emerald (Subkutan)
-            const COLOR_IM = 0x38bdf8;   // Light Blue (Intramuskulär)
-
-            // Angepasste Koordinaten an die neue Muskelstruktur
-            createPoint(0, 2.0, 0.95, COLOR_SUBQ, 'subq-bauch'); // Bauch
-            createPoint(-1.25, 1.8, 0.6, COLOR_SUBQ, 'subq-love'); // Hüfte L
-            createPoint(1.25, 1.8, 0.6, COLOR_SUBQ, 'subq-love'); // Hüfte R
-            createPoint(-1.7, 4.0, 0.1, COLOR_IM, 'im-schulter'); // Deltoid L
-            createPoint(1.7, 4.0, 0.1, COLOR_IM, 'im-schulter'); // Deltoid R
-            createPoint(-1.1, -0.6, 0.35, COLOR_IM, 'im-bein'); // Oberschenkel L
-            createPoint(1.1, -0.6, 0.35, COLOR_IM, 'im-bein'); // Oberschenkel R
-            createPoint(-0.7, 1.5, -0.85, COLOR_IM, 'im-gluteus'); // Gluteus L
-            createPoint(0.7, 1.5, -0.85, COLOR_IM, 'im-gluteus'); // Gluteus R
-
-            // Raycaster für Interaktionen
-            const raycaster = new THREE.Raycaster();
-            const mouse = new THREE.Vector2();
-
-            const handleInteraction = (event) => {
-                if(event.type !== 'touchend' && event.type !== 'click') return;
-
-                const rect = container.getBoundingClientRect();
-                let clientX, clientY;
+                // Verhindere 0/0 (NaN) Fehler, falls der Container versteckt geladen wird
+                let width = container.clientWidth || 800;
+                let height = container.clientHeight || 600;
                 
-                if (event.changedTouches && event.changedTouches.length > 0) {
-                    clientX = event.changedTouches[0].clientX;
-                    clientY = event.changedTouches[0].clientY;
-                } else if(event.clientX !== undefined) {
-                    clientX = event.clientX;
-                    clientY = event.clientY;
-                } else {
-                    return;
+                // Kamera anpassen, etwas tiefer fokussieren
+                const camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 1000);
+                camera.position.set(0, 1.5, 17);
+
+                const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+                renderer.setSize(width, height);
+                renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2)); // Performance Boost
+                container.appendChild(renderer.domElement);
+
+                let controls = null;
+                if (typeof THREE.OrbitControls !== 'undefined') {
+                    controls = new THREE.OrbitControls(camera, renderer.domElement);
+                    controls.target.set(0, 1.5, 0); // Fokus auf Rumpfmitte
+                    controls.enableZoom = true;
+                    controls.minDistance = 6;
+                    controls.maxDistance = 25;
+                    controls.enablePan = false;
+                    // Beschränke Kamera auf vorderen bis leicht seitlichen Bereich
+                    controls.minPolarAngle = Math.PI/2 - 0.6;
+                    controls.maxPolarAngle = Math.PI/2 + 0.6;
+                    controls.autoRotate = false; // Manuelles Ziehen
+                    controls.enableDamping = true;
+                    controls.dampingFactor = 0.05;
                 }
 
-                mouse.x = ((clientX - rect.left) / rect.width) * 2 - 1;
-                mouse.y = -((clientY - rect.top) / rect.height) * 2 + 1;
+                const bodyGroup = new THREE.Group();
+                
+                // High-End Medical Phantom Material (Lichtbrechung, Glas, organisch)
+                const bodyMat = new THREE.MeshPhysicalMaterial({
+                    color: 0x0f172a,      
+                    metalness: 0.1,       
+                    roughness: 0.2,       
+                    transmission: 0.6,    // Simuliert dicke Glas/Gel-Struktur
+                    ior: 1.6,             // Index of Refraction
+                    clearcoat: 1.0,       // Nasse/glänzende Oberfläche
+                    clearcoatRoughness: 0.1,
+                    transparent: true,
+                    opacity: 0.9,
+                    side: THREE.DoubleSide
+                });
 
-                raycaster.setFromCamera(mouse, camera);
-                const intersects = raycaster.intersectObjects(points, true);
+                // Hilfsfunktion für hoch-organische Körperteile
+                const addPart = (geo, x, y, z, scaleX=1, scaleY=1, scaleZ=1, rotX=0, rotY=0, rotZ=0) => {
+                    const mesh = new THREE.Mesh(geo, bodyMat);
+                    mesh.position.set(x, y, z);
+                    mesh.scale.set(scaleX, scaleY, scaleZ);
+                    mesh.rotation.set(rotX, rotY, rotZ);
+                    bodyGroup.add(mesh);
+                    return mesh;
+                };
 
-                if (intersects.length > 0) {
-                    let obj = intersects[0].object;
-                    if(obj.userData.zoneId === undefined && obj.parent && obj.parent.userData.zoneId) {
-                        obj = obj.parent;
+                const sphere = new THREE.SphereGeometry(1, 64, 64); // High-Res Kugeln
+                const cyl = new THREE.CylinderGeometry(1, 1, 1, 64);
+
+                // Anatomisch detaillierter Körperaufbau
+                // Kopf & Hals
+                addPart(sphere, 0, 6.4, 0, 0.7, 0.9, 0.75); 
+                addPart(cyl, 0, 5.4, 0, 0.28, 0.8, 0.28); 
+                
+                // Torso Base
+                addPart(sphere, 0, 4.2, 0, 1.3, 1.1, 0.8); 
+                // Brustmuskeln (Pectorals) für Definition
+                addPart(sphere, -0.5, 4.3, 0.65, 0.6, 0.4, 0.2, 0.1, 0, -0.1); 
+                addPart(sphere, 0.5, 4.3, 0.65, 0.6, 0.4, 0.2, 0.1, 0, 0.1); 
+                
+                // Bauch & Taille (Abs)
+                addPart(cyl, 0, 2.7, 0, 1.0, 1.8, 0.7); 
+                addPart(sphere, 0, 2.7, 0.6, 0.8, 1.0, 0.2); // Leichte Bauchwölbung
+                
+                // Becken & Gluteus
+                addPart(sphere, 0, 1.2, 0, 1.25, 0.9, 0.8); 
+                addPart(sphere, -0.5, 1.2, -0.5, 0.55, 0.65, 0.55, -0.2, 0, 0); // Gluteus L
+                addPart(sphere, 0.5, 1.2, -0.5, 0.55, 0.65, 0.55, -0.2, 0, 0);  // Gluteus R
+
+                // Schultern (Deltoids)
+                addPart(sphere, -1.5, 4.4, 0, 0.55, 0.65, 0.55, 0, 0, 0.2);
+                addPart(sphere, 1.5, 4.4, 0, 0.55, 0.65, 0.55, 0, 0, -0.2);
+
+                // Arme (Bizeps & Unterarme)
+                addPart(sphere, -1.8, 3.0, 0, 0.35, 1.0, 0.35, 0, 0, 0.15); // Oberarm L
+                addPart(sphere, 1.8, 3.0, 0, 0.35, 1.0, 0.35, 0, 0, -0.15); // Oberarm R
+                addPart(sphere, -2.05, 1.8, 0, 0.25, 0.25, 0.25); // Ellbogen L
+                addPart(sphere, 2.05, 1.8, 0, 0.25, 0.25, 0.25);  // Ellbogen R
+                addPart(cyl, -2.15, 0.7, 0, 0.22, 1.2, 0.22, 0, 0, 0.05); // Unterarm L
+                addPart(cyl, 2.15, 0.7, 0, 0.22, 1.2, 0.22, 0, 0, -0.05); // Unterarm R
+
+                // Beine (Oberschenkel, Knie, Waden)
+                addPart(sphere, -0.65, -0.4, 0.1, 0.55, 1.4, 0.55, 0, 0, -0.05); // Quad L
+                addPart(sphere, 0.65, -0.4, 0.1, 0.55, 1.4, 0.55, 0, 0, 0.05);   // Quad R
+                addPart(sphere, -0.75, -2.1, 0.15, 0.3, 0.35, 0.3); // Knie L
+                addPart(sphere, 0.75, -2.1, 0.15, 0.3, 0.35, 0.3);  // Knie R
+                addPart(sphere, -0.8, -3.5, 0, 0.35, 1.1, 0.4, 0.05, 0, 0); // Wade L
+                addPart(sphere, 0.8, -3.5, 0, 0.35, 1.1, 0.4, 0.05, 0, 0);  // Wade R
+
+                scene.add(bodyGroup);
+
+                // Studio Lighting Setup (starkes Rim Lighting für Konturen)
+                const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+                scene.add(ambientLight);
+
+                const dirLight = new THREE.DirectionalLight(0x818cf8, 4);
+                dirLight.position.set(5, 10, 5);
+                scene.add(dirLight);
+
+                const backLight = new THREE.DirectionalLight(0x38bdf8, 5);
+                backLight.position.set(-8, 5, -8);
+                scene.add(backLight);
+                
+                const fillLight = new THREE.PointLight(0x10b981, 2, 20);
+                fillLight.position.set(0, 2, 8);
+                scene.add(fillLight);
+
+                // --- Hotspots mit unsichtbaren Hitboxen und HTML Labels ---
+                const points = [];
+                const COLOR_SUBQ = 0x10b981; // Emerald (Subkutan)
+                const COLOR_IM = 0x38bdf8;   // Light Blue (Intramuskulär)
+
+                const createPoint = (x, y, z, colorHex, zoneId, labelText) => {
+                    // 1. Der sichtbare, kleine Punkt
+                    const geo = new THREE.SphereGeometry(0.15, 16, 16);
+                    const mat = new THREE.MeshBasicMaterial({ color: colorHex });
+                    const mesh = new THREE.Mesh(geo, mat);
+                    mesh.position.set(x, y, z);
+                    mesh.userData = { zoneId: zoneId, baseScale: 1.0, isHovered: false };
+                    
+                    // 2. Weicher Halo
+                    const haloGeo = new THREE.SphereGeometry(0.3, 16, 16);
+                    const haloMat = new THREE.MeshBasicMaterial({ 
+                        color: colorHex, 
+                        transparent: true, 
+                        opacity: 0.4,
+                        blending: THREE.AdditiveBlending
+                    });
+                    const halo = new THREE.Mesh(haloGeo, haloMat);
+                    mesh.add(halo);
+
+                    // 3. RIESIGE, unsichtbare Kugel als "Hitbox" zum extrem leichten Antippen
+                    const hitGeo = new THREE.SphereGeometry(1.2, 16, 16);
+                    const hitMat = new THREE.MeshBasicMaterial({ visible: false });
+                    const hitBox = new THREE.Mesh(hitGeo, hitMat);
+                    mesh.add(hitBox);
+
+                    // 4. HTML Label erstellen
+                    const label = document.createElement('div');
+                    label.className = 'absolute transform -translate-x-1/2 -translate-y-1/2 px-2 py-0.5 rounded backdrop-blur-md bg-slate-900/80 border text-[9px] font-bold shadow-[0_0_10px_rgba(0,0,0,0.5)] transition-opacity duration-300 pointer-events-none whitespace-nowrap';
+                    if(colorHex === COLOR_SUBQ) {
+                        label.classList.add('border-emerald-500/50', 'text-emerald-400');
+                    } else {
+                        label.classList.add('border-accent/50', 'text-accent');
                     }
+                    label.innerText = labelText;
+                    labelsContainer.appendChild(label);
+                    
+                    // Verknüpfe das HTML Label mit dem 3D Mesh
+                    mesh.userData.labelEl = label;
 
-                    const zoneId = obj.userData.zoneId;
-                    if(zoneId) {
-                        showMapInfo(zoneId);
+                    bodyGroup.add(mesh);
+                    points.push(mesh);
+                };
+
+                // Angepasste Koordinaten an die neue Muskelstruktur & Labels
+                createPoint(0, 2.0, 0.95, COLOR_SUBQ, 'subq-bauch', 'Bauch (SC)');
+                createPoint(-1.25, 1.8, 0.6, COLOR_SUBQ, 'subq-love', 'Hüfte (SC)');
+                createPoint(1.25, 1.8, 0.6, COLOR_SUBQ, 'subq-love', 'Hüfte (SC)');
+                createPoint(-1.7, 4.0, 0.1, COLOR_IM, 'im-schulter', 'Schulter (IM)');
+                createPoint(1.7, 4.0, 0.1, COLOR_IM, 'im-schulter', 'Schulter (IM)');
+                createPoint(-1.1, -0.6, 0.35, COLOR_IM, 'im-bein', 'Bein (IM)');
+                createPoint(1.1, -0.6, 0.35, COLOR_IM, 'im-bein', 'Bein (IM)');
+                createPoint(-0.7, 1.5, -0.85, COLOR_IM, 'im-gluteus', 'Gluteus (IM)');
+                createPoint(0.7, 1.5, -0.85, COLOR_IM, 'im-gluteus', 'Gluteus (IM)');
+
+                // --- Raycaster & Interaktion ---
+                const raycaster = new THREE.Raycaster();
+                const mouse = new THREE.Vector2();
+
+                const handleMouseMove = (event) => {
+                    if(!container || container.clientWidth === 0) return;
+                    const rect = container.getBoundingClientRect();
+                    mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+                    mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+                    raycaster.setFromCamera(mouse, camera);
+                    // "true" wichtig, damit auch die großen Hitboxen geprüft werden
+                    const intersects = raycaster.intersectObjects(points, true);
+
+                    let hovered = false;
+                    points.forEach(p => p.userData.isHovered = false);
+
+                    if (intersects.length > 0) {
+                        let obj = intersects[0].object;
+                        // Falls wir die Hitbox/Halo treffen, reiche es zum Haupt-Mesh weiter
+                        let mainMesh = points.includes(obj.parent) ? obj.parent : obj;
                         
-                        const origScale = obj.scale.clone();
-                        obj.scale.set(1.5, 1.5, 1.5);
-                        setTimeout(() => obj.scale.copy(origScale), 200);
+                        if(mainMesh.userData && mainMesh.userData.zoneId) {
+                            mainMesh.userData.isHovered = true;
+                            hovered = true;
+                        }
                     }
-                }
-            };
+                    container.style.cursor = hovered ? 'pointer' : 'move';
+                };
 
-            container.addEventListener('click', handleInteraction);
-            container.addEventListener('touchend', handleInteraction, {passive: true});
+                const handleInteraction = (event) => {
+                    if(event.type !== 'touchend' && event.type !== 'click') return;
 
-            window.addEventListener('resize', () => {
-                if(!container || container.clientWidth === 0) return;
-                camera.aspect = container.clientWidth / container.clientHeight;
-                camera.updateProjectionMatrix();
-                renderer.setSize(container.clientWidth, container.clientHeight);
-            });
+                    const rect = container.getBoundingClientRect();
+                    let clientX, clientY;
+                    
+                    if (event.changedTouches && event.changedTouches.length > 0) {
+                        clientX = event.changedTouches[0].clientX;
+                        clientY = event.changedTouches[0].clientY;
+                    } else if(event.clientX !== undefined) {
+                        clientX = event.clientX;
+                        clientY = event.clientY;
+                    } else {
+                        return;
+                    }
 
-            if(loading) {
-                loading.style.opacity = '0';
-                setTimeout(() => loading.style.display = 'none', 500);
-            }
+                    mouse.x = ((clientX - rect.left) / rect.width) * 2 - 1;
+                    mouse.y = -((clientY - rect.top) / rect.height) * 2 + 1;
 
-            const clock = new THREE.Clock();
-            
-            function animate() {
-                requestAnimationFrame(animate);
-                
-                const mapView = document.getElementById('view-map');
-                if (mapView && mapView.classList.contains('hidden')) return;
+                    raycaster.setFromCamera(mouse, camera);
+                    const intersects = raycaster.intersectObjects(points, true);
 
-                controls.update();
-                
-                const t = clock.getElapsedTime();
-                points.forEach(p => {
-                    const scale = 1 + Math.sin(t * 3) * 0.15; 
-                    if(p.children.length > 0) p.children[0].scale.set(scale, scale, scale); 
-                    if(p.children.length > 1) p.children[1].scale.set(scale * 1.1, scale * 1.1, scale * 1.1);
+                    if (intersects.length > 0) {
+                        let obj = intersects[0].object;
+                        let mainMesh = points.includes(obj.parent) ? obj.parent : obj;
+
+                        const zoneId = mainMesh.userData.zoneId;
+                        if(zoneId) {
+                            showMapInfo(zoneId);
+                            
+                            const origScale = mainMesh.scale.clone();
+                            mainMesh.scale.set(1.6, 1.6, 1.6);
+                            setTimeout(() => mainMesh.scale.copy(origScale), 200);
+                        }
+                    }
+                };
+
+                container.addEventListener('mousemove', handleMouseMove);
+                container.addEventListener('click', handleInteraction);
+                container.addEventListener('touchend', handleInteraction, {passive: true});
+
+                window.addEventListener('resize', () => {
+                    if(!container || container.clientWidth === 0) return;
+                    camera.aspect = container.clientWidth / container.clientHeight;
+                    camera.updateProjectionMatrix();
+                    renderer.setSize(container.clientWidth, container.clientHeight);
                 });
 
-                bodyGroup.position.y = Math.sin(t) * 0.05; // Sehr weiches Atmen
+                const clock = new THREE.Clock();
+                const tempV = new THREE.Vector3();
+                
+                function animate() {
+                    requestAnimationFrame(animate);
+                    
+                    const mapView = document.getElementById('view-map');
+                    if (mapView && mapView.classList.contains('hidden')) return;
+                    if (container.clientWidth === 0 || container.clientHeight === 0) return;
 
-                renderer.render(scene, camera);
+                    if (controls) controls.update();
+                    
+                    const t = clock.getElapsedTime();
+                    const halfW = container.clientWidth / 2;
+                    const halfH = container.clientHeight / 2;
+
+                    points.forEach(p => {
+                        // Hover Animation für den 3D Punkt
+                        const targetBase = p.userData.isHovered ? 1.5 : 1.0;
+                        if(isNaN(p.userData.baseScale)) p.userData.baseScale = 1.0; 
+                        p.userData.baseScale += (targetBase - p.userData.baseScale) * 0.15;
+
+                        const scale = p.userData.baseScale + Math.sin(t * 3) * 0.08; 
+                        if(p.children.length > 0) p.children[0].scale.set(scale, scale, scale); 
+
+                        // --- HTML LABEL SYNC ---
+                        if (p.userData.labelEl) {
+                            p.getWorldPosition(tempV);
+                            
+                            // Berechne Winkel zur Kamera, um auszublenden, wenn es auf der Rückseite ist
+                            const dirToCam = new THREE.Vector3().subVectors(camera.position, tempV).normalize();
+                            const pointNormal = p.position.clone().normalize(); 
+                            const dot = dirToCam.dot(pointNormal);
+
+                            tempV.project(camera);
+                            
+                            // Wenn der Punkt den Bildschirm verlässt
+                            if (tempV.z > 1) {
+                                p.userData.labelEl.style.display = 'none';
+                            } else {
+                                p.userData.labelEl.style.display = 'block';
+                                
+                                // Map 3D Koordinaten auf CSS Pixel
+                                const x = (tempV.x * halfW) + halfW;
+                                const y = -(tempV.y * halfH) + halfH;
+                                
+                                p.userData.labelEl.style.left = `${x}px`;
+                                p.userData.labelEl.style.top = `${y - 25}px`; // Leicht über dem Punkt schweben
+
+                                // Transparenz für die Rückseite
+                                if (dot < -0.15) {
+                                    p.userData.labelEl.style.opacity = '0.15';
+                                    p.userData.labelEl.style.zIndex = '10';
+                                } else {
+                                    p.userData.labelEl.style.opacity = '1';
+                                    p.userData.labelEl.style.zIndex = '30';
+                                    // Highlight bei Hover
+                                    if (p.userData.isHovered) {
+                                        p.userData.labelEl.style.borderColor = '#10b981';
+                                        p.userData.labelEl.style.backgroundColor = 'rgba(16, 185, 129, 0.2)';
+                                    } else {
+                                        p.userData.labelEl.style.borderColor = 'rgba(15, 23, 42, 0.3)';
+                                        p.userData.labelEl.style.backgroundColor = 'rgba(15, 23, 42, 0.8)';
+                                    }
+                                }
+                            }
+                        }
+                    });
+
+                    bodyGroup.position.y = Math.sin(t) * 0.05; // Sehr weiches Atmen
+
+                    renderer.render(scene, camera);
+                }
+                animate();
+
+                // Lade-Bildschirm beenden
+                if(loading) {
+                    loading.style.opacity = '0';
+                    setTimeout(() => loading.style.display = 'none', 500);
+                }
+
+            } catch (error) {
+                console.error("ThreeJS Initialisierungsfehler:", error);
+                if(loading) {
+                    loading.innerHTML = '<span class="text-xs text-rose-500 font-bold bg-slate-900/80 px-3 py-1 rounded">3D-Modell konnte nicht geladen werden.</span>';
+                }
             }
-            animate();
         }
 
         let calCurrentDate = new Date();
@@ -3764,6 +3443,139 @@
             }
 
             grid.innerHTML = html;
+        }
+
+        // --- KI ASSISTENT (Prof. Dr. Pep) LOGIK ---
+        let chatHistory = [];
+        
+        function toggleAIChat() {
+            const chatWindow = document.getElementById('ai-chat-window');
+            if(chatWindow.classList.contains('opacity-0')) {
+                chatWindow.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-10');
+                chatWindow.classList.add('opacity-100', 'pointer-events-auto', 'translate-y-0');
+                const input = document.getElementById('ai-input');
+                if(input) input.focus();
+            } else {
+                chatWindow.classList.add('opacity-0', 'pointer-events-none', 'translate-y-10');
+                chatWindow.classList.remove('opacity-100', 'pointer-events-auto', 'translate-y-0');
+            }
+        }
+
+        function toggleAISettings() {
+            const settings = document.getElementById('ai-settings-area');
+            settings.classList.toggle('hidden');
+            const input = document.getElementById('ai-api-key');
+            input.value = localStorage.getItem('peptide_ai_key') || '';
+        }
+
+        function saveAPIKey() {
+            const input = document.getElementById('ai-api-key');
+            localStorage.setItem('peptide_ai_key', input.value.trim());
+            toggleAISettings();
+            
+            const msgs = document.getElementById('ai-messages');
+            msgs.innerHTML += `<div class="text-center text-[10px] text-emerald-400 my-2">✅ API-Schlüssel lokal gespeichert.</div>`;
+            msgs.scrollTop = msgs.scrollHeight;
+        }
+
+        async function sendAIMessage() {
+            const inputEl = document.getElementById('ai-input');
+            const text = inputEl.value.trim();
+            if(!text) return;
+            
+            const msgs = document.getElementById('ai-messages');
+            const sendBtn = document.getElementById('ai-send-btn');
+            
+            msgs.innerHTML += `
+                <div class="flex items-start gap-3 flex-row-reverse animate-fade-in-up">
+                    <div class="w-6 h-6 rounded-full bg-slate-700 flex-shrink-0 flex items-center justify-center text-[10px]">👤</div>
+                    <div class="bg-brand-600 rounded-2xl rounded-tr-sm p-3 text-xs text-white leading-relaxed shadow-sm">
+                        ${text.replace(/</g, "&lt;").replace(/>/g, "&gt;")}
+                    </div>
+                </div>
+            `;
+            inputEl.value = '';
+            msgs.scrollTop = msgs.scrollHeight;
+
+            let apiKey = localStorage.getItem('peptide_ai_key') || "";
+
+            const loadingId = 'loading-' + Date.now();
+            msgs.innerHTML += `
+                <div id="${loadingId}" class="flex items-start gap-3 animate-fade-in-up">
+                    <div class="w-6 h-6 rounded-full bg-brand-500/20 flex-shrink-0 flex items-center justify-center text-[10px]">👨‍🔬</div>
+                    <div class="bg-slate-800 border border-white/5 rounded-2xl rounded-tl-sm p-3 text-xs text-slate-400 flex gap-1 items-center">
+                        <span class="animate-pulse">.</span><span class="animate-pulse" style="animation-delay: 0.2s">.</span><span class="animate-pulse" style="animation-delay: 0.4s">.</span>
+                    </div>
+                </div>
+            `;
+            msgs.scrollTop = msgs.scrollHeight;
+
+            inputEl.disabled = true;
+            sendBtn.disabled = true;
+
+            try {
+                chatHistory.push({ role: "user", parts: [{ text: text }] });
+
+                const payload = {
+                    contents: chatHistory,
+                    systemInstruction: {
+                        parts: [{ text: "Du bist 'Prof. Dr. Pep', ein akademischer, leicht nerdiger aber lockerer Biochemie-Forscher ('Labor-Bro'). Du erklärst Substanzen, Rezeptoren und Halbwertszeiten aus der 'Peptide Bank'. Du gibst NIEMALS medizinischen Rat, keine Dosierungs- oder Einnahmeempfehlungen. Du sprichst den Nutzer per 'Du' an. Formatiere deine Antworten mit kurzen Absätzen und nutze gelegentlich passende Emojis." }]
+                    }
+                };
+
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+                
+                document.getElementById(loadingId).remove();
+
+                if (result.error) {
+                    throw new Error(result.error.message || "Unbekannter API Fehler");
+                }
+
+                if (result.candidates && result.candidates.length > 0) {
+                    const replyText = result.candidates[0].content.parts[0].text;
+                    chatHistory.push({ role: "model", parts: [{ text: replyText }] });
+
+                    let formattedText = replyText
+                        .replace(/\*\*(.*?)\*\*/g, '<strong class="text-white">$1</strong>')
+                        .replace(/\n/g, '<br>');
+
+                    msgs.innerHTML += `
+                        <div class="flex items-start gap-3 animate-fade-in-up">
+                            <div class="w-6 h-6 rounded-full bg-brand-500/20 flex-shrink-0 flex items-center justify-center text-[10px]">👨‍🔬</div>
+                            <div class="bg-slate-800 border border-white/5 rounded-2xl rounded-tl-sm p-3 text-xs text-slate-300 leading-relaxed shadow-sm">
+                                ${formattedText}
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    throw new Error("Leere Antwort von der KI erhalten.");
+                }
+
+            } catch (err) {
+                document.getElementById(loadingId)?.remove();
+                msgs.innerHTML += `
+                    <div class="flex items-start gap-3 animate-fade-in-up">
+                        <div class="w-6 h-6 rounded-full bg-rose-500/20 flex-shrink-0 flex items-center justify-center text-[10px]">⚠️</div>
+                        <div class="bg-rose-500/10 border border-rose-500/30 rounded-2xl rounded-tl-sm p-3 text-xs text-rose-300 leading-relaxed shadow-sm">
+                            Hoppla: ${err.message}. <br><br>Hast du deinen eigenen API-Schlüssel über das kleine Zahnrad ⚙️ hinterlegt?
+                        </div>
+                    </div>
+                `;
+                chatHistory.pop();
+            }
+
+            inputEl.disabled = false;
+            sendBtn.disabled = false;
+            inputEl.focus();
+            msgs.scrollTop = msgs.scrollHeight;
         }
 
         window.onload = function() {
