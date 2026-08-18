@@ -3513,6 +3513,53 @@
             inputEl.disabled = true;
             sendBtn.disabled = true;
 
+            // --- LOKALER OFFLINE-MODUS (Wenn kein API Key hinterlegt ist) ---
+            if (!apiKey) {
+                setTimeout(() => {
+                    document.getElementById(loadingId)?.remove();
+                    let replyText = "";
+                    let lowerInput = text.toLowerCase();
+
+                    // Einfache Keyword-Suche in der lokalen Datenbank (RAW_DATA)
+                    let foundPep = RAW_DATA.find(p => lowerInput.includes(p[2].toLowerCase()) || lowerInput.includes(p[3].toLowerCase()));
+
+                    if (foundPep) {
+                        replyText = `Ah, **${foundPep[2]}** (${foundPep[3]})! Das fällt in unsere klinische Kategorie *${foundPep[5]}*.\n\n`;
+
+                        if (lowerInput.includes("dosis") || lowerInput.includes("dosierung") || lowerInput.includes("wieviel") || lowerInput.includes("wie viel")) {
+                            replyText += `**Forschungs-Dosierung:**\nDie gängige Standard-Dosis liegt bei **${foundPep[9].normal}** (Maximal: ${foundPep[9].max}).\nDie Applikation erfolgt **${foundPep[9].form}**, meistens ${foundPep[9].timing}.\nHalbwertszeit: ca. ${foundPep[9].halflife}.\n\n*(Hinweis: Rein biochemische Info, kein medizinischer Rat!)*`;
+                        } else if (lowerInput.includes("risiko") || lowerInput.includes("nebenwirkung") || lowerInput.includes("gefahr")) {
+                            replyText += `**Bekannte Risiken & Nebenwirkungen:**\n- ${foundPep[8].join('\n- ')}\n\nDas Risikoprofil ist als **${foundPep[6].toUpperCase()}** eingestuft.`;
+                        } else {
+                            replyText += `**Klinische Wirkmechanismen:**\n- ${foundPep[7].join('\n- ')}\n\n**Häufige Nebenwirkungen:**\n- ${foundPep[8].join('\n- ')}\n\nWenn du hochkomplexe biochemische Fragen hast, trage oben im ⚙️-Menü einen API-Key ein!`;
+                        }
+                    } else if (lowerInput.includes("hallo") || lowerInput.includes("hi") || lowerInput.includes("gude") || lowerInput.includes("moin")) {
+                        replyText = "Gude! Ich laufe aktuell im **lokalen Offline-Modus** (ohne API-Key). Ich kenne aber unsere gesamte Datenbank auswendig! Nenn mir einfach den Namen einer Substanz (z.B. 'Was macht BPC-157?' oder 'Dosierung von Semaglutid'), und ich gebe dir die Infos direkt aus dem System.";
+                    } else {
+                        replyText = "Puh, da muss ich im Offline-Modus leider passen. 😅\nOhne API-Key kann ich nicht frei chatten, sondern nur gezielt unsere Datenbank nach Wirkstoffen durchsuchen.\n\nFrag mich z.B.:\n- *'Infos zu TB-500'* \n- *'Nebenwirkungen von Retatrutide'*\n\nFür komplexe Konversationen hinterlege bitte oben im ⚙️-Menü deinen kostenlosen Gemini API-Schlüssel.";
+                    }
+
+                    // Markdown-Formatierung umwandeln
+                    let formattedText = replyText.replace(/\*\*(.*?)\*\*/g, '<strong class="text-white">$1</strong>').replace(/\n/g, '<br>');
+
+                    msgs.innerHTML += `
+                        <div class="flex items-start gap-3 animate-fade-in-up">
+                            <div class="w-6 h-6 rounded-full bg-brand-500/20 flex-shrink-0 flex items-center justify-center text-[10px]">👨‍🔬</div>
+                            <div class="bg-slate-800 border border-white/5 rounded-2xl rounded-tl-sm p-3 text-xs text-slate-300 leading-relaxed shadow-sm">
+                                ${formattedText}
+                            </div>
+                        </div>
+                    `;
+
+                    inputEl.disabled = false;
+                    sendBtn.disabled = false;
+                    inputEl.focus();
+                    msgs.scrollTop = msgs.scrollHeight;
+                }, 800); // Künstliches Delay, damit es sich anfühlt, als würde er tippen
+                return; // Stoppt hier, ruft die API nicht auf
+            }
+
+            // --- ONLINE API MODUS (Wenn API Key vorhanden ist) ---
             try {
                 chatHistory.push({ role: "user", parts: [{ text: text }] });
 
@@ -3565,7 +3612,7 @@
                     <div class="flex items-start gap-3 animate-fade-in-up">
                         <div class="w-6 h-6 rounded-full bg-rose-500/20 flex-shrink-0 flex items-center justify-center text-[10px]">⚠️</div>
                         <div class="bg-rose-500/10 border border-rose-500/30 rounded-2xl rounded-tl-sm p-3 text-xs text-rose-300 leading-relaxed shadow-sm">
-                            Hoppla: ${err.message}. <br><br>Hast du deinen eigenen API-Schlüssel über das kleine Zahnrad ⚙️ hinterlegt?
+                            Hoppla: ${err.message}. <br><br>Hast du deinen eigenen API-Schlüssel über das kleine Zahnrad ⚙️ hinterlegt? Überprüfe bitte, ob er gültig ist.
                         </div>
                     </div>
                 `;
