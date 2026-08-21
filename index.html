@@ -143,7 +143,8 @@
 
             <nav class="flex items-center justify-center sm:justify-start gap-1.5 bg-slate-900/50 p-1.5 rounded-3xl sm:rounded-full border border-white/5 shadow-inner w-full xl:w-auto flex-wrap relative z-50">
                 
-                <button onclick="router('db')" id="nav-db" class="nav-btn px-4 py-2 rounded-full text-xs font-semibold transition-all duration-300 bg-brand-500 text-white shadow-md">Datenbank</button>
+                <button onclick="router('dashboard')" id="nav-dashboard" class="nav-btn px-4 py-2 rounded-full text-xs font-semibold transition-all duration-300 bg-brand-500 text-white shadow-md">🏠 Cockpit</button>
+                <button onclick="router('db')" id="nav-db" class="nav-btn px-4 py-2 rounded-full text-xs font-semibold transition-all duration-300 text-slate-400 hover:text-white">Datenbank</button>
                 
                 <!-- Tools Dropdown -->
                 <div class="relative group">
@@ -221,7 +222,60 @@
             <button onclick="router('inventory')" class="px-4 py-2 bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 rounded-xl text-xs font-bold transition-all whitespace-nowrap">Zum Bestand</button>
         </div>
 
-        <div id="view-db" class="view-panel block animate-fade-in-up space-y-8">
+        <div id="view-dashboard" class="view-panel block animate-fade-in-up space-y-8">
+            <div class="text-center space-y-4 mb-10">
+                <h2 class="text-4xl font-extrabold text-white tracking-tight">Dein <span class="text-gradient">Cockpit</span></h2>
+                <p class="text-slate-400 text-sm max-w-2xl mx-auto">Willkommen zurück. Hier ist deine persönliche Übersicht über Bestand, Journal und anstehende Aufgaben.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Quick Actions -->
+                <div class="lg:col-span-3 grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                    <button onclick="router('tracker'); setTimeout(() => document.getElementById('trk-date').focus(), 100);" class="glass-panel p-4 rounded-2xl border border-white/5 hover:border-brand-500/50 hover:bg-white/5 transition-all flex flex-col items-center justify-center gap-2 group">
+                        <span class="text-2xl group-hover:scale-110 transition-transform">💉</span>
+                        <span class="text-xs font-bold text-slate-300">Injektion loggen</span>
+                    </button>
+                    <button onclick="router('tracker'); setTimeout(() => setTrackerType('feedback', document.querySelector('.tracker-type-btn:nth-child(2)')), 100);" class="glass-panel p-4 rounded-2xl border border-white/5 hover:border-emerald-500/50 hover:bg-white/5 transition-all flex flex-col items-center justify-center gap-2 group">
+                        <span class="text-2xl group-hover:scale-110 transition-transform">📊</span>
+                        <span class="text-xs font-bold text-slate-300">Bio-Feedback</span>
+                    </button>
+                    <button onclick="router('calc')" class="glass-panel p-4 rounded-2xl border border-white/5 hover:border-accent/50 hover:bg-white/5 transition-all flex flex-col items-center justify-center gap-2 group">
+                        <span class="text-2xl group-hover:scale-110 transition-transform">🧪</span>
+                        <span class="text-xs font-bold text-slate-300">Neuer Rechner</span>
+                    </button>
+                    <button onclick="toggleAIChat()" class="glass-panel p-4 rounded-2xl border border-brand-500/30 bg-brand-500/10 hover:bg-brand-500/20 transition-all flex flex-col items-center justify-center gap-2 group shadow-glow-brand">
+                        <span class="text-2xl group-hover:scale-110 transition-transform">👨‍🔬</span>
+                        <span class="text-xs font-bold text-brand-400">Dr. Pep fragen</span>
+                    </button>
+                </div>
+
+                <!-- Widget 1: Journal Trend -->
+                <div class="glass-card p-6 rounded-3xl border border-white/5">
+                    <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-4 flex items-center gap-2"><span class="text-lg">📈</span> Aktueller Trend</h3>
+                    <div id="dash-trend-content" class="space-y-4">
+                        <p class="text-xs text-slate-500">Lade Daten...</p>
+                    </div>
+                </div>
+
+                <!-- Widget 2: Inventory Status -->
+                <div class="glass-card p-6 rounded-3xl border border-white/5">
+                    <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-4 flex items-center gap-2"><span class="text-lg">❄️</span> Kühlschrank</h3>
+                    <div id="dash-inv-content" class="space-y-3">
+                        <p class="text-xs text-slate-500">Lade Daten...</p>
+                    </div>
+                </div>
+
+                <!-- Widget 3: Last Injection -->
+                <div class="glass-card p-6 rounded-3xl border border-white/5">
+                    <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-4 flex items-center gap-2"><span class="text-lg">💉</span> Letzte Applikation</h3>
+                    <div id="dash-log-content" class="space-y-4">
+                        <p class="text-xs text-slate-500">Lade Daten...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="view-db" class="view-panel hidden animate-fade-in-up space-y-8">
             <div class="text-center space-y-4 mb-10">
                 <h2 class="text-4xl font-extrabold text-white tracking-tight">Molekulare <span class="text-gradient">Referenz</span></h2>
                 <p class="text-slate-400 text-sm max-w-2xl mx-auto">Durchsuche verifizierte Peptid-Sequenzen, SARMs und Bioregulatoren inkl. Studien-Links, Applikations-Winkel und Halbwertszeiten.</p>
@@ -256,7 +310,14 @@
 
             <div class="flex items-center justify-between text-xs text-slate-500 font-medium px-2">
                 <div><span id="db-count" class="text-brand-400 font-bold text-sm">0</span> Substanzen geladen</div>
-                <div>Zertifizierte Daten 2026</div>
+                <div class="flex items-center gap-2 bg-slate-900/50 p-1 rounded-xl border border-white/5">
+                    <button id="btn-view-grid" onclick="toggleDbView('grid')" class="p-1.5 rounded-lg bg-brand-500 text-white shadow-md transition-colors" title="Karten-Ansicht">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                    </button>
+                    <button id="btn-view-list" onclick="toggleDbView('list')" class="p-1.5 rounded-lg bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700 border border-white/5 transition-colors" title="Listen-Ansicht">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                    </button>
+                </div>
             </div>
 
             <div id="db-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
@@ -779,31 +840,77 @@
                         </div>
                     </div>
 
-                    <div class="xl:col-span-8 bg-slate-900/50 border border-white/5 rounded-2xl p-6 flex flex-col">
-                        <div class="flex justify-between items-center mb-6 border-b border-white/5 pb-4">
-                            <h3 class="text-xl font-bold text-white" id="cal-month-title">Monat Jahr</h3>
-                            <div class="flex gap-2">
-                                <button onclick="changeCalMonth(-1)" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
-                                </button>
-                                <button onclick="changeCalMonth(1)" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                                </button>
+                    <div class="xl:col-span-8 flex flex-col gap-6">
+                        <!-- TABS -->
+                        <div class="flex bg-slate-900 p-1 rounded-xl border border-slate-800 w-max">
+                            <button onclick="toggleTrackerView('main')" id="tab-trk-main" class="px-4 py-2 rounded-lg text-xs font-bold bg-emerald-500 text-white shadow-md transition-all">🗓️ Kalender</button>
+                            <button onclick="toggleTrackerView('analytics')" id="tab-trk-analytics" class="px-4 py-2 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition-all">📈 Analytics</button>
+                        </div>
+
+                        <!-- MAIN VIEW -->
+                        <div id="tracker-main-view" class="bg-slate-900/50 border border-white/5 rounded-2xl p-6 flex flex-col flex-grow">
+                            <div class="flex justify-between items-center mb-6 border-b border-white/5 pb-4">
+                                <h3 class="text-xl font-bold text-white" id="cal-month-title">Monat Jahr</h3>
+                                <div class="flex gap-2">
+                                    <button onclick="changeCalMonth(-1)" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                    </button>
+                                    <button onclick="changeCalMonth(1)" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-7 gap-2 text-center text-xs font-bold text-slate-500 mb-2">
+                                <div>Mo</div><div>Di</div><div>Mi</div><div>Do</div><div>Fr</div><div>Sa</div><div>So</div>
+                            </div>
+                            <div id="tracker-calendar-grid" class="grid grid-cols-7 gap-2 flex-grow">
+                            </div>
+                            
+                            <div class="mt-6 flex gap-4 text-[10px] text-slate-400 justify-center">
+                                <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-brand-500/80"></span> Injektion</div>
+                                <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-400/80"></span> Bio-Feedback</div>
+                                <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-400/80"></span> Notiz</div>
+                                <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full border border-emerald-500"></span> Heute</div>
                             </div>
                         </div>
 
-                        <div class="grid grid-cols-7 gap-2 text-center text-xs font-bold text-slate-500 mb-2">
-                            <div>Mo</div><div>Di</div><div>Mi</div><div>Do</div><div>Fr</div><div>Sa</div><div>So</div>
+                        <!-- ANALYTICS VIEW -->
+                        <div id="tracker-analytics-view" class="hidden flex-col gap-6 flex-grow">
+                            <div class="grid grid-cols-3 gap-4">
+                                <div class="bg-slate-900/50 border border-emerald-500/20 p-4 rounded-xl text-center">
+                                    <span class="text-[10px] font-bold text-emerald-400 uppercase tracking-wider block mb-1">Ø Schlaf</span>
+                                    <span class="text-2xl font-bold text-white" id="stat-sleep-avg">-</span>
+                                </div>
+                                <div class="bg-slate-900/50 border border-rose-500/20 p-4 rounded-xl text-center">
+                                    <span class="text-[10px] font-bold text-rose-400 uppercase tracking-wider block mb-1">Ø Schmerz</span>
+                                    <span class="text-2xl font-bold text-white" id="stat-pain-avg">-</span>
+                                </div>
+                                <div class="bg-slate-900/50 border border-brand-500/20 p-4 rounded-xl text-center">
+                                    <span class="text-[10px] font-bold text-brand-400 uppercase tracking-wider block mb-1">Ø Energie</span>
+                                    <span class="text-2xl font-bold text-white" id="stat-mood-avg">-</span>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-slate-900/50 border border-white/5 p-5 rounded-2xl text-sm text-slate-300 leading-relaxed" id="analytics-insight-text">
+                            </div>
+                            
+                            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-grow">
+                                <div class="lg:col-span-2 bg-slate-900/50 border border-white/5 p-4 rounded-2xl min-h-[250px] relative flex flex-col">
+                                    <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">14-Tage Trend</h4>
+                                    <div class="relative w-full flex-grow min-h-[200px]">
+                                        <canvas id="analytics-trend-chart" class="absolute inset-0 w-full h-full"></canvas>
+                                    </div>
+                                </div>
+                                <div class="bg-slate-900/50 border border-white/5 p-4 rounded-2xl min-h-[250px] relative flex flex-col items-center">
+                                    <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 self-start">Verteilung</h4>
+                                    <div class="relative w-full flex-grow flex items-center justify-center p-2 min-h-[200px]">
+                                        <canvas id="analytics-substance-chart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div id="tracker-calendar-grid" class="grid grid-cols-7 gap-2 flex-grow">
-                        </div>
-                        
-                        <div class="mt-6 flex gap-4 text-[10px] text-slate-400 justify-center">
-                            <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-brand-500/80"></span> Injektion</div>
-                            <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-400/80"></span> Bio-Feedback</div>
-                            <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-400/80"></span> Notiz</div>
-                            <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full border border-emerald-500"></span> Heute</div>
-                        </div>
+
                     </div>
                 </div>
             </div>
@@ -1155,7 +1262,11 @@
 
     <!-- Mobile Bottom Navigation Bar -->
     <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-slate-900/90 backdrop-blur-xl border-t border-white/10 z-[100] px-2 py-3 pb-safe flex justify-around items-center shadow-[0_-10px_30px_rgba(0,0,0,0.5)]">
-        <button onclick="router('db')" id="mob-nav-db" class="mob-nav-btn flex flex-col items-center gap-1 text-brand-400 relative drop-shadow-[0_0_8px_rgba(129,140,248,0.5)]">
+        <button onclick="router('dashboard')" id="mob-nav-dashboard" class="mob-nav-btn flex flex-col items-center gap-1 text-brand-400 relative drop-shadow-[0_0_8px_rgba(129,140,248,0.5)]">
+            <span class="text-lg leading-none mb-0.5">🏠</span>
+            <span class="text-[9px] font-bold tracking-wider uppercase">Home</span>
+        </button>
+        <button onclick="router('db')" id="mob-nav-db" class="mob-nav-btn flex flex-col items-center gap-1 text-slate-500 hover:text-slate-300 transition-colors relative">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
             <span class="text-[9px] font-bold tracking-wider uppercase">DB</span>
         </button>
@@ -1914,6 +2025,26 @@
             return "Spezifische Rezeptor-Modulation (" + catText + ")";
         }
 
+        window.dbViewMode = 'grid';
+
+        function toggleDbView(mode) {
+            window.dbViewMode = mode;
+            
+            const btnGrid = document.getElementById('btn-view-grid');
+            const btnList = document.getElementById('btn-view-list');
+            
+            if (mode === 'grid') {
+                btnGrid.className = "p-1.5 rounded-lg bg-brand-500 text-white shadow-md transition-colors";
+                btnList.className = "p-1.5 rounded-lg bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700 border border-white/5 transition-colors";
+            } else {
+                btnList.className = "p-1.5 rounded-lg bg-brand-500 text-white shadow-md transition-colors";
+                btnGrid.className = "p-1.5 rounded-lg bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700 border border-white/5 transition-colors";
+            }
+            
+            renderDatabase();
+            applyFilters();
+        }
+
         function renderDatabase() {
             const grid = document.getElementById('db-grid');
             if(!grid) return;
@@ -1929,6 +2060,13 @@
             });
             
             let counters = { PEP: 1, SRM: 1, MIX: 1, MSC: 1 };
+            
+            if (typeof dbViewMode === 'undefined') window.dbViewMode = 'grid';
+            if (dbViewMode === 'list') {
+                grid.className = "flex flex-col gap-3";
+            } else {
+                grid.className = "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6";
+            }
 
             sortedData.forEach(item => {
                 // Typ-Erkennung für dynamisches Präfix und Highlighting
@@ -2105,6 +2243,47 @@
 
                 const bio = getBiomarkers(p.name, p.cat);
                 const moaText = getMoA(p.id, p.name, p.catText);
+
+                if (dbViewMode === 'list') {
+                    let bestPriceStr = "N/A";
+                    if (p.prices && p.prices.length > 0) {
+                        let lowest = Math.min(...p.prices.map(pr => parsePrice(pr.price)).filter(val => val > 0));
+                        if (lowest > 0 && lowest < Infinity) {
+                            bestPriceStr = `ab ${lowest.toFixed(2)} €`;
+                        }
+                    }
+                    const listHTML = `
+                        <div class="peptide-card glass-panel rounded-2xl p-4 flex flex-col lg:flex-row lg:items-center justify-between gap-4 transition-all duration-300 hover:border-brand-500/50 border border-white/5" data-cat="${p.cat}" data-risk="${p.risk}" data-search="${p.name.toLowerCase()} ${p.aka.toLowerCase()}">
+                            <div class="flex items-center gap-4 lg:min-w-[250px]">
+                                <button onclick="toggleFavorite('${p.id}')" class="text-lg leading-none transition-transform hover:scale-125 ${isFav ? 'text-amber-400 drop-shadow-[0_0_8px_rgba(251,191,36,0.8)]' : 'text-slate-600 hover:text-slate-400'}">
+                                    ${isFav ? '★' : '☆'}
+                                </button>
+                                <div>
+                                    <h3 class="text-base font-bold text-white flex items-center gap-1">${p.name} ${typeIcon}</h3>
+                                    <p class="text-[10px] text-slate-400 truncate max-w-[200px]">${p.aka}</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2 lg:w-[200px] flex-shrink-0">
+                                <span class="px-2 py-0.5 rounded text-[9px] font-bold border uppercase tracking-wider ${badgeColor}">${p.catText}</span>
+                                <span class="px-2 py-0.5 rounded text-[9px] font-bold border uppercase tracking-wider ${riskClass}">${riskText}</span>
+                            </div>
+                            <div class="flex items-center gap-3 flex-grow justify-start lg:justify-end">
+                                <div class="text-left lg:text-right mr-auto lg:mr-2">
+                                    <span class="block text-[9px] text-slate-500 uppercase tracking-widest">Bester Preis</span>
+                                    <span class="font-bold text-white text-sm">${bestPriceStr}</span>
+                                </div>
+                                <button onclick="const s = document.getElementById('searchInput'); s.dataset.autoFiltered = 'true'; toggleDbView('grid'); setTimeout(() => { s.value = '${p.name.replace(/'/g, "\\'")}'; applyFilters(); }, 50);" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 border border-white/10 transition-colors whitespace-nowrap shadow-inner">
+                                    ℹ️ Info
+                                </button>
+                                <button onclick="router('calc'); loadDirectToCalc('${p.id}')" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-brand-500/20 text-brand-400 hover:bg-brand-500 hover:text-white border border-brand-500/50 transition-colors shadow-glow-brand flex items-center gap-1.5 whitespace-nowrap">
+                                    🧪 Rechner
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    grid.innerHTML += listHTML;
+                    return; // Stoppt hier für diesen Schleifendurchlauf (generiert keine Karte!)
+                }
 
                 const cardHTML = `
                     <div class="peptide-card glass-panel rounded-3xl p-6 transition-all duration-300 group ${cardBorderClass}" data-cat="${p.cat}" data-risk="${p.risk}" data-search="${p.name.toLowerCase()} ${p.aka.toLowerCase()}">
@@ -3543,6 +3722,7 @@
 
             renderTrackerCalendar();
             renderTrackerRecent();
+            if(typeof renderAnalytics === 'function') renderAnalytics();
         }
 
         function changeCalMonth(dir) {
@@ -3614,12 +3794,186 @@
 
             renderTrackerCalendar();
             renderTrackerRecent();
+            if(typeof renderAnalytics === 'function') renderAnalytics();
         }
 
         function clearTrackerData() {
             localStorage.removeItem('tracker_data');
             renderTrackerCalendar();
             renderTrackerRecent();
+            if(typeof renderAnalytics === 'function') renderAnalytics();
+        }
+
+        // --- Analytics Modul ---
+        let analyticsTrendChartInstance = null;
+        let analyticsSubChartInstance = null;
+
+        function toggleTrackerView(view) {
+            const mainView = document.getElementById('tracker-main-view');
+            const analyticsView = document.getElementById('tracker-analytics-view');
+            const btnMain = document.getElementById('tab-trk-main');
+            const btnAnalytics = document.getElementById('tab-trk-analytics');
+
+            if (view === 'main') {
+                mainView.classList.remove('hidden');
+                mainView.classList.add('flex');
+                analyticsView.classList.add('hidden');
+                analyticsView.classList.remove('flex');
+                
+                btnMain.className = "px-4 py-2 rounded-lg text-xs font-bold bg-emerald-500 text-white shadow-md transition-all";
+                btnAnalytics.className = "px-4 py-2 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition-all";
+            } else {
+                mainView.classList.add('hidden');
+                mainView.classList.remove('flex');
+                analyticsView.classList.remove('hidden');
+                analyticsView.classList.add('flex');
+                
+                btnAnalytics.className = "px-4 py-2 rounded-lg text-xs font-bold bg-emerald-500 text-white shadow-md transition-all";
+                btnMain.className = "px-4 py-2 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition-all";
+                
+                renderAnalytics();
+            }
+        }
+
+        function renderAnalytics() {
+            const data = JSON.parse(localStorage.getItem('tracker_data') || '[]');
+            
+            let sleepSum = 0, painSum = 0, moodSum = 0;
+            let sleepCount = 0, painCount = 0, moodCount = 0;
+            let pepCounts = {};
+            let dailyData = {};
+
+            data.forEach(entry => {
+                if (entry.type === 'feedback' || entry.sleep) {
+                    if (entry.sleep) { sleepSum += parseInt(entry.sleep); sleepCount++; }
+                    if (entry.pain) { painSum += parseInt(entry.pain); painCount++; }
+                    if (entry.mood) { moodSum += parseInt(entry.mood); moodCount++; }
+                }
+                if (entry.type === 'injection' || entry.peptide) {
+                    let pep = entry.peptide || "Unbekannt";
+                    pepCounts[pep] = (pepCounts[pep] || 0) + 1;
+                }
+
+                if (!dailyData[entry.date]) dailyData[entry.date] = { sleep: null, pain: null, mood: null, injection: false, subNames: [] };
+                
+                if (entry.type === 'feedback' || entry.sleep) {
+                    if (entry.sleep) dailyData[entry.date].sleep = parseInt(entry.sleep);
+                    if (entry.pain) dailyData[entry.date].pain = parseInt(entry.pain);
+                    if (entry.mood) dailyData[entry.date].mood = parseInt(entry.mood);
+                }
+                if (entry.type === 'injection' || entry.peptide) {
+                    dailyData[entry.date].injection = true;
+                    if(entry.peptide) dailyData[entry.date].subNames.push(entry.peptide);
+                }
+            });
+
+            const sleepAvg = sleepCount > 0 ? (sleepSum / sleepCount).toFixed(1) : "-";
+            const painAvg = painCount > 0 ? (painSum / painCount).toFixed(1) : "-";
+            const moodAvg = moodCount > 0 ? (moodSum / moodCount).toFixed(1) : "-";
+
+            const elSleep = document.getElementById('stat-sleep-avg');
+            const elPain = document.getElementById('stat-pain-avg');
+            const elMood = document.getElementById('stat-mood-avg');
+
+            if(elSleep) elSleep.innerText = sleepAvg;
+            if(elPain) elPain.innerText = painAvg;
+            if(elMood) elMood.innerText = moodAvg;
+
+            const insightText = document.getElementById('analytics-insight-text');
+            if (insightText) {
+                if (data.length < 3) {
+                    insightText.innerHTML = "<em>Zu wenig Daten. Protokolliere in den nächsten Tagen Bio-Feedback und Injektionen, um Korrelationen zu erkennen.</em>";
+                } else {
+                    let text = `<p>Basierend auf deinen Einträgen beträgt deine <strong>Ø Schlafqualität ${sleepAvg}</strong> und dein <strong>Ø Energielevel ${moodAvg}</strong>.</p>`;
+                    const topPep = Object.keys(pepCounts).sort((a,b) => pepCounts[b] - pepCounts[a])[0];
+                    if (topPep) {
+                        text += `<p class="mt-2">Deine am häufigsten protokollierte Substanz ist <strong class="text-white">${topPep}</strong>.</p>`;
+                    }
+                    if (painAvg !== "-" && parseFloat(painAvg) > 5) {
+                        text += `<p class="text-rose-400 mt-2">Dein Schmerzlevel ist mit ${painAvg} überdurchschnittlich hoch. Achte auf ausreichend Regeneration.</p>`;
+                    } else if (painAvg !== "-") {
+                        text += `<p class="text-emerald-400 mt-2">Dein Schmerzlevel ist mit ${painAvg} in einem guten Bereich.</p>`;
+                    }
+                    insightText.innerHTML = text;
+                }
+            }
+
+            if (typeof Chart === 'undefined') return;
+
+            // Trend Chart
+            const trendCtx = document.getElementById('analytics-trend-chart');
+            if (trendCtx) {
+                let labels = [], sleepData = [], painData = [], moodData = [], injData = [];
+                const today = new Date();
+                
+                for (let i = 13; i >= 0; i--) {
+                    let d = new Date(today);
+                    d.setDate(d.getDate() - i);
+                    let dateStr = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+                    let displayStr = `${String(d.getDate()).padStart(2, '0')}.${String(d.getMonth()+1).padStart(2, '0')}`;
+                    labels.push(displayStr);
+
+                    let dayStats = dailyData[dateStr] || { sleep: null, pain: null, mood: null, injection: false, subNames: [] };
+                    sleepData.push(dayStats.sleep);
+                    painData.push(dayStats.pain);
+                    moodData.push(dayStats.mood);
+                    
+                    if(dayStats.injection) {
+                        injData.push({x: displayStr, y: 5, subs: dayStats.subNames.join(', ')});
+                    } else {
+                        injData.push(null);
+                    }
+                }
+
+                if (analyticsTrendChartInstance) analyticsTrendChartInstance.destroy();
+
+                analyticsTrendChartInstance = new Chart(trendCtx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            { label: 'Schlaf', data: sleepData, borderColor: '#10b981', backgroundColor: 'transparent', tension: 0.3, spanGaps: true },
+                            { label: 'Schmerz', data: painData, borderColor: '#f43f5e', backgroundColor: 'transparent', tension: 0.3, spanGaps: true },
+                            { label: 'Energie', data: moodData, borderColor: '#38bdf8', backgroundColor: 'transparent', tension: 0.3, spanGaps: true },
+                            { type: 'scatter', label: 'Injektion', data: injData, backgroundColor: '#6366f1', pointStyle: 'rectRot', pointRadius: 6, pointHoverRadius: 8 }
+                        ]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        scales: {
+                            y: { min: 0, max: 10, grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { color: '#94a3b8' } },
+                            x: { grid: { display: false }, ticks: { color: '#64748b' } }
+                        },
+                        plugins: {
+                            legend: { labels: { color: '#94a3b8', usePointStyle: true, boxWidth: 8, font: {size: 10} } },
+                            tooltip: { callbacks: { label: function(ctx) { return ctx.dataset.type === 'scatter' ? "Injektion: " + ctx.raw.subs : ctx.dataset.label + ": " + ctx.raw; } } }
+                        }
+                    }
+                });
+            }
+
+            // Doughnut Chart
+            const subCtx = document.getElementById('analytics-substance-chart');
+            if (subCtx) {
+                if (analyticsSubChartInstance) analyticsSubChartInstance.destroy();
+                const subLabels = Object.keys(pepCounts);
+                const subData = Object.values(pepCounts);
+
+                if (subLabels.length === 0) {
+                    analyticsSubChartInstance = new Chart(subCtx, {
+                        type: 'doughnut',
+                        data: { labels: ['Keine Daten'], datasets: [{ data: [1], backgroundColor: ['#1e293b'], borderWidth: 0 }] },
+                        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { enabled: false } }, cutout: '75%' }
+                    });
+                } else {
+                    const colors = ['#6366f1', '#10b981', '#f59e0b', '#38bdf8', '#c026d3', '#f43f5e'];
+                    analyticsSubChartInstance = new Chart(subCtx, {
+                        type: 'doughnut',
+                        data: { labels: subLabels, datasets: [{ data: subData, backgroundColor: colors.slice(0, subLabels.length), borderWidth: 2, borderColor: '#0f172a' }] },
+                        options: { responsive: true, maintainAspectRatio: false, cutout: '70%', plugins: { legend: { position: 'right', labels: { color: '#94a3b8', usePointStyle: true, boxWidth: 8, font: {size: 10} } } } }
+                    });
+                }
+            }
         }
 
         function renderTrackerRecent() {
@@ -3769,6 +4123,88 @@
             input.value = localStorage.getItem('peptide_ai_key') || '';
         }
 
+        // NEU: Auto-Logger Helferfunktion für die KI
+        function handleAILogging(text) {
+            let lower = text.toLowerCase();
+            let logged = false;
+            let reply = "";
+
+            const nicknames = {
+                "reta": "retatrutide", "sema": "semaglutide", "ozempic": "semaglutide", "wegovy": "semaglutide",
+                "tirz": "tirzepatide", "mounjaro": "tirzepatide", "zepbound": "tirzepatide", "cagri": "cagrilintide",
+                "ipa": "ipamorelin", "bpc": "bpc157", "tb": "tb500", "wolverine": "bpctb", "cjc": "cjc1295",
+                "dac": "cjc1295dac", "tesa": "tesamorelin", "osta": "ostarine", "mk": "mk677", "rad": "rad140",
+                "lgd": "lgd4033", "cardi": "cardarine", "gw": "cardarine", "frag": "hghfrag", "lemon": "lemonbottle",
+                "mt2": "mt2", "mt1": "mt1", "ghk": "ghkcu", "copper": "ghkcu", "pt": "pt141", "epi": "epitalon",
+                "igf": "igf1lr3", "nad": "nadplus", "mb": "methyleneblue", "mots": "motsc"
+            };
+
+            // 1. Check für Bio-Feedback (Schlaf, Schmerz, Energie)
+            if(lower.includes("schlaf") || lower.includes("schmerz") || lower.includes("energie") || lower.includes("stimmung")) {
+                let numMatch = lower.match(/(?:schlaf|schmerz|energie|stimmung).*?(?:ist|bei|auf|eine)?\s*(\d+)/i);
+                if(!numMatch) numMatch = lower.match(/(\d+)\s*(?:von 10)?\s*(?:beim|als|für)?\s*(?:schlaf|schmerz|energie|stimmung)/i);
+                
+                if(numMatch && parseInt(numMatch[1]) <= 10) {
+                    let val = parseInt(numMatch[1]);
+                    let entry = { id: Date.now().toString(), date: new Date().toLocaleDateString('en-CA'), type: 'feedback' };
+                    
+                    if(lower.includes("schlaf")) entry.sleep = val;
+                    if(lower.includes("schmerz")) entry.pain = val;
+                    if(lower.includes("energie") || lower.includes("stimmung")) entry.mood = val;
+
+                    let data = JSON.parse(localStorage.getItem('tracker_data') || '[]');
+                    data.unshift(entry);
+                    localStorage.setItem('tracker_data', JSON.stringify(data));
+                    
+                    reply += `Notiert! Ich habe dein Bio-Feedback (Wert: **${val}/10**) für heute ins Journal eingetragen. 📈\n`;
+                    logged = true;
+                }
+            }
+
+            // 2. Check für Injektionen
+            if(lower.includes("logge") || lower.includes("habe") || lower.includes("spritze") || lower.includes("genommen") || lower.includes("injiziert")) {
+                let foundPep = RAW_DATA.find(p => lower.includes(p[2].toLowerCase()) || lower.includes(p[3].toLowerCase()) || lower.includes(p[0].toLowerCase()));
+                if (!foundPep) {
+                    for (const [nick, fullId] of Object.entries(nicknames)) {
+                        const regex = new RegExp(`\\b${nick}\\b`, 'i');
+                        if (regex.test(lower)) { foundPep = RAW_DATA.find(p => p[0] === fullId); break; }
+                    }
+                }
+                
+                let doseMatch = lower.match(/(\d+[,.]?\d*)\s*(mcg|mg|ml|iu|u)/i);
+                
+                if(foundPep && doseMatch) {
+                    let doseStr = doseMatch[1] + doseMatch[2];
+                    let parsedDoseMg = 0;
+                    if(doseMatch[2].toLowerCase() === 'mcg') parsedDoseMg = parseFloat(doseMatch[1].replace(',','.'))/1000;
+                    else if(doseMatch[2].toLowerCase() === 'mg') parsedDoseMg = parseFloat(doseMatch[1].replace(',','.'));
+                    
+                    let entry = {
+                        id: Date.now().toString(), date: new Date().toLocaleDateString('en-CA'),
+                        type: 'injection', peptide: foundPep[2], dose: doseStr
+                    };
+                    
+                    let data = JSON.parse(localStorage.getItem('tracker_data') || '[]');
+                    data.unshift(entry);
+                    localStorage.setItem('tracker_data', JSON.stringify(data));
+                    
+                    if(parsedDoseMg > 0) deductFromInventory(foundPep[0], parsedDoseMg);
+
+                    reply += `Super! Ich habe die Applikation von **${foundPep[2]}** (${doseStr}) für heute in dein Journal gebucht und den Bestand aktualisiert. 💉\n`;
+                    logged = true;
+                }
+            }
+
+            if(logged) {
+                if(typeof renderTrackerCalendar === 'function') renderTrackerCalendar();
+                if(typeof renderTrackerRecent === 'function') renderTrackerRecent();
+                if(typeof renderDashboard === 'function') renderDashboard();
+                if(typeof renderAnalytics === 'function') renderAnalytics();
+                return reply;
+            }
+            return false;
+        }
+
         function saveAPIKey() {
             const input = document.getElementById('ai-api-key');
             localStorage.setItem('peptide_ai_key', input.value.trim());
@@ -3813,6 +4249,28 @@
 
             inputEl.disabled = true;
             sendBtn.disabled = true;
+
+            // --- NEU: Auto-Logging Abfangen ---
+            const interceptReply = handleAILogging(text);
+            if (interceptReply) {
+                setTimeout(() => {
+                    document.getElementById(loadingId)?.remove();
+                    let formattedText = interceptReply.replace(/\*\*(.*?)\*\*/g, '<strong class="text-white">$1</strong>').replace(/\n/g, '<br>');
+                    msgs.innerHTML += `
+                        <div class="flex items-start gap-3 animate-fade-in-up">
+                            <div class="w-6 h-6 rounded-full bg-brand-500/20 flex-shrink-0 flex items-center justify-center text-[10px]">👨‍🔬</div>
+                            <div class="bg-slate-800 border border-emerald-500/30 shadow-[0_0_15px_rgba(16,185,129,0.1)] rounded-2xl rounded-tl-sm p-3 text-xs text-slate-300 leading-relaxed">
+                                ${formattedText}
+                            </div>
+                        </div>
+                    `;
+                    inputEl.disabled = false;
+                    sendBtn.disabled = false;
+                    inputEl.focus();
+                    msgs.scrollTop = msgs.scrollHeight;
+                }, 600); // Kurze künstliche "Nachdenk-Pause"
+                return;
+            }
 
             // --- LOKALER OFFLINE-MODUS (Wenn kein API Key hinterlegt ist) ---
             if (!apiKey) {
@@ -4464,7 +4922,89 @@
             if(typeof renderPKChart === "function") renderPKChart();
             if(typeof initThreeJSMap === "function") initThreeJSMap();
             if(typeof initTracker === "function") initTracker();
+            
+            if(typeof renderDashboard === "function") renderDashboard();
         };
+
+        function renderDashboard() {
+            // 1. Trend
+            const dashTrend = document.getElementById('dash-trend-content');
+            if (dashTrend) {
+                let data = JSON.parse(localStorage.getItem('tracker_data') || '[]');
+                let recentFeedback = data.filter(d => d.type === 'feedback' || d.sleep).slice(0, 5);
+                if (recentFeedback.length > 0) {
+                    let slp = 0, eng = 0;
+                    recentFeedback.forEach(f => { slp += parseInt(f.sleep||5); eng += parseInt(f.mood||5); });
+                    slp = (slp / recentFeedback.length).toFixed(1);
+                    eng = (eng / recentFeedback.length).toFixed(1);
+                    dashTrend.innerHTML = `
+                        <div class="flex justify-between items-center p-3 bg-slate-900/50 rounded-xl border border-emerald-500/20">
+                            <span class="text-xs text-slate-300">Ø Schlaf (5 Tage)</span>
+                            <span class="text-lg font-bold text-emerald-400">${slp}</span>
+                        </div>
+                        <div class="flex justify-between items-center p-3 bg-slate-900/50 rounded-xl border border-brand-500/20 mt-2">
+                            <span class="text-xs text-slate-300">Ø Energie (5 Tage)</span>
+                            <span class="text-lg font-bold text-brand-400">${eng}</span>
+                        </div>
+                        <button onclick="router('tracker'); toggleTrackerView('analytics');" class="w-full text-[10px] text-slate-500 hover:text-white transition-colors text-center mt-3 block">Zur Analytics Engine →</button>
+                    `;
+                } else {
+                    dashTrend.innerHTML = `<p class="text-xs text-slate-500 italic">Noch kein Bio-Feedback protokolliert.</p>`;
+                }
+            }
+
+            // 2. Inventory
+            const dashInv = document.getElementById('dash-inv-content');
+            if (dashInv) {
+                let inv = JSON.parse(localStorage.getItem('peptide_inventory') || '{}');
+                let invKeys = Object.keys(inv);
+                if (invKeys.length > 0) {
+                    let html = '';
+                    let warnings = 0;
+                    invKeys.slice(0,3).forEach(id => {
+                        const item = inv[id];
+                        const pep = RAW_DATA.find(p => p[0] === id);
+                        if(!pep) return;
+                        let dailyDose = item.dailyDose || (item.mgPerVial / (item.daysPerVial || 14));
+                        const remainingDays = dailyDose > 0 ? Math.floor(item.totalMg / dailyDose) : 0;
+                        let isLow = remainingDays < 14;
+                        if(isLow) warnings++;
+                        html += `
+                            <div class="flex justify-between items-center p-2.5 bg-slate-800/40 rounded-lg mb-2 border border-white/5">
+                                <span class="text-xs font-bold text-white truncate max-w-[120px]">${pep[2]}</span>
+                                <span class="text-[10px] ${isLow ? 'text-rose-400 font-bold' : 'text-slate-400'}">${remainingDays} Tage übrig</span>
+                            </div>
+                        `;
+                    });
+                    if(invKeys.length > 3) html += `<div class="text-[10px] text-slate-500 text-center mt-2">+ ${invKeys.length - 3} weitere im Bestand</div>`;
+                    dashInv.innerHTML = html + `<button onclick="router('inventory')" class="w-full text-[10px] text-brand-400 hover:text-brand-300 transition-colors text-center mt-3 block">Bestand verwalten →</button>`;
+                } else {
+                    dashInv.innerHTML = `<p class="text-xs text-slate-500 italic mb-3">Dein Kühlschrank ist leer.</p><button onclick="router('inventory')" class="w-full py-2 bg-blue-500/20 text-blue-400 border border-blue-500/30 rounded-lg text-[10px] font-bold transition-all hover:bg-blue-500/30">Bestand anlegen</button>`;
+                }
+            }
+
+            // 3. Last Log
+            const dashLog = document.getElementById('dash-log-content');
+            if (dashLog) {
+                let history = JSON.parse(localStorage.getItem('injection_history') || '[]');
+                if (history.length > 0) {
+                    let last = history[0];
+                    let dateObj = new Date(last.time);
+                    let timeStr = dateObj.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+                    let dateStr = dateObj.toLocaleDateString('de-DE', { day: '2-digit', month: 'short' });
+                    dashLog.innerHTML = `
+                        <div class="p-4 bg-slate-900/50 border border-white/5 rounded-xl">
+                            <span class="text-[10px] text-slate-500 block mb-2">${dateStr}, ${timeStr} Uhr</span>
+                            <strong class="text-sm text-white block mb-1">${last.zone}</strong>
+                            <span class="text-xs text-brand-400 flex items-center gap-1.5"><span class="text-[10px]">💉</span> ${last.substance || 'Unbekannt'}</span>
+                        </div>
+                        <button onclick="router('map')" class="w-full text-[10px] text-slate-500 hover:text-white transition-colors text-center mt-3 block">Zur Body-Map →</button>
+                    `;
+                } else {
+                    dashLog.innerHTML = `<p class="text-xs text-slate-500 italic">Noch keine Injektionen auf der Map geloggt.</p>`;
+                }
+            }
+        }
     </script>
 </body>
 </html>
